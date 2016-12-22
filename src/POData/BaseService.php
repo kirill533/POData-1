@@ -2,6 +2,7 @@
 
 namespace POData;
 
+use Exception;
 use POData\Common\MimeTypes;
 use POData\Common\Version;
 use POData\OperationContext\HTTPRequestMethod;
@@ -13,9 +14,11 @@ use POData\Common\ODataConstants;
 use POData\Common\NotImplementedException;
 use POData\Common\InvalidOperationException;
 use POData\Common\HttpStatus;
+use POData\Providers\Metadata\IMetadataProvider;
 use POData\Providers\Metadata\Type\IType;
 use POData\Providers\ProvidersWrapper;
 use POData\Providers\Stream\StreamProviderWrapper;
+use POData\Providers\Query\IQueryProvider;
 use POData\Configuration\ServiceConfiguration;
 use POData\UriProcessor\UriProcessor;
 use POData\UriProcessor\RequestDescription;
@@ -29,13 +32,10 @@ use POData\Writers\Json\JsonLightMetadataLevel;
 use POData\Writers\Json\JsonLightODataWriter;
 use POData\Writers\Json\JsonODataV1Writer;
 use POData\Writers\Json\JsonODataV2Writer;
+use POData\Writers\ODataWriterRegistry;
 use POData\Writers\ResponseWriter;
-
-use POData\Providers\Query\IQueryProvider;
-use POData\Providers\Metadata\IMetadataProvider;
 use POData\OperationContext\IOperationContext;
 
-use POData\Writers\ODataWriterRegistry;
 
 /**
  * Class BaseService
@@ -221,8 +221,9 @@ abstract class BaseService implements IRequestHandler, IService
 
             $uriProcessor = UriProcessor::process($this);
             $request = $uriProcessor->getRequest();
+            ob_clean();
             $this->serializeResult($request, $uriProcessor);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             ErrorHandler::handleException($exception, $this);
             // Return to dispatcher for writing serialized exception
             return;

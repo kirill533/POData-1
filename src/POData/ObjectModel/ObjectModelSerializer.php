@@ -357,7 +357,8 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
             }
 
             if ($this->needNextPageLink(count($entryObjects))) {
-                $feed->nextPageLink = $this->getNextLinkUri(end($entryObjects), $absoluteUri);
+                $end = end($entryObjects);
+                $feed->nextPageLink = $this->getNextLinkUri($end, $absoluteUri);
             }
         }
     }
@@ -844,7 +845,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
         } else if ($type instanceof DateTime && $primitiveValue instanceOf \DateTime) {
             $stringValue = $primitiveValue->format(\DateTime::ATOM);
         } else if ($type instanceof StringType) {
-            $stringValue = utf8_encode($primitiveValue);
+            $stringValue = mb_convert_encoding($primitiveValue, 'UTF-8');
         } else {        
             $stringValue = strval($primitiveValue);
         }

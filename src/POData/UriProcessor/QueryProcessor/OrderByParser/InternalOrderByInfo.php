@@ -148,6 +148,7 @@ class InternalOrderByInfo
                     $dummyProperty = new \ReflectionProperty(
                         $currentObject, $subPathSegment->getName()
                     );
+                    $dummyProperty->setAccessible(true);
                     $currentObject = $dummyProperty->getValue($currentObject);
                     if (is_null($currentObject)) {                        
                             $nextPageLink .= 'null, ';

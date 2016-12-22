@@ -210,6 +210,7 @@ class InternalSkipTokenInfo
                                 $currentObject, 
                                 $subPathSegment->getName()
                             );
+                            $dummyProperty->setAccessible(true);
                             $currentObject 
                                 = $dummyProperty->getValue($currentObject);
                         } else {
@@ -217,6 +218,7 @@ class InternalSkipTokenInfo
                                 $currentObject, 
                                 $subPathSegment->getName()
                             );
+                            $dummyProperty->setAccessible(true);
                             if ($this->_orderByValuesInSkipToken[$i][1] instanceof Null1) {
                                 $dummyProperty->setValue($currentObject, null);
                             } else {
@@ -275,6 +277,7 @@ class InternalSkipTokenInfo
                         $currentObject, 
                         $subPathSegment->getName()
                     );
+                    $dummyProperty->setAccessible(true);
                     $currentObject = $dummyProperty->getValue($currentObject);
                     if (is_null($currentObject)) {
                             $nextPageLink .= 'null, ';
