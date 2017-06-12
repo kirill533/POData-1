@@ -286,13 +286,16 @@ class UriProcessor
             
         } else {
 
+            $internalskiptokentinfo = $this->request->getInternalSkipTokenInfo();
+
             $queryResult = $this->providers->getResourceSet(
 	            $this->request->queryType,
                 $segment->getTargetResourceSetWrapper(),
                 $this->request->getFilterInfo(),
                 $this->request->getInternalOrderByInfo(),
                 $this->request->getTopCount(),
-                $this->request->getSkipCount()
+                $this->request->getSkipCount(),
+                $internalskiptokentinfo ? $internalskiptokentinfo->getSkipTokenInfo() : null
             );
             $segment->setResult($queryResult);
         }

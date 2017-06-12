@@ -647,7 +647,7 @@ class ProvidersWrapper
      * 
      * @return QueryResult
      */
-    public function getResourceSet(QueryType $queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip)
+    public function getResourceSet(QueryType $queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip, $skiptoken)
     {
 
 		$queryResult = $this->queryProvider->getResourceSet(
@@ -656,7 +656,8 @@ class ProvidersWrapper
 			$filterInfo,
 			$orderBy,
 			$top,
-			$skip
+			$skip,
+            $skiptoken
 		);
 
         $this->validateQueryResult($queryResult, $queryType, 'IQueryProvider::getResourceSet');
@@ -840,6 +841,7 @@ class ProvidersWrapper
                         $entityInstance, 
                         $keyName
                     );
+                    $keyProperty->setAccessible(true);
                     $keyValue = $keyProperty->getValue($entityInstance);
                     if (is_null($keyValue)) {
                         throw ODataException::createInternalServerError(
@@ -898,6 +900,7 @@ class ProvidersWrapper
             as $keyName => $valueDescription) {
             try {
                 $keyProperty = new \ReflectionProperty($entityInstance, $keyName);
+                $keyProperty->setAccessible(true);
                 $keyValue = $keyProperty->getValue($entityInstance);
                 if (is_null($keyValue)) {
                     throw ODataException::createInternalServerError(

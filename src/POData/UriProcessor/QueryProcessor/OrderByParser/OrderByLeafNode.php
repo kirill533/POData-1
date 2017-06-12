@@ -112,7 +112,7 @@ class OrderByLeafNode extends OrderByBaseNode
         foreach ($ancestors as $i => $anscestor) {
             if ($i == 0) {
                 $parameterNames = array (
-                    '$' . $anscestor . 'A', '$' . $anscestor . 'B'
+                    '$A', '$B'
                 );
                 $accessor1 = $parameterNames[0];
                 $accessor2 = $parameterNames[1];

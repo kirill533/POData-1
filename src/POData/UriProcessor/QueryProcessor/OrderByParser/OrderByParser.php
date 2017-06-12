@@ -113,7 +113,7 @@ class OrderByParser
     ) {
         $orderByParser = new OrderByParser($providerWrapper);
         try {
-            $orderByParser->_dummyObject = $resourceType->getInstanceType()->newInstance();
+            $orderByParser->_dummyObject = $resourceType->getInstanceType()->newInstanceWithoutConstructor();
         } catch (\ReflectionException $reflectionException) {
             throw ODataException::createInternalServerError(Messages::orderByParserFailedToCreateDummyObject());
         }
@@ -281,7 +281,8 @@ class OrderByParser
                                 = new \ReflectionProperty(
                                     $currentObject, $resourceProperty->getName()
                                 );
-                            $object = $resourceProperty->getInstanceType()->newInstance();
+                            $object = $resourceProperty->getInstanceType()->newInstanceWithoutConstructor();
+                            $dummyProperty->setAccessible(true);
                             $dummyProperty->setValue($currentObject, $object);
                             $currentObject = $object;
                         } catch (\ReflectionException $reflectionException) {
@@ -300,7 +301,7 @@ class OrderByParser
                                 = new \ReflectionProperty(
                                     $currentObject, $resourceProperty->getName()
                                 );
-                            $object = $resourceProperty->getInstanceType()->newInstance();
+                            $object = $resourceProperty->getInstanceType()->newInstanceWithoutConstructor();
                             $dummyProperty->setValue($currentObject, $object);
                             $currentObject = $object;
                         } catch (\ReflectionException $reflectionException) {

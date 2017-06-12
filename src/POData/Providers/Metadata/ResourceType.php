@@ -22,6 +22,9 @@ use POData\Common\Messages;
 use POData\Common\InvalidOperationException;
 use POData\Common;
 
+use ReflectionClass;
+use InvalidArgumentException;
+
 /**
  * Class ResourceType
  *
@@ -157,7 +160,7 @@ class ResourceType
      * ReflectionClass (for complex/Entity) or IType (for Primitive) instance for 
      * the resource (type) described by this class instance
      * 
-     * @var \ReflectionClass|IType
+     * @var ReflectionClass|IType
      */
     private $_type;
 
@@ -178,7 +181,7 @@ class ResourceType
     /**
      * Create new instance of ResourceType
      * 
-     * @param \ReflectionClass|IType $instanceType     Instance type for the resource,
+     * @param ReflectionClass|IType $instanceType     Instance type for the resource,
      *                                                for entity and 
      *                                                complex this will 
      *                                                be 'ReflectionClass' and for 
@@ -191,7 +194,7 @@ class ResourceType
      *
      * @param boolean               $isAbstract       Whether resource is abstract
      * 
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(
 	    $instanceType,
@@ -204,25 +207,25 @@ class ResourceType
         $this->_type = $instanceType;
         if ($resourceTypeKind == ResourceTypeKind::PRIMITIVE) {
             if ($baseType != null) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     Messages::resourceTypeNoBaseTypeForPrimitive()
                 );
             }
 
             if ($isAbstract) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     Messages::resourceTypeNoAbstractForPrimitive()
                 );
             }
 
             if (!($instanceType instanceof IType)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     Messages::resourceTypeTypeShouldImplementIType('$instanceType')
                 );
             }
         } else {
-            if (!($instanceType instanceof \ReflectionClass)) {
-                throw new \InvalidArgumentException(
+            if (!($instanceType instanceof ReflectionClass)) {
+                throw new InvalidArgumentException(
                     Messages::resourceTypeTypeShouldReflectionClass('$instanceType')
                 );
             }
@@ -288,7 +291,7 @@ class ResourceType
      * then this function returns refernece to ReflectionClass instance for the type.
      * If resource type describes a primitive type then this function returns ITYpe.
      * 
-     * @return \ReflectionClass|IType
+     * @return ReflectionClass|IType
      */
     public function getInstanceType()
     {
@@ -917,11 +920,16 @@ class ResourceType
             );
             break;
         default:
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 Messages::commonNotValidPrimitiveEDMType(
                     '$typeCode', 'getPrimitiveResourceType'
                 )
             );
         }    
+    }
+
+
+    function __wakeup () {
+        if ($this->_type instanceof ReflectionClass) $this->_type = new ReflectionClass($this->_type->name);
     }
 }
