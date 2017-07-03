@@ -19,6 +19,7 @@ use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\DateTime;
 use POData\Common\ODataException;
 use POData\Common\Messages;
+use ArrayAccess;
 
 /**
  * Class ObjectModelSerializer
@@ -340,7 +341,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
         $relativeUri,
         ODataFeed &$feed
     ) {
-        $this->assert(is_array($entryObjects), '_writeFeedElements::is_array($entryObjects)');
+        $this->assert(is_array($entryObjects) || $entryObjects instanceof ArrayAccess, '_writeFeedElements::is_array($entryObjects)');
         $feed->id = $absoluteUri;
         $feed->title = $title;
         $feed->selfLink = new ODataLink();

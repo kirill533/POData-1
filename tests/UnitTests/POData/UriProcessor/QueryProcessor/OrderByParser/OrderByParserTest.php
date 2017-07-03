@@ -223,7 +223,7 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($subSorters);
         $this->assertEquals(count($subSorters), 1);
         //Parmater to this sub sort must be CustomersA, CustomersB
-        $this->assertEquals($subSorters[0]->getParametersAsString(), '$CustomersA, $CustomersB');
+        $this->assertEquals($subSorters[0]->getParametersAsString(), '$A, $B');
         //since there is only one sub sorter, that will be the main sorter
         //asset this by comapring the anonymous function names
         $subSorterName = $subSorters[0]->getReference();
@@ -233,8 +233,8 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($subSorterName, $mainSorterName);
         //check code inside the anonymous function (see the generated function code)
         /**
-            $flag1 = is_null($CustomersA) || is_null($CustomersA->Address) || is_null($CustomersA->Address->HouseNumber);
-			$flag2 = is_null($CustomersB) || is_null($CustomersB->Address) || is_null($CustomersB->Address->HouseNumber);
+            $flag1 = is_null($A) || is_null($A->Address) || is_null($A->Address->HouseNumber);
+			$flag2 = is_null($B) || is_null($B->Address) || is_null($B->Address->HouseNumber);
 			if($flag1 && $flag2) {
                 return 0;
 			} else if ($flag1) {
@@ -243,7 +243,7 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
                 return 1*1;
 			}
 
-			$result = strcmp($CustomersA->Address->HouseNumber, $CustomersB->Address->HouseNumber);
+			$result = strcmp($A->Address->HouseNumber, $B->Address->HouseNumber);
 			return 1*$result;
          */
         $customer1 = new Customer2();
@@ -388,7 +388,7 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(!is_null($subSorters));
         $this->assertEquals(count($subSorters), 1);
         //Parmater to this sub sort must be Order_DetailsA, Order_DetailsB
-        $this->assertEquals($subSorters[0]->getParametersAsString(), '$Order_DetailsA, $Order_DetailsB');
+        $this->assertEquals($subSorters[0]->getParametersAsString(), '$A, $B');
         //since there is only one sub sorter, that will be the main sorter
         //asset this by comapring the anonymous function names
         $subSorterName = $subSorters[0]->getReference();
@@ -501,9 +501,9 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
         $subSorters = $internalOrderInfo->getSubSorterFunctions();
         $this->assertTrue(!is_null($subSorters));
         $this->assertEquals(count($subSorters), 2);
-        //Parmater to first sub sort must be $Order_DetailsA, $Order_DetailsB
-        $this->assertEquals($subSorters[0]->getParametersAsString(), '$Order_DetailsA, $Order_DetailsB');
-        $this->assertEquals($subSorters[1]->getParametersAsString(), '$Order_DetailsA, $Order_DetailsB');
+        //Parmater to first sub sort must be $A, $B
+        $this->assertEquals($subSorters[0]->getParametersAsString(), '$A, $B');
+        $this->assertEquals($subSorters[1]->getParametersAsString(), '$A, $B');
         //generate sub sorter functions with different names
         $subSorterName1 = $subSorters[0]->getReference();
         $subSorterName2 = $subSorters[1]->getReference();
@@ -515,8 +515,8 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
         /**
          //Function Name: lambda_1
 
-         $flag1 = is_null($Order_DetailsA) || is_null($Order_DetailsA->Order) || is_null($Order_DetailsA->Order->Price);
-		 $flag2 = is_null($Order_DetailsB) || is_null($Order_DetailsB->Order) || is_null($Order_DetailsB->Order->Price);
+         $flag1 = is_null($A) || is_null($A->Order) || is_null($A->Order->Price);
+		 $flag2 = is_null($B) || is_null($B->Order) || is_null($B->Order->Price);
 		 if($flag1 && $flag2) {
             return 0;
 		 } else if ($flag1) {
@@ -525,7 +525,7 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
             return -1*1;
 		 }
 
-		 $result = $Order_DetailsA->Order->Price > $Order_DetailsB->Order->Price;
+		 $result = $A->Order->Price > $B->Order->Price;
 		 return -1*$result;
          */
         $OrderDetails1 = new Order_Details2();
@@ -577,8 +577,8 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
         /**
         //Function Name: lambda_2
 
-		$flag1 = is_null($Order_DetailsA) || is_null($Order_DetailsA->Product) || is_null($Order_DetailsA->Product->ProductName);
-		$flag2 = is_null($Order_DetailsB) || is_null($Order_DetailsB->Product) || is_null($Order_DetailsB->Product->ProductName);
+		$flag1 = is_null($A) || is_null($A->Product) || is_null($A->Product->ProductName);
+		$flag2 = is_null($B) || is_null($B->Product) || is_null($B->Product->ProductName);
 		if($flag1 && $flag2) {
             return 0;
 		} else if ($flag1) {
@@ -587,7 +587,7 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
             return 1*1;
 		}
 
-		$result = strcmp($Order_DetailsA->Product->ProductName, $Order_DetailsB->Product->ProductName);
+		$result = strcmp($A->Product->ProductName, $B->Product->ProductName);
 		return 1*$result;
          */
 
@@ -595,12 +595,12 @@ class OrderByParserTest extends \PHPUnit_Framework_TestCase
         /**
             //Function Name: lambda_3
 
-			$result = call_user_func_array(chr(0) . 'lambda_1', array($Order_DetailsA, $Order_DetailsB));
+			$result = call_user_func_array(chr(0) . 'lambda_1', array($A, $B));
 			if ($result != 0) {
                 return $result;
 			}
 
-			$result = call_user_func_array(chr(0) . 'lambda_2', array($Order_DetailsA, $Order_DetailsB));
+			$result = call_user_func_array(chr(0) . 'lambda_2', array($A, $B));
 			if ($result != 0) {
                 return $result;
 			}

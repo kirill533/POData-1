@@ -647,7 +647,7 @@ class ProvidersWrapper
      * 
      * @return QueryResult
      */
-    public function getResourceSet(QueryType $queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip, $skiptoken)
+    public function getResourceSet(QueryType $queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip, $skiptoken = null)
     {
 
 		$queryResult = $this->queryProvider->getResourceSet(
