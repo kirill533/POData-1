@@ -42,4 +42,9 @@ class ResourcePropertyKind
      * A reference to another resource set
      */
     const RESOURCESET_REFERENCE = 64;
+
+    /**
+     * A reference to another resource that is part of the key
+     */
+    const KEY_RESOURCE_REFERENCE = 128;
 }
