@@ -11,14 +11,14 @@ class ResourceProperty
 {
     /**
      * Property name.
-     * 
+     *
      * @var string
      */
     private $_name;
 
     /**
      * Property MIME type.
-     * 
+     *
      * @var string
      */
     private $_mimeType;
@@ -33,14 +33,14 @@ class ResourceProperty
      *  PrimitiveType + Bag
      *  PrimitiveType + Key
      *  PrimitiveType + ETag
-     *  
+     *
      * @var ResourcePropertyKind
      */
     private $_kind;
 
     /**
      * ResourceType describes this property
-     * 
+     *
      * @var ResourceType
      */
     private $_propertyResourceType;
@@ -50,7 +50,7 @@ class ResourceProperty
      * @param string               $mimeType              Mime type of the property
      * @param ResourcePropertyKind $kind                  The kind of property
      * @param ResourceType         $propertyResourceType ResourceType of the property
-     * 
+     *
      * @throws InvalidArgumentException
      */
     public function __construct($name, $mimeType, $kind, ResourceType $propertyResourceType) {
@@ -59,7 +59,7 @@ class ResourceProperty
                 Messages::resourcePropertyInvalidKindParameter('$kind')
             );
         }
-    
+
         if (!$this->_isResourceKindValidForPropertyKind($kind, $propertyResourceType->getResourceTypeKind())) {
             throw new InvalidArgumentException(
                 Messages::resourcePropertyPropertyKindAndResourceTypeKindMismatch(
@@ -76,9 +76,9 @@ class ResourceProperty
 
     /**
      * Check whether current property is of kind specified by the parameter
-     * 
+     *
      * @param ResourcePropertyKind $kind kind to check
-     * 
+     *
      * @return boolean
      */
     public function isKindOf($kind)
@@ -95,10 +95,10 @@ class ResourceProperty
     {
         return $this->_name;
     }
-  
+
     /**
      * Get property MIME type
-     * 
+     *
      * @return string
      */
     public function getMIMEType()
@@ -108,7 +108,7 @@ class ResourceProperty
 
     /**
      * Get property kind
-     * 
+     *
      * @return ResourcePropertyKind
      */
     public function getKind()
@@ -118,7 +118,7 @@ class ResourceProperty
 
     /**
      * Get the resource type for this property
-     * 
+     *
      * @return ResourceType
      */
     public function getResourceType()
@@ -128,7 +128,7 @@ class ResourceProperty
 
     /**
      * Get the kind of resource type
-     * 
+     *
      * @return ResourceTypeKind
      */
     public function getTypeKind()
@@ -137,11 +137,11 @@ class ResourceProperty
     }
 
     /**
-     * Get the instance type. If the property is of kind 'Complex', 
-     * 'ResourceReference' or 'ResourceSetReference' then this function returns 
-     * refernece to ReflectionClass instance for the type. If the property of 
+     * Get the instance type. If the property is of kind 'Complex',
+     * 'ResourceReference' or 'ResourceSetReference' then this function returns
+     * refernece to ReflectionClass instance for the type. If the property of
      * kind 'Primitive' then this function returns ITYpe instance for the type.
-     * 
+     *
      * @return \ReflectionClass|IType
      */
     public function getInstanceType()
@@ -151,28 +151,29 @@ class ResourceProperty
 
     /**
      * Check once kind is of another kind.
-     * 
+     *
      * @param ResourcePropertyKind $kind1 First kind
      * @param ResourcePropertyKind $kind2 second kind
-     *  
+     *
      * @return boolean
      */
     public static function sIsKindOf($kind1, $kind2)
     {
         return ($kind1 & $kind2) == $kind2;
     }
-  
+
     /**
      * Checks whether resource property kind is valid or not
-     * 
+     *
      * @param ResourcePropertyKind $kind The kind to validate
-     * 
+     *
      * @return boolean
      */
     private function _isValidResourcePropertyKind($kind)
     {
-        return 
+        return
           !($kind != ResourcePropertyKind::RESOURCE_REFERENCE &&
+            $kind != ResourcePropertyKind::KEY_RESOURCE_REFERENCE &&
             $kind != ResourcePropertyKind::RESOURCESET_REFERENCE &&
             $kind != ResourcePropertyKind::COMPLEX_TYPE &&
             ($kind != (ResourcePropertyKind::COMPLEX_TYPE | ResourcePropertyKind::BAG)) &&
@@ -184,28 +185,28 @@ class ResourceProperty
 
     /**
      * Check the specified resource kind is valid resource kind for property kind
-     * 
+     *
      * @param ResourcePropertyKind $pKind The kind of resource property
      * @param ResourceTypeKind     $rKind The kind of resource type
-     * 
-     * @return boolean True if resource type kind and property kind matches 
+     *
+     * @return boolean True if resource type kind and property kind matches
      *                      otherwise false.
      */
     private function _isResourceKindValidForPropertyKind($pKind, $rKind)
     {
-        if (self::sIsKindOf($pKind, ResourcePropertyKind::PRIMITIVE) 
+        if (self::sIsKindOf($pKind, ResourcePropertyKind::PRIMITIVE)
             && $rKind != ResourceTypeKind::PRIMITIVE
         ) {
             return false;
         }
 
-        if (self::sIsKindOf($pKind, ResourcePropertyKind::COMPLEX_TYPE) 
+        if (self::sIsKindOf($pKind, ResourcePropertyKind::COMPLEX_TYPE)
             && $rKind != ResourceTypeKind::COMPLEX
         ) {
             return false;
         }
 
-        if ((self::sIsKindOf($pKind, ResourcePropertyKind::RESOURCE_REFERENCE) 
+        if ((self::sIsKindOf($pKind, ResourcePropertyKind::RESOURCE_REFERENCE)
             || self::sIsKindOf($pKind, ResourcePropertyKind::RESOURCESET_REFERENCE))
             && $rKind != ResourceTypeKind::ENTITY
         ) {
