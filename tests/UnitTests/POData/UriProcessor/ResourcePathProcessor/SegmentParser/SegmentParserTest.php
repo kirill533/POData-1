@@ -194,7 +194,7 @@ class SegmentParserTest extends \PHPUnit_Framework_TestCase
         $segments = array('$batch', "Employees('ID234')");
         try {
             SegmentParser::parseRequestUriSegments($segments, $this->providersWrapper);
-            $this->fail('An expected ODataException for invalid uri ($metadata/Employees(\'ID234\')) has not been thrown');
+            $this->fail('An expected ODataException for invalid uri ($batch/Employees(\'ID234\')) has not been thrown');
         } catch (ODataException $exception) {
             $this->assertStringStartsWith('The request URI is not valid. The segment \'$batch\' must be the last segment in the URI', $exception->getMessage());
         }

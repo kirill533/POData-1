@@ -148,7 +148,11 @@ class UriProcessor
             $this->executePut();
         }
         elseif ($requestMethod == HTTPRequestMethod::POST) {
-            $this->executePost();
+            if ($this->request->getLastSegment()->getTargetKind() == TargetKind::BATCH()) {
+                $this->executeBatch();
+            } else {
+                $this->executePost();
+            }
         }
         elseif ($requestMethod == HTTPRequestMethod::DELETE) {
             $this->executeDelete();
@@ -219,7 +223,7 @@ class UriProcessor
     }
 
     /**
-     * Execute the client submitted request against the data source (POST)
+     * Execute the client submitted request against the data source (DELETE)
      */
     protected function executeDelete()
     {
@@ -227,7 +231,27 @@ class UriProcessor
             $requestMethod = $uriProcessor->service->getOperationContext()->incomingRequest()->getMethod();
             $resourceSet = $segment->getTargetResourceSetWrapper();
             $keyDescriptor = $segment->getKeyDescriptor();
-           
+
+            if (!$resourceSet || !$keyDescriptor) {
+                $url = $uriProcessor->service->getHost()->getAbsoluteRequestUri()->getUrlAsString();
+                throw ODataException::createBadRequestError(Messages::badRequestInvalidUriForThisVerb($url, $requestMethod));
+            }
+
+            return $uriProcessor->providers->deleteResource($resourceSet, $keyDescriptor);
+        });
+    }
+
+    /**
+     * Execute the client submitted batch request against the data source (POST)
+     */
+    protected function executeBatch()
+    {
+        $callback = null;
+        $post_callback = function ($uriProcessor, $segment) {
+            $requestMethod = $uriProcessor->service->getOperationContext()->incomingRequest()->getMethod();
+            $resourceSet = $segment->getTargetResourceSetWrapper();
+            $data = $uriProcessor->request->getData();
+
             if (!$resourceSet) {
                 $url = $uriProcessor->service->getHost()->getAbsoluteRequestUri()->getUrlAsString();
                 throw ODataException::createBadRequestError(Messages::badRequestInvalidUriForThisVerb($url, $requestMethod));
@@ -237,7 +261,113 @@ class UriProcessor
                 throw ODataException::createBadRequestError(Messages::noDataForThisVerb($requestMethod));
             }
 
-            return $uriProcessor->providers->deleteResource($resourceSet, $keyDescriptor);
+            $entity = $uriProcessor->providers->postResource($resourceSet, $data);
+
+            $segment->setSingleResult(true);
+            $segment->setResult($entity);
+
+            return $entity;
+        };
+
+        foreach ($this->request->getParts() as $request) {
+
+            $segments = $request->getSegments();
+
+            foreach ($segments as $segment) {
+
+                $requestTargetKind = $segment->getTargetKind();
+
+                if ($segment->getTargetSource() == TargetSource::ENTITY_SET) {
+                    $this->handleSegmentTargetsToResourceSet($segment);
+                } else if ($requestTargetKind == TargetKind::RESOURCE()) {
+                    if (is_null($segment->getPrevious()->getResult())) {
+                        throw ODataException::createResourceNotFoundError(
+                            $segment->getPrevious()->getIdentifier()
+                        );
+                    }
+                    $this->_handleSegmentTargetsToRelatedResource($segment);
+                } else if ($requestTargetKind == TargetKind::LINK()) {
+                    $segment->setResult($segment->getPrevious()->getResult());
+                } else if ($segment->getIdentifier() == ODataConstants::URI_COUNT_SEGMENT) {
+                    // we are done, $count will the last segment and
+                    // taken care by _applyQueryOptions method
+                    $segment->setResult($this->request->getCountValue());
+                    break;
+                } else {
+                    if ($requestTargetKind == TargetKind::MEDIA_RESOURCE()) {
+                        if (is_null($segment->getPrevious()->getResult())) {
+                            throw ODataException::createResourceNotFoundError(
+                                $segment->getPrevious()->getIdentifier()
+                            );
+                        }
+                        // For MLE and Named Stream the result of last segment
+                        // should be that of previous segment, this is required
+                        // while retrieving content type or stream from IDSSP
+                        $segment->setResult($segment->getPrevious()->getResult());
+                        // we are done, as named stream property or $value on
+                        // media resource will be the last segment
+                        break;
+                    }
+
+                    $value = $segment->getPrevious()->getResult();
+                    while (!is_null($segment)) {
+                        //TODO: what exactly is this doing here?  Once a null's found it seems everything will be null
+                        if (!is_null($value)) {
+                            $value = null;
+                        } else {
+                            try {
+                                //see #88
+                                $property = new \ReflectionProperty($value, $segment->getIdentifier());
+                                $value = $property->getValue($value);
+                            } catch (\ReflectionException $reflectionException) {
+                                //throw ODataException::createInternalServerError(Messages::orderByParserFailedToAccessOrInitializeProperty($resourceProperty->getName(), $resourceType->getName()));
+                            }
+                        }
+
+                        $segment->setResult($value);
+                        $segment = $segment->getNext();
+                        if (!is_null($segment) && $segment->getIdentifier() == ODataConstants::URI_VALUE_SEGMENT) {
+                            $segment->setResult($value);
+                            $segment = $segment->getNext();
+                        }
+                    }
+
+                    break;
+
+                }
+
+                if (is_null($segment->getNext()) || $segment->getNext()->getIdentifier() == ODataConstants::URI_COUNT_SEGMENT) {
+                    $this->applyQueryOptions($segment, $callback);
+                }
+            }
+
+            // Apply $select and $expand options to result set, this function will be always applied
+            // irrespective of return value of IDSQP2::canApplyQueryOptions which means library will
+            // not delegate $expand/$select operation to IDSQP2 implementation
+            $this->handleExpansion();
+        }
+
+        return;
+        return $this->executeBase(function ($uriProcessor, $segment) {
+            $requestMethod = $uriProcessor->service->getOperationContext()->incomingRequest()->getMethod();
+            $resourceSet = $segment->getTargetResourceSetWrapper();
+            $data = $uriProcessor->request->getData();
+
+            if (!$resourceSet) {
+                $url = $uriProcessor->service->getHost()->getAbsoluteRequestUri()->getUrlAsString();
+                throw ODataException::createBadRequestError(Messages::badRequestInvalidUriForThisVerb($url, $requestMethod));
+            }
+
+            if (!$data) {
+                throw ODataException::createBadRequestError(Messages::noDataForThisVerb($requestMethod));
+            }
+
+            $entity = $uriProcessor->providers->postResource($resourceSet, $data);
+
+            $segment->setSingleResult(true);
+            $segment->setResult($entity);
+
+            return $entity;
         });
     }
 
