@@ -18,6 +18,7 @@ use POData\Common\MimeTypes;
 use POData\Common\Messages;
 use POData\Common\ODataException;
 use POData\Common\InvalidOperationException;
+use POData\Providers\ProvidersWrapper;
 
 use POData\Writers\Json\JsonLightMetadataLevel;
 
@@ -74,7 +75,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
 		$parts = explode(";", $contentType);
 
 		//It must be app/json and have the right odata= piece
-		$metadata = array_filter($parts, function ($item) { strpos($item, 'odata') !== false; });
+		$metadata = array_filter($parts, function ($item) { return strpos($item, 'odata') !== false; });
 		return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (empty($metadata) || in_array($this->metadataLevel->getValue(), $metadata));
 	}
 
@@ -357,6 +358,42 @@ class JsonLightODataWriter extends JsonODataV2Writer
 
 		$this->_writer->endScope();  // ]
 		return $this;
+	}
+
+	/**
+	 * @param ProvidersWrapper $providers
+	 * @return IODataWriter
+	 */
+	public function writeServiceDocument(ProvidersWrapper $providers){
+		$writer = $this->_writer;
+		$writer
+			->startObjectScope() // {
+				->writeName("odata.metadata")
+				->writeValue("{$this->baseUri}/\$metadata")
+				->writeName("value") // "value" :
+				// ->writeName(ODataConstants::ENTITY_SET) // "EntitySets"
+				->startArrayScope() // [
+				;
+
+		foreach ($providers->getResourceSets() as $resourceSetWrapper) {
+			$name = $resourceSetWrapper->getName();
+			$writer
+					->startObjectScope() // {
+						->writeName("name") // "name" :
+						->writeValue($name)
+						->writeName("url") // "name" :
+						->writeValue($name)
+					->endScope() // }
+					;
+		}
+
+		$writer
+				->endScope() // ]
+			->endScope() // }
+		;
+
+		return $this;
+
 	}
 
 }
