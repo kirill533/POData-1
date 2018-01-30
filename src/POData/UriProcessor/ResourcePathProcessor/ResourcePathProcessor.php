@@ -23,11 +23,11 @@ class ResourcePathProcessor
     /**
      * Process the request Uri and creates an instance of
      * RequestDescription from the processed uri.
-     * 
+     *
      * @param IService $service        Reference to the data service instance.
      *
      * @return RequestDescription
-     * 
+     *
      * @throws ODataException If any exception occurs while processing the segments
      *                        or in case of any version incompatibility.
      */
@@ -58,7 +58,8 @@ class ResourcePathProcessor
             $service->getConfiguration()->getMaxDataServiceVersion(),
             $host->getRequestVersion(),
             $host->getRequestMaxVersion(),
-            $dataType
+            $dataType,
+            $service
         );
         $kind = $request->getTargetKind();
 
@@ -111,5 +112,5 @@ class ResourcePathProcessor
 
 
         return $request;
-    } 
+    }
 }
