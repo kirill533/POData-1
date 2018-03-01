@@ -148,7 +148,7 @@ class UriProcessor
             $this->executePut();
         }
         elseif ($requestMethod == HTTPRequestMethod::POST) {
-            if ($this->request->getLastSegment()->getTargetKind() == TargetKind::BATCH()) {
+            if ($this->request->getLastSegment()->getTargetKind() == TargetKind::BATCH) {
                 $this->executeBatch();
             } else {
                 $this->executePost();
@@ -199,7 +199,7 @@ class UriProcessor
      */
     protected function executePost()
     {
-        return $this->executeBase(function ($uriProcessor, $segment) {
+        $callback = function ($uriProcessor, $segment) {
             $requestMethod = $uriProcessor->service->getOperationContext()->incomingRequest()->getMethod();
             $resourceSet = $segment->getTargetResourceSetWrapper();
             $data = $uriProcessor->request->getData();
@@ -219,7 +219,15 @@ class UriProcessor
             $segment->setResult($entity);
 
             return $entity;
-        });
+        };
+
+        $segments = $this->request->getSegments();
+
+        foreach ($segments as $segment) {
+            if (is_null($segment->getNext()) || $segment->getNext()->getIdentifier() == ODataConstants::URI_COUNT_SEGMENT) {
+                $this->applyQueryOptions($segment, $callback);
+            }
+        }
     }
 
     /**
@@ -279,14 +287,14 @@ class UriProcessor
 
                 if ($segment->getTargetSource() == TargetSource::ENTITY_SET) {
                     $this->handleSegmentTargetsToResourceSet($segment);
-                } else if ($requestTargetKind == TargetKind::RESOURCE()) {
+                } else if ($requestTargetKind == TargetKind::RESOURCE) {
                     if (is_null($segment->getPrevious()->getResult())) {
                         throw ODataException::createResourceNotFoundError(
                             $segment->getPrevious()->getIdentifier()
                         );
                     }
                     $this->_handleSegmentTargetsToRelatedResource($segment);
-                } else if ($requestTargetKind == TargetKind::LINK()) {
+                } else if ($requestTargetKind == TargetKind::LINK) {
                     $segment->setResult($segment->getPrevious()->getResult());
                 } else if ($segment->getIdentifier() == ODataConstants::URI_COUNT_SEGMENT) {
                     // we are done, $count will the last segment and
@@ -294,7 +302,7 @@ class UriProcessor
                     $segment->setResult($this->request->getCountValue());
                     break;
                 } else {
-                    if ($requestTargetKind == TargetKind::MEDIA_RESOURCE()) {
+                    if ($requestTargetKind == TargetKind::MEDIA_RESOURCE) {
                         if (is_null($segment->getPrevious()->getResult())) {
                             throw ODataException::createResourceNotFoundError(
                                 $segment->getPrevious()->getIdentifier()
@@ -386,14 +394,14 @@ class UriProcessor
 
 	        if ($segment->getTargetSource() == TargetSource::ENTITY_SET) {
                 $this->handleSegmentTargetsToResourceSet($segment);
-            } else if ($requestTargetKind == TargetKind::RESOURCE()) {
+            } else if ($requestTargetKind == TargetKind::RESOURCE) {
                 if (is_null($segment->getPrevious()->getResult())) {
 					throw ODataException::createResourceNotFoundError(
                         $segment->getPrevious()->getIdentifier()
                     );
                 }
                 $this->_handleSegmentTargetsToRelatedResource($segment);
-            } else if ($requestTargetKind == TargetKind::LINK()) {
+            } else if ($requestTargetKind == TargetKind::LINK) {
                 $segment->setResult($segment->getPrevious()->getResult());
             } else if ($segment->getIdentifier() == ODataConstants::URI_COUNT_SEGMENT) {
                 // we are done, $count will the last segment and
@@ -401,7 +409,7 @@ class UriProcessor
                 $segment->setResult($this->request->getCountValue());
                 break;
             } else {
-                if ($requestTargetKind == TargetKind::MEDIA_RESOURCE()) {
+                if ($requestTargetKind == TargetKind::MEDIA_RESOURCE) {
                     if (is_null($segment->getPrevious()->getResult())) {
 						throw ODataException::createResourceNotFoundError(
                             $segment->getPrevious()->getIdentifier()
