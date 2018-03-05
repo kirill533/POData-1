@@ -5,7 +5,7 @@ namespace POData\UriProcessor\QueryProcessor;
 use POData\Common\ODataException;
 use POData\Common\Messages;
 use POData\Common\ODataConstants;
-use POData\Providers\Metadata\Type\Null1;
+use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\Type\INavigationType;
 use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\Int16;
@@ -17,7 +17,7 @@ use POData\Providers\Metadata\Type\DateTime;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\Boolean;
-use POData\Providers\Metadata\Type\Void;
+use POData\Providers\Metadata\Type\VoidType;
 use POData\Providers\Metadata\Type\Binary;
 use POData\Providers\Metadata\Type\IType;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ExpressionType;
@@ -50,7 +50,7 @@ class FunctionDescription
 
     /**
      * Create new instance of FunctionDescription
-     * 
+     *
      * @param string  $name  Name of the function
      * @param IType   $returnType    Return type
      * @param IType[] $argumentTypes Parameter type
@@ -62,9 +62,9 @@ class FunctionDescription
         $this->argumentTypes = $argumentTypes;
     }
 
-    /**      
+    /**
      * Get the function prototype as string
-     * 
+     *
      * @return string
      */
     public function getPrototypeAsString()
@@ -78,7 +78,7 @@ class FunctionDescription
         return rtrim($str, ', ') . ')';
     }
 
-    /**      
+    /**
      * Create function descriptions for supported function-calls in $filter option
      *
      * TODO: FIGURE OUT WHAT THE HECK THIS IS RETURNING!?!?
@@ -253,16 +253,16 @@ class FunctionDescription
         return $functions;
     }
 
-    /** 
+    /**
      * Get function description for string comparison
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function stringComparisonFunctions()
     {
         return array(
             new FunctionDescription(
-                'strcmp', new Int32(), 
+                'strcmp', new Int32(),
                 array(new StringType(), new StringType())
             )
         );
@@ -270,14 +270,14 @@ class FunctionDescription
 
     /**
      * Get function description for datetime comparison
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function dateTimeComparisonFunctions()
     {
         return array(
             new FunctionDescription(
-                'dateTimeCmp', new Int32(), 
+                'dateTimeCmp', new Int32(),
                 array(new DateTime(), new DateTime())
             )
         );
@@ -285,29 +285,29 @@ class FunctionDescription
 
     /**
      * Get function description for guid equality check
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function guidEqualityFunctions()
     {
         return array(
             new FunctionDescription(
-                'guidEqual', new Boolean(), 
+                'guidEqual', new Boolean(),
                 array(new Guid(), new Guid())
             )
         );
     }
-    
+
     /**
      * Get function description for binary equality check
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function binaryEqualityFunctions()
     {
         return array(
             new FunctionDescription(
-                'binaryEqual', new Boolean(), 
+                'binaryEqual', new Boolean(),
                 array(new Binary(), new Binary())
             )
         );
@@ -315,42 +315,42 @@ class FunctionDescription
 
     /**
      * Get function descriptions for arithmetic operations
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function arithmeticOperationFunctions()
-    {      
+    {
         return array(
             new FunctionDescription(
-                'F', new int16(), 
+                'F', new int16(),
                 array(new int16(), new int16())
             ),
             new FunctionDescription(
-                'F', new int32(), 
+                'F', new int32(),
                 array(new int32(), new int32())
             ),
             new FunctionDescription(
-                'F', new int64(), 
+                'F', new int64(),
                 array(new int64(), new int64())
             ),
             new FunctionDescription(
-                'F', new Single(), 
+                'F', new Single(),
                 array(new Single(), new Single())
             ),
             new FunctionDescription(
-                'F', new Double(), 
+                'F', new Double(),
                 array(new Double(), new Double())
             ),
             new FunctionDescription(
-                'F', new Decimal(), 
+                'F', new Decimal(),
                 array(new Decimal(), new Decimal())
             )
         );
     }
 
-    /**      
+    /**
      * Get function descriptions for arithmetic add operations
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[] indexed by function name
      */
     public static function addOperationFunctions()
@@ -360,7 +360,7 @@ class FunctionDescription
 
     /**
      * Get function descriptions for arithmetic subtract operations
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[] indexed by function name
      */
     public static function subtractOperationFunctions()
@@ -368,16 +368,16 @@ class FunctionDescription
         return self::arithmeticOperationFunctions();
     }
 
-    /**      
+    /**
      * Get function descriptions for logical operations
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function logicalOperationFunctions()
     {
         return array(
             new FunctionDescription(
-                'F', new Boolean(), 
+                'F', new Boolean(),
                 array(new Boolean(), new Boolean())
             )
         );
@@ -385,7 +385,7 @@ class FunctionDescription
 
     /**
      * Get function descriptions for relational operations
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function relationalOperationFunctions()
@@ -394,19 +394,19 @@ class FunctionDescription
             self::arithmeticOperationFunctions(),
             array(
                 new FunctionDescription(
-                    'F', new Boolean(), 
+                    'F', new Boolean(),
                     array(new Boolean(), new Boolean())
                 ),
                 new FunctionDescription(
-                    'F', new DateTime(), 
+                    'F', new DateTime(),
                     array(new DateTime(), new DateTime())
                 ),
                 new FunctionDescription(
-                    'F', new Guid(), 
+                    'F', new Guid(),
                     array(new Guid(), new Guid())
                 ),
                 new FunctionDescription(
-                    'F', new Boolean(), 
+                    'F', new Boolean(),
                     array(new Binary(), new Binary())
                 )
             )
@@ -415,14 +415,14 @@ class FunctionDescription
 
     /**
      * Get function descriptions for unary not operation
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function notOperationFunctions()
     {
         return array(
             new FunctionDescription(
-                'F', new Boolean(), 
+                'F', new Boolean(),
                 array(new Boolean())
             )
         );
@@ -430,19 +430,19 @@ class FunctionDescription
 
     /**
      * Get function description for checking an operand is null or not
-     * 
+     *
      * @param IType $type Type of the argument to null check function.
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription
      */
     public static function isNullCheckFunction(IType $type)
     {
         return new FunctionDescription('is_null', new Boolean(), array($type));
     }
-    
-    /**      
+
+    /**
      * Get function description for unary negate operator
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[]
      */
     public static function negateOperationFunctions()
@@ -459,10 +459,10 @@ class FunctionDescription
 
     /**
      * To throw ODataException for incompatible types
-     * 
+     *
      * @param ExpressionToken           $expressionToken Expression token
      * @param AbstractExpression[] $argExpressions  Array of argument expression
-     * 
+     *
      * @throws ODataException
      * @return void
      */
@@ -481,25 +481,25 @@ class FunctionDescription
 
         throw ODataException::createSyntaxError(
             Messages::expressionParserInCompatibleTypes(
-                $expressionToken->Text, 
+                $expressionToken->Text,
                 $string, $expressionToken->Position
             )
         );
     }
 
-    /**      
+    /**
      * Validate operands of an arithmetic operation and promote if required
-     * 
+     *
      * @param ExpressionToken    $expressionToken The expression token
      * @param AbstractExpression $leftArgument    The left expression
      * @param AbstractExpression $rightArgument   The right expression
-     * 
+     *
      * @return IType
      */
-    public static function verifyAndPromoteArithmeticOpArguments($expressionToken, 
+    public static function verifyAndPromoteArithmeticOpArguments($expressionToken,
         $leftArgument, $rightArgument
     ) {
-        $function  
+        $function
             = self::findFunctionWithPromotion(
                 self::arithmeticOperationFunctions(),
                 array($leftArgument, $rightArgument)
@@ -512,28 +512,28 @@ class FunctionDescription
 
         return $function->returnType;
     }
-    
-    /**      
+
+    /**
      * Validate operands of an logical operation
-     * 
+     *
      * @param ExpressionToken    $expressionToken The expression token
      * @param AbstractExpression $leftArgument    The left expression
      * @param AbstractExpression $rightArgument   The right expression
-     * 
+     *
      * @return void
-     * 
+     *
      * @throws ODataException
      */
-    public static function verifyLogicalOpArguments($expressionToken, 
+    public static function verifyLogicalOpArguments($expressionToken,
         $leftArgument, $rightArgument
     ) {
         $function = self::findFunctionWithPromotion(
-            self::logicalOperationFunctions(), 
+            self::logicalOperationFunctions(),
             array($leftArgument, $rightArgument), false
         );
         if ($function == null) {
             self::incompatibleError(
-                $expressionToken, 
+                $expressionToken,
                 array($leftArgument, $rightArgument)
             );
         }
@@ -541,25 +541,25 @@ class FunctionDescription
 
     /**
      * Validate operands of an relational operation
-     * 
+     *
      * @param ExpressionToken    $expressionToken The expression token
      * @param AbstractExpression $leftArgument    The left argument expression
      * @param AbstractExpression $rightArgument   The right argument expression
-     * 
+     *
      * @return void
      */
-    public static function verifyRelationalOpArguments($expressionToken, 
+    public static function verifyRelationalOpArguments($expressionToken,
         $leftArgument, $rightArgument
     ) {
         //for null operands only equality operators are allowed
-        $null = new Null1();
+        $null = new NullType();
         if ($leftArgument->typeIs($null) || $rightArgument->typeIs($null)) {
-            if ((strcmp($expressionToken->Text, ODataConstants::KEYWORD_EQUAL) != 0) 
+            if ((strcmp($expressionToken->Text, ODataConstants::KEYWORD_EQUAL) != 0)
                 && (strcmp($expressionToken->Text, ODataConstants::KEYWORD_NOT_EQUAL) != 0)
-            ) {                
+            ) {
                 throw ODataException::createSyntaxError(
                     Messages::expressionParserOperatorNotSupportNull(
-                        $expressionToken->Text, 
+                        $expressionToken->Text,
                         $expressionToken->Position
                     )
                 );
@@ -571,9 +571,9 @@ class FunctionDescription
         //for guid operands only equality operators are allowed
         $guid = new Guid();
         if ($leftArgument->typeIs($guid) && $rightArgument->typeIs($guid)) {
-            if ((strcmp($expressionToken->Text, ODataConstants::KEYWORD_EQUAL) != 0) 
+            if ((strcmp($expressionToken->Text, ODataConstants::KEYWORD_EQUAL) != 0)
                 && (strcmp($expressionToken->Text, ODataConstants::KEYWORD_NOT_EQUAL) != 0)
-            ) {                
+            ) {
                 throw ODataException::createSyntaxError(
                     Messages::expressionParserOperatorNotSupportGuid(
                         $expressionToken->Text, $expressionToken->Position
@@ -582,14 +582,14 @@ class FunctionDescription
             }
 
             return;
-        }       
-        
+        }
+
         //for binary operands only equality operators are allowed
         $binary = new Binary();
         if ($leftArgument->typeIs($binary) && $rightArgument->typeIs($binary)) {
-            if ((strcmp($expressionToken->Text, ODataConstants::KEYWORD_EQUAL) != 0) 
+            if ((strcmp($expressionToken->Text, ODataConstants::KEYWORD_EQUAL) != 0)
                 && (strcmp($expressionToken->Text, ODataConstants::KEYWORD_NOT_EQUAL) != 0)
-            ) {                
+            ) {
                 throw ODataException::createSyntaxError(
                     Messages::expressionParserOperatorNotSupportBinary(
                         $expressionToken->Text, $expressionToken->Position
@@ -599,12 +599,12 @@ class FunctionDescription
 
             return;
         }
-        
-        //TODO: eq and ne is valid for 'resource reference' 
+
+        //TODO: eq and ne is valid for 'resource reference'
         //navigation also verify here
 
         $functions = array_merge(
-            self::relationalOperationFunctions(), 
+            self::relationalOperationFunctions(),
             self::stringComparisonFunctions()
         );
         $function = self::findFunctionWithPromotion(
@@ -612,7 +612,7 @@ class FunctionDescription
         );
         if ($function == null) {
             self::incompatibleError(
-                $expressionToken, 
+                $expressionToken,
                 array($leftArgument, $rightArgument)
             );
         }
@@ -620,12 +620,12 @@ class FunctionDescription
 
     /**
      * Validate operands of a unary  operation
-     * 
+     *
      * @param ExpressionToken    $expressionToken The expression token
      * @param AbstractExpression $argExpression   Argument expression
-     * 
+     *
      * @throws ODataException
-     * 
+     *
      * @return void
      */
     public static function validateUnaryOpArguments($expressionToken, $argExpression)
@@ -633,7 +633,7 @@ class FunctionDescription
         //Unary not
         if (strcmp($expressionToken->Text, ODataConstants::KEYWORD_NOT) == 0 ) {
             $function = self::findFunctionWithPromotion(
-                self::notOperationFunctions(), 
+                self::notOperationFunctions(),
                 array($argExpression)
             );
             if ($function == null) {
@@ -650,14 +650,14 @@ class FunctionDescription
             }
         }
     }
-    
+
     /**
      * Check am identifier is a valid filter function
-     * 
-     * @param ExpressionToken $expressionToken The expression token      
-     * 
+     *
+     * @param ExpressionToken $expressionToken The expression token
+     *
      * @throws ODataException
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription[] Array of matching functions
      */
     public static function verifyFunctionExists($expressionToken)
@@ -665,11 +665,11 @@ class FunctionDescription
         if (!array_key_exists($expressionToken->Text, self::filterFunctionDescriptions())) {
             throw ODataException::createSyntaxError(
                 Messages::expressionParserUnknownFunction(
-                    $expressionToken->Text, 
+                    $expressionToken->Text,
                     $expressionToken->Position
                 )
             );
-            
+
         }
 
         $filterFunctions =  self::filterFunctionDescriptions();
@@ -677,21 +677,21 @@ class FunctionDescription
     }
 
     /**
-     * Validate operands (arguments) of a function call operation and return 
+     * Validate operands (arguments) of a function call operation and return
      * matching function
-     * 
+     *
      * @param \POData\UriProcessor\QueryProcessor\FunctionDescription[] $functions       List of functions to be checked
      * @param AbstractExpression[]  $argExpressions  Function argument expressions
      * @param ExpressionToken            $expressionToken Expression token
-     * 
+     *
      * @throws ODataException
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription
      */
-    public static function verifyFunctionCallOpArguments($functions, 
+    public static function verifyFunctionCallOpArguments($functions,
         $argExpressions, $expressionToken
     ) {
-        $function 
+        $function
             = self::findFunctionWithPromotion($functions, $argExpressions, false);
         if ($function == null) {
             $protoTypes = null;
@@ -701,8 +701,8 @@ class FunctionDescription
 
             throw ODataException::createSyntaxError(
                 Messages::expressionLexerNoApplicableFunctionsFound(
-                    $expressionToken->Text, 
-                    $protoTypes, 
+                    $expressionToken->Text,
+                    $protoTypes,
                     $expressionToken->Position
                 )
             );
@@ -712,17 +712,17 @@ class FunctionDescription
     }
 
     /**
-     * Finds a function from the list of functions whose argument types matches 
+     * Finds a function from the list of functions whose argument types matches
      * with types of expressions
-     * 
+     *
      * @param \POData\UriProcessor\QueryProcessor\FunctionDescription[] $functionDescriptions List of functions
      * @param AbstractExpression[]  $argExpressions       Function argument expressions
      * @param Boolean                    $promoteArguments     Function argument
-     * 
+     *
      * @return \POData\UriProcessor\QueryProcessor\FunctionDescription|null Reference to the matching function if
      *                                  found else NULL
      */
-    public static function findFunctionWithPromotion($functionDescriptions, 
+    public static function findFunctionWithPromotion($functionDescriptions,
         $argExpressions, $promoteArguments = true
     ) {
         $argCount = count($argExpressions);

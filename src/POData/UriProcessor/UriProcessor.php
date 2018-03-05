@@ -148,7 +148,7 @@ class UriProcessor
             $this->executePut();
         }
         elseif ($requestMethod == HTTPRequestMethod::POST) {
-            if ($this->request->getLastSegment()->getTargetKind() == TargetKind::BATCH) {
+            if ($this->request->getLastSegment()->getTargetKind() == TargetKind::BATCH()) {
                 $this->executeBatch();
             } else {
                 $this->executePost();

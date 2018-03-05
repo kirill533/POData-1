@@ -5,10 +5,10 @@ namespace POData\Providers\Metadata\Type;
 use POData\Common\NotImplementedException;
 
 /**
- * Class Void
+ * Class VoidType
  * @package POData\Providers\Metadata\Type
  */
-class Void implements IType
+class VoidType implements IType
 {
     /**
      * Gets the type code
@@ -22,7 +22,7 @@ class Void implements IType
     }
 
     /**
-     * Checks this type (Void) is compatible with another type
+     * Checks this type (VoidType) is compatible with another type
      * Note: implementation of IType::isCompatibleWith
      * 
      * @param IType $type Type to check compatibility
@@ -58,7 +58,7 @@ class Void implements IType
      */
     public function getFullTypeName()
     {
-        return 'System.Void';
+        return 'System.VoidType';
     }
 
     /**

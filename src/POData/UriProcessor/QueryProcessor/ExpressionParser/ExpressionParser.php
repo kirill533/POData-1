@@ -15,7 +15,7 @@ use POData\Providers\Metadata\Type\Double;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\Guid;
 use POData\Providers\Metadata\Type\Binary;
-use POData\Providers\Metadata\Type\Null1;
+use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\Type\INavigationType;
 use POData\Providers\Metadata\Type\TypeCode;
 use POData\Providers\Metadata\Type\IType;
@@ -580,7 +580,7 @@ class ExpressionParser
     private function _parseNullLiteral()
     {
         $this->_lexer->nextToken();
-        return new ConstantExpression(null, new Null1());
+        return new ConstantExpression(null, new NullType());
     }
 
     /**
@@ -688,7 +688,7 @@ class ExpressionParser
             $right = new ConstantExpression(true, new Boolean());
         }
 
-        $null = new Null1();
+        $null = new NullType();
         if ($left->typeIs($null) || $right->typeIs($null)) {
           // If the end user is responsible for implementing IExpressionProvider
           // then the sub-tree for a nullability check would be:

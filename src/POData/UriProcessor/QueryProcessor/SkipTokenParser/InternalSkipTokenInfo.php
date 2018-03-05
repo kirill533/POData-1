@@ -3,7 +3,7 @@
 namespace POData\UriProcessor\QueryProcessor\SkipTokenParser;
 
 use POData\Providers\Metadata\Type\Guid;
-use POData\Providers\Metadata\Type\Null1;
+use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\Type\DateTime;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\ResourceType;
@@ -219,7 +219,7 @@ class InternalSkipTokenInfo
                                 $subPathSegment->getName()
                             );
                             $dummyProperty->setAccessible(true);
-                            if ($this->_orderByValuesInSkipToken[$i][1] instanceof Null1) {
+                            if ($this->_orderByValuesInSkipToken[$i][1] instanceof NullType) {
                                 $dummyProperty->setValue($currentObject, null);
                             } else {
                                 // The Lexer's Token::Text value will be always 

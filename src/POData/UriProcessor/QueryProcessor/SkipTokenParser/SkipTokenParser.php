@@ -4,7 +4,7 @@ namespace POData\UriProcessor\QueryProcessor\SkipTokenParser;
 
 use POData\Common\ODataException;
 use POData\Common\Messages;
-use POData\Providers\Metadata\Type\Null1;
+use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\ResourceType;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
 use POData\UriProcessor\QueryProcessor\OrderByParser\OrderByInfo;
@@ -76,7 +76,7 @@ class SkipTokenParser
         $i = 0;
         foreach ($orderByPathSegments as $orderByPathSegment) {
             $typeProvidedInSkipToken = $positionalValues[$i][1];
-            if (!($typeProvidedInSkipToken instanceof Null1)) {
+            if (!($typeProvidedInSkipToken instanceof NullType)) {
                 $orderBySubPathSegments = $orderByPathSegment->getSubPathSegments();
                 $j = count($orderBySubPathSegments) - 1;
                 $expectedType = $orderBySubPathSegments[$j]->getInstanceType();

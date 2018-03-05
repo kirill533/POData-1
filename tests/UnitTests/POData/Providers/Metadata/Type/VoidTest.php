@@ -16,12 +16,12 @@ use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\IType;
 use POData\Providers\Metadata\Type\Navigation;
-use POData\Providers\Metadata\Type\Null1;
+use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\Type\SByte;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\TypeCode;
-use POData\Providers\Metadata\Type\Void;
+use POData\Providers\Metadata\Type\VoidType;
 
 class VoidTest extends \PHPUnit_Framework_TestCase {
 
@@ -30,7 +30,7 @@ class VoidTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function getAsIType()
 	{
-		return new Void();
+		return new VoidType();
 	}
 
 	public function testConstructorAndDefaultValues()
@@ -55,7 +55,7 @@ class VoidTest extends \PHPUnit_Framework_TestCase {
 		$actual = $type->getFullTypeName();
 
 		//TODO: is there no EDM equivalent to void?
-		$this->assertEquals("System.Void", $actual);
+		$this->assertEquals("System.VoidType", $actual);
 
 	}
 
@@ -84,11 +84,11 @@ class VoidTest extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse( $type->isCompatibleWith(new Int16()) );
 		$this->assertFalse( $type->isCompatibleWith(new Int32()) );
 		$this->assertFalse( $type->isCompatibleWith(new Int64()) );
-		$this->assertFalse( $type->isCompatibleWith(new Null1()) );
+		$this->assertFalse( $type->isCompatibleWith(new NullType()) );
 		$this->assertFalse( $type->isCompatibleWith(new SByte()) );
 		$this->assertFalse( $type->isCompatibleWith(new Single()) );
 		$this->assertFalse( $type->isCompatibleWith(new StringType()) );
-		$this->assertTrue( $type->isCompatibleWith(new Void()) );
+		$this->assertTrue( $type->isCompatibleWith(new VoidType()) );
 
 
 

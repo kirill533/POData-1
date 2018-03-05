@@ -12,7 +12,7 @@ use POData\Providers\Metadata\Type\Binary;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\Navigation;
 use POData\Providers\Metadata\Type\Boolean;
-use POData\Providers\Metadata\Type\Null1;
+use POData\Providers\Metadata\Type\NullType;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\PropertyAccessExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ConstantExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ArithmeticExpression;

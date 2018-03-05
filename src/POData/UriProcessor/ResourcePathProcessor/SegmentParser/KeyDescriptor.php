@@ -14,7 +14,7 @@ use POData\Providers\Metadata\Type\Guid;
 use POData\Providers\Metadata\Type\DateTime;
 use POData\Providers\Metadata\Type\Boolean;
 use POData\Providers\Metadata\Type\Int32;
-use POData\Providers\Metadata\Type\Null1;
+use POData\Providers\Metadata\Type\NullType;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionToken;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
@@ -498,7 +498,7 @@ class KeyDescriptor
             $outType = new Single();
             break;
         case ExpressionTokenId::NULL_LITERAL:
-            $outType = new Null1();
+            $outType = new NullType();
             break;
         default:
             $outType = null;

@@ -5,10 +5,10 @@ namespace POData\Providers\Metadata\Type;
 use POData\Common\NotImplementedException;
 
 /**
- * Class Null1
+ * Class NullType
  * @package POData\Providers\Metadata\Type
  */
-class Null1 implements IType
+class NullType implements IType
 {
     /**
      * Gets the type code
