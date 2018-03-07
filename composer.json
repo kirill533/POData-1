@@ -29,7 +29,7 @@
         "balihoo/phockito-unit" : "1.0.0",
         "hafriedlander/phockito" : "dev-master",
         "doctrine/annotations": "1.*",
-        "satooshi/php-coveralls": "dev-master",
+        "satooshi/php-coveralls": "2.*",
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
