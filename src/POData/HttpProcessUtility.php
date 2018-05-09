@@ -97,18 +97,18 @@ class MediaType
             //get the odata parameter (if there is one)
             $candidateODataValue = null;
             $candidateParts = explode(';', $candidate);
-            if(count($candidateParts) > 1){
+            if (count($candidateParts) > 1) {
                 //is it safe to assume the mime type is always the first part?
                 $candidate = array_shift($candidateParts); //move off the first type matcher
                 //the rest look like QSPs..kinda so we can do this
                 parse_str(implode("&", $candidateParts), $candidateParts);
-                if(array_key_exists('odata', $candidateParts)){
+                if (array_key_exists('odata', $candidateParts)) {
                    $candidateODataValue = $candidateParts['odata'];
                 }
             }
 
             //ensure that the odata parameter values match
-            if($this->getODataValue() !== $candidateODataValue){
+            if ($this->getODataValue() !== $candidateODataValue) {
                 return -1;
             }
 
@@ -463,7 +463,7 @@ class HttpProcessUtility
      * To check whether the given character is a HTTP token character
      * or not.
      *
-     * @param char $char The character to inspect.
+     * @param string $char The character to inspect.
      *
      * @return boolean True if the given character is a valid HTTP token
      *                 character, False otherwise.
@@ -606,6 +606,7 @@ class HttpProcessUtility
      * @param string $text          Text to read qvalue from.
      * @param int    &$textIndex    Index into text where the qvalue starts.
      * @param int    &$qualityValue After the method executes, the normalized qvalue.
+     * @param integer $textIndex
      *
      * @throws HttpHeaderFailure If any error occured while reading and processing
      *                           the quality factor.
@@ -659,7 +660,7 @@ class HttpProcessUtility
     /**
      * Converts the specified character from the ASCII range to a digit.
      *
-     * @param char $c Character to convert
+     * @param string $c Character to convert
      *
      * @return int The Int32 value for $c, or -1 if it is an element separator.
      *
@@ -696,7 +697,7 @@ class HttpProcessUtility
         return $c == ',' || $c == ' ' || $c == '\t';
     }
 
-	/**
+    /**
      * Get server key by header
      * @param string $headerName Name of header
      */
@@ -717,6 +718,6 @@ class HttpProcessUtility
             case 'MAXDATASERVICEVERSION':
                 return 'HTTP_' . $name;
         }
-		return $name;
-	}
+        return $name;
+    }
 }

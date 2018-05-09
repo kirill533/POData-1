@@ -7,7 +7,6 @@ use POData\Common\Messages;
 use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\ResourceType;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
-use POData\UriProcessor\QueryProcessor\OrderByParser\OrderByInfo;
 use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
 
 /**
@@ -66,7 +65,7 @@ class SkipTokenParser
         $orderByPathSegments = $internalOrderByInfo->getOrderByPathSegments();
         $orderByPathCount = count($orderByPathSegments);
         if ($count != ($orderByPathCount)) {
-			    throw ODataException::createBadRequestError(
+                throw ODataException::createBadRequestError(
                     Messages::skipTokenParserSkipTokenNotMatchingOrdering(
                         $count, $skipToken, $orderByPathCount
                     )

@@ -106,7 +106,7 @@ class OrderByParser
      * @throws ODataException If any error occur while parsing orderby clause
      */
     public static function parseOrderByClause(
-	    ResourceSetWrapper $resourceSetWrapper,
+        ResourceSetWrapper $resourceSetWrapper,
         ResourceType $resourceType,
         $orderBy,
         ProvidersWrapper $providerWrapper
@@ -190,14 +190,14 @@ class OrderByParser
                 }
 
                 if ($resourceProperty->isKindOf(ResourcePropertyKind::BAG)) {
-					throw ODataException::createBadRequestError(
+                    throw ODataException::createBadRequestError(
                         Messages::orderByParserBagPropertyNotAllowed(
                             $resourceProperty->getName()
                         )
                     );
                 } else if ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE)) {
                     if (!$isLastSegment) {
-						throw ODataException::createBadRequestError(
+                        throw ODataException::createBadRequestError(
                             Messages::orderByParserPrimitiveAsIntermediateSegment(
                                 $resourceProperty->getName()
                             )
@@ -206,7 +206,7 @@ class OrderByParser
 
                     $type = $resourceProperty->getInstanceType();
                     if ($type instanceof Binary) {
-						throw ODataException::createBadRequestError(Messages::orderByParserSortByBinaryPropertyNotAllowed($resourceProperty->getName()));
+                        throw ODataException::createBadRequestError(Messages::orderByParserSortByBinaryPropertyNotAllowed($resourceProperty->getName()));
                     }
                 } else if ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCESET_REFERENCE
                     || $resourceProperty->getKind() == ResourcePropertyKind::RESOURCE_REFERENCE
@@ -220,7 +220,7 @@ class OrderByParser
                             $resourceSetWrapper, $resourceType, $resourceProperty
                         );
                     if (is_null($resourceSetWrapper)) {
-						throw ODataException::createBadRequestError(
+                        throw ODataException::createBadRequestError(
                             Messages::badRequestInvalidPropertyNameSpecified(
                                 $resourceType->getFullName(), $orderBySubPathSegment
                             )
@@ -228,7 +228,7 @@ class OrderByParser
                     }
 
                     if ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCESET_REFERENCE) {
-						throw ODataException::createBadRequestError(
+                        throw ODataException::createBadRequestError(
                             Messages::orderByParserResourceSetReferenceNotAllowed(
                                 $resourceProperty->getName(), $resourceType->getFullName()
                             )
@@ -249,7 +249,7 @@ class OrderByParser
                     $ancestors[] = $orderBySubPathSegment;
                 } else if ($resourceProperty->isKindOf(ResourcePropertyKind::COMPLEX_TYPE)) {
                     if ($isLastSegment) {
-						throw ODataException::createBadRequestError(
+                        throw ODataException::createBadRequestError(
                             Messages::orderByParserSortByComplexPropertyIsNotAllowed(
                                 $resourceProperty->getName()
                             )

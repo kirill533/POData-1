@@ -2,11 +2,8 @@
 
 namespace POData\Providers\Metadata;
 
-use POData\Providers\Metadata\ResourceStreamInfo;
 use POData\Providers\Metadata\ResourceAssociationSetEnd;
 use POData\Providers\Metadata\ResourceAssociationSet;
-use POData\Common\NotImplementedException;
-use POData\Providers\Metadata\Type\EdmPrimitiveType;
 use POData\Providers\Metadata\ResourceSet;
 use POData\Providers\Metadata\ResourcePropertyKind;
 use POData\Providers\Metadata\ResourceProperty;
@@ -364,8 +361,7 @@ class SimpleMetadataProvider implements IMetadataProvider
         try 
         {
             $resourceType->getInstanceType()->getProperty($name);
-        }
-        catch (\ReflectionException $ex)
+        } catch (\ReflectionException $ex)
         {
             throw new InvalidOperationException('Can\'t add a property which does not exist on the instance type.');
         }
@@ -397,8 +393,7 @@ class SimpleMetadataProvider implements IMetadataProvider
         try 
         {
             $resourceType->getInstanceType()->getProperty($name);
-        }
-        catch (\ReflectionException $ex)
+        } catch (\ReflectionException $ex)
         {
             throw new InvalidOperationException(
                 'Can\'t add a property which does not exist on the instance type.'
@@ -445,8 +440,8 @@ class SimpleMetadataProvider implements IMetadataProvider
      * @return void
      */
     private function _addReferencePropertyInternal(
-	    ResourceType $resourceType,
-	    $name,
+        ResourceType $resourceType,
+        $name,
         ResourceSet $targetResourceSet,
         $resourcePropertyKind
     ) {
@@ -479,7 +474,7 @@ class SimpleMetadataProvider implements IMetadataProvider
 
         //Customer_Orders_Orders, Order_Customer_Customers 
         //(source type::name _ source property::name _ target set::name)
-        $setKey = $resourceType->getName() . '_' .  $name . '_' . $targetResourceSet->getName();
+        $setKey = $resourceType->getName() . '_' . $name . '_' . $targetResourceSet->getName();
         $set = new ResourceAssociationSet(
             $setKey,
             new ResourceAssociationSetEnd($sourceResourceSet, $resourceType, $resourceProperty),

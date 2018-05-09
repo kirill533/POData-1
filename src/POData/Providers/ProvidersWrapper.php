@@ -179,7 +179,7 @@ class ProvidersWrapper
 		foreach ($resourceSets as $resourceSet) {
 			$name = $resourceSet->getName();
 			if (in_array($name, $resourceSetNames)) {
-				throw new ODataException(Messages::providersWrapperEntitySetNameShouldBeUnique($name), 500 );
+				throw new ODataException(Messages::providersWrapperEntitySetNameShouldBeUnique($name), 500);
 			}
 
 			$resourceSetNames[] = $name;
@@ -333,7 +333,7 @@ class ProvidersWrapper
 		$type = $this->_getResourceTypeWherePropertyIsDeclared($type, $property);
 		$cacheKey = $set->getName() . '_' . $type->getName() . '_' . $property->getName();
 
-		if (array_key_exists($cacheKey,  $this->associationSetCache)) {
+		if (array_key_exists($cacheKey, $this->associationSetCache)) {
 			return $this->associationSetCache[$cacheKey];
 		}
 
@@ -443,7 +443,7 @@ class ProvidersWrapper
 		}
 		//TODO: move this to doctrine annotations
 		$cacheKey = $setWrapper->getName() . '_' . $resourceType->getFullName();
-		if (!array_key_exists($cacheKey,  $this->propertyCache)) {
+		if (!array_key_exists($cacheKey, $this->propertyCache)) {
 			//Fill the cache
 			$this->propertyCache[$cacheKey] = array();
 			foreach ($resourceType->getAllProperties() as $resourceProperty) {
@@ -586,7 +586,7 @@ class ProvidersWrapper
 
 		if (!$expressionProvider instanceof IExpressionProvider)
 		{
-			throw ODataException::createInternalServerError( Messages::providersWrapperInvalidExpressionProviderInstance() );
+			throw ODataException::createInternalServerError(Messages::providersWrapperInvalidExpressionProviderInstance());
 		}
 
 		return $expressionProvider;
@@ -605,6 +605,10 @@ class ProvidersWrapper
 	}
 
 
+	/**
+	 * @param QueryResult $queryResult
+	 * @param string $methodName
+	 */
 	private function ValidateQueryResult($queryResult, QueryType $queryType, $methodName){
 		if (!$queryResult instanceof QueryResult) {
 			throw ODataException::createInternalServerError(
@@ -644,10 +648,12 @@ class ProvidersWrapper
 	 * @param InternalOrderByInfo $orderBy The orderBy information
 	 * @param int $top The top count
 	 * @param int $skip The skip count
+	 * @param \POData\UriProcessor\QueryProcessor\SkipTokenParser\SkipTokenInfo $skiptoken
+	 * @param \POData\UriProcessor\QueryProcessor\ExpandProjectionParser\ExpandedProjectionNode[] $expansion
 	 *
 	 * @return QueryResult
 	 */
-	public function getResourceSet(QueryType $queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip, $skiptoken = null, $expansion=null)
+	public function getResourceSet(QueryType $queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip, $skiptoken = null, $expansion = null)
 	{
 
 		$queryResult = $this->queryProvider->getResourceSet(
@@ -678,7 +684,7 @@ class ProvidersWrapper
 	 */
 	public function getResourceFromResourceSet(ResourceSet $resourceSet, KeyDescriptor $keyDescriptor)
 	{
-		$entityInstance = $this->queryProvider->getResourceFromResourceSet( $resourceSet, $keyDescriptor );
+		$entityInstance = $this->queryProvider->getResourceFromResourceSet($resourceSet, $keyDescriptor);
 		$this->_validateEntityInstance(
 			$entityInstance,
 			$resourceSet,
@@ -714,7 +720,6 @@ class ProvidersWrapper
 	 * Posts an entity instance to entity set identified by a key
 	 *
 	 * @param ResourceSet $resourceSet The entity set containing the entity to update
-	 * @param KeyDescriptor $keyDescriptor The key identifying the entity to update
 	 *
 	 * @return bool|null Returns result of executiong query
 	 */
