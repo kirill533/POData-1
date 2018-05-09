@@ -56,7 +56,7 @@ class ResourceAssociationSetEnd
         }
 
         if (!is_null($resourceProperty)
-            && (is_null($resourceType->resolveProperty($resourceProperty->getName())) || (($resourceProperty->getKind() != ResourcePropertyKind::RESOURCE_REFERENCE) && ($resourceProperty->getKind() != ResourcePropertyKind::RESOURCESET_REFERENCE)&& ($resourceProperty->getKind() != ResourcePropertyKind::KEY_RESOURCE_REFERENCE)))
+            && (is_null($resourceType->resolveProperty($resourceProperty->getName())) || (($resourceProperty->getKind() != ResourcePropertyKind::RESOURCE_REFERENCE) && ($resourceProperty->getKind() != ResourcePropertyKind::RESOURCESET_REFERENCE) && ($resourceProperty->getKind() != ResourcePropertyKind::KEY_RESOURCE_REFERENCE)))
         ) {
             throw new \InvalidArgumentException(
                 Messages::resourceAssociationSetEndPropertyMustBeNavigationProperty(

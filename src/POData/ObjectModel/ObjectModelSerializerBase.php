@@ -5,7 +5,6 @@ namespace POData\ObjectModel;
 
 use POData\Common\ODataConstants;
 use POData\IService;
-use POData\Providers\ProvidersWrapper;
 use POData\Providers\Metadata\ResourceSetWrapper;
 use POData\Providers\Metadata\ResourceProperty;
 use POData\Providers\Metadata\ResourceTypeKind;
@@ -128,7 +127,9 @@ class ObjectModelSerializerBase
         $comma = null;
         foreach ($keyProperties as $keyName => $resourceProperty) {
             $keyType = $resourceProperty->getInstanceType();
-            if (!$keyType instanceof IType) continue;
+            if (!$keyType instanceof IType) {
+                continue;
+            }
             // $this->assert($keyType instanceof IType, '$keyType instanceof IType');
 
             $keyValue = $this->getPropertyValue($entityInstance, $resourceType, $resourceProperty);
@@ -137,7 +138,7 @@ class ObjectModelSerializerBase
             }
 
             $keyValue = $keyType->convertToOData($keyValue);
-            $keyString .= $comma . $keyName.'='.$keyValue;
+            $keyString .= $comma . $keyName . '=' . $keyValue;
             $comma = ',';
         }
 
@@ -212,7 +213,7 @@ class ObjectModelSerializerBase
             );
             $value = $this->getPropertyValue($entryObject, $resourceType, $eTagProperty);
             if (is_null($value)) {
-                $eTag = $eTag . $comma. 'null';
+                $eTag = $eTag . $comma . 'null';
             } else {
                 $eTag = $eTag . $comma . $type->convertToOData($value);
             }
@@ -409,7 +410,7 @@ class ObjectModelSerializerBase
      *                            used for generating $skiptoken.
      * @param string $absoluteUri Absolute response URI.
      *
-     * @return URI for the link for next page.
+     * @return ODataLink for the link for next page.
      */
     protected function getNextLinkUri(&$lastObject, $absoluteUri)
     {
@@ -461,7 +462,7 @@ class ObjectModelSerializerBase
 
         $topCountValue = $this->request->getTopOptionCount();
         if (!is_null($topCountValue)) {
-            $remainingCount  = $topCountValue - $this->request->getTopCount();
+            $remainingCount = $topCountValue - $this->request->getTopCount();
             if (!is_null($queryParameterString)) {
                 $queryParameterString .= '&';
             }
@@ -548,7 +549,7 @@ class ObjectModelSerializerBase
             //presence of $top option affect next link for root container
             $topValueCount = $this->request->getTopOptionCount();
             if (!is_null($topValueCount) && ($topValueCount <= $pageSize)) {
-                 return false;
+                    return false;
             }
         }
 
@@ -622,6 +623,8 @@ class ObjectModelSerializerBase
      *                                                        true if any expansion
      *                                                        defined under this node
      *                                                        false otherwise.
+     * @param boolean $foundSelections
+     * @param boolean $foundExpansions
      *
      * @return void
      */

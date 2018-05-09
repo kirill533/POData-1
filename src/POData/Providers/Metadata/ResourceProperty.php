@@ -172,12 +172,12 @@ class ResourceProperty
     private function _isValidResourcePropertyKind($kind)
     {
         return
-          !($kind != ResourcePropertyKind::RESOURCE_REFERENCE &&
+            !($kind != ResourcePropertyKind::RESOURCE_REFERENCE &&
             $kind != ResourcePropertyKind::KEY_RESOURCE_REFERENCE &&
             $kind != ResourcePropertyKind::RESOURCESET_REFERENCE &&
             $kind != ResourcePropertyKind::COMPLEX_TYPE &&
             ($kind != (ResourcePropertyKind::COMPLEX_TYPE | ResourcePropertyKind::BAG)) &&
-            $kind  != ResourcePropertyKind::PRIMITIVE &&
+            $kind != ResourcePropertyKind::PRIMITIVE &&
             ($kind != (ResourcePropertyKind::PRIMITIVE | ResourcePropertyKind::BAG)) &&
             ($kind != (ResourcePropertyKind::PRIMITIVE | ResourcePropertyKind::KEY)) &&
             ($kind != (ResourcePropertyKind::PRIMITIVE | ResourcePropertyKind::ETAG)));

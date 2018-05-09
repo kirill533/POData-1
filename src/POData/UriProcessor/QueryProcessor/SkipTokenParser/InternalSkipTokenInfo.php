@@ -2,10 +2,7 @@
 
 namespace POData\UriProcessor\QueryProcessor\SkipTokenParser;
 
-use POData\Providers\Metadata\Type\Guid;
 use POData\Providers\Metadata\Type\NullType;
-use POData\Providers\Metadata\Type\DateTime;
-use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\ResourceType;
 use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
 use POData\Common\Messages;

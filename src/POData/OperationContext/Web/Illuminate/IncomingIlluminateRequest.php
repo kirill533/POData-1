@@ -29,7 +29,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
 	 *
 	 * @var string
 	 */
-	private $_rawUrl  = null;
+	private $_rawUrl = null;
 
 
 	/**
@@ -85,7 +85,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
 	{
 		$result = $this->request->header($key);
 		//Zend returns false for a missing header...POData needs a null
-		if($result === false || $result === ''){
+		if ($result === false || $result === '') {
 			return null;
 		}
 		return $result;
@@ -108,7 +108,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
 		//odata.svc/?$format=xml&$format=json the format will be json
 		$this->_queryOptions = [];
 		$this->_queryOptionsCount = 0;
-		foreach($this->request->all() as $key => $value){
+		foreach ($this->request->all() as $key => $value) {
 			$this->_queryOptions[] = [$key => $value];
 			$this->_queryOptionsCount++;
 		}
