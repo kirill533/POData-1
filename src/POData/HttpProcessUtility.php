@@ -103,7 +103,7 @@ class MediaType
                 //the rest look like QSPs..kinda so we can do this
                 parse_str(implode("&", $candidateParts), $candidateParts);
                 if (array_key_exists('odata', $candidateParts)) {
-                   $candidateODataValue = $candidateParts['odata'];
+                    $candidateODataValue = $candidateParts['odata'];
                 }
             }
 
@@ -477,7 +477,7 @@ class HttpProcessUtility
     /**
      * To check whether the given character is a HTTP seperator character.
      *
-     * @param char $char The character to inspect.
+     * @param string $char The character to inspect.
      *
      * @return boolean True if the given character is a valid HTTP seperator
      *                 character, False otherwise.
@@ -687,7 +687,7 @@ class HttpProcessUtility
      * Verifies whether the specified character is a valid separator in
        an HTTP header list of element.
      *
-     * @param char $c Character to verify
+     * @param string $c Character to verify
      *
      * @return boolean true if c is a valid character for separating elements;
      *                 false otherwise.

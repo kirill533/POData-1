@@ -286,8 +286,8 @@ class CreateWordPressMetadata
     public static function getEntityMapping() {
         if (!is_null(self::$_entityMapping))
         {
-        self::$_entityMapping = array (
-            'Post' => array (
+        self::$_entityMapping = array(
+            'Post' => array(
                 '$MappedTable$' => 'wp_posts',
                 'PostID' => 'ID',
                 'Author' => 'post_author',

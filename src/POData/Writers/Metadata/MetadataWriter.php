@@ -187,7 +187,6 @@ class MetadataWriter
      * Write all resource types (entity and complex types)
      *
      * @param ResourceType[] $resourceTypes resource types array
-
      * @param ResourceAssociationType[] $associationTypesInResourceTypesNamespace collection of
      * association types for the given resource types
      * array(string, AssociationType)
@@ -211,7 +210,7 @@ class MetadataWriter
      * Write an entity type and associated attributes.
      *
      * @param ResourceType $resourceType                            Resource type
-     * @param array        $associationTypesInResourceTypeNamespace Collection of
+     * @param ResourceAssociationType[]        $associationTypesInResourceTypeNamespace Collection of
      * association types for the given resource types
      * array(string, AssociationType)
      *

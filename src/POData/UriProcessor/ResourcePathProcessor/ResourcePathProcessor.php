@@ -63,7 +63,7 @@ class ResourcePathProcessor
         );
         $kind = $request->getTargetKind();
 
-        if ($kind == TargetKind::METADATA() || $kind == TargetKind::BATCH() || $kind == TargetKind::SERVICE_DIRECTORY()){
+        if ($kind == TargetKind::METADATA() || $kind == TargetKind::BATCH() || $kind == TargetKind::SERVICE_DIRECTORY()) {
             return $request;
         }
 

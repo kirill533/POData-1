@@ -48,7 +48,7 @@ class WordPressDataService extends BaseService
      */
     public function getService($serviceType)
     {
-        if(($serviceType === 'IMetadataProvider') ||
+        if (($serviceType === 'IMetadataProvider') ||
         ($serviceType === 'IQueryProvider') ||
         ($serviceType === 'IStreamProvider')) {
         if (is_null($this->_wordPressExpressionProvider)) {

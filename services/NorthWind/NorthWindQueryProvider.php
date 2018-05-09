@@ -456,16 +456,16 @@ class NorthWindQueryProvider implements IQueryProvider
         return $customer;
     }
     
-     /**
-     * copy address
-     * 
-     * @param Object &$src    source
-     * @param Object &$target target
-     * @param integer $tag     tag
-     * @param Address $target
-     * 
-     * @return void
-     */
+        /**
+         * copy address
+         * 
+         * @param Object &$src    source
+         * @param Object &$target target
+         * @param integer $tag     tag
+         * @param Address $target
+         * 
+         * @return void
+         */
     private function _copyAddress(&$src, &$target, $tag)
     {
         $target->StreetName = $src->StreetName . $tag;
@@ -492,7 +492,7 @@ class NorthWindQueryProvider implements IQueryProvider
     private function _serializeOrders($result)
     {
         $orders = array();
-        while ( $record = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        while ($record = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                 $orders[] = $this->_serializeOrder($record);
         }
 

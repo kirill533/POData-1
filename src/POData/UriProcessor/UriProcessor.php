@@ -565,7 +565,7 @@ class UriProcessor
         //and just work with the QueryResult in the object model serializer
         $result = $segment->getResult();
 
-        if(!$result instanceof QueryResult){
+        if (!$result instanceof QueryResult) {
             //If the segment isn't a query result, then there's no paging or counting to be done
             return;
         }
@@ -581,59 +581,59 @@ class UriProcessor
             }
         }
 
-	    //Have POData perform paging if necessary
-	    if (!$this->providers->handlesOrderedPaging() && !empty($result->results)) {
-			$result->results = $this->performPaging($result->results);
-	    }
+        //Have POData perform paging if necessary
+        if (!$this->providers->handlesOrderedPaging() && !empty($result->results)) {
+            $result->results = $this->performPaging($result->results);
+        }
 
-	    //a bit surprising, but $skip and $top affects $count so update it here, not above
-	    //IE  data.svc/Collection/$count?$top=10 returns 10 even if Collection has 11+ entries
-	    if ($this->request->queryType == QueryType::COUNT()) {
-		    if ($this->providers->handlesOrderedPaging()) {
-			    $this->request->setCountValue($result->count);
-		    } else {
-			    $this->request->setCountValue(count($result->results));
-		    }
-	    }
+        //a bit surprising, but $skip and $top affects $count so update it here, not above
+        //IE  data.svc/Collection/$count?$top=10 returns 10 even if Collection has 11+ entries
+        if ($this->request->queryType == QueryType::COUNT()) {
+            if ($this->providers->handlesOrderedPaging()) {
+                $this->request->setCountValue($result->count);
+            } else {
+                $this->request->setCountValue(count($result->results));
+            }
+        }
 
         $segment->setResult($result->results);
     }
 
-	/**
-	 * If the provider does not perform the paging (ordering, top, skip) then this method does it
-	 *
-	 * @param array $result
-	 * @return array
-	 */
-	private function performPaging(array $result)
-	{
-		//Apply (implicit and explicit) $orderby option
-		$internalOrderByInfo = $this->request->getInternalOrderByInfo();
-		if (!is_null($internalOrderByInfo)) {
-			$orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
-			usort($result, $orderByFunction);
-		}
+    /**
+     * If the provider does not perform the paging (ordering, top, skip) then this method does it
+     *
+     * @param array $result
+     * @return array
+     */
+    private function performPaging(array $result)
+    {
+        //Apply (implicit and explicit) $orderby option
+        $internalOrderByInfo = $this->request->getInternalOrderByInfo();
+        if (!is_null($internalOrderByInfo)) {
+            $orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
+            usort($result, $orderByFunction);
+        }
 
-		//Apply $skiptoken option
-		$internalSkipTokenInfo = $this->request->getInternalSkipTokenInfo();
-		if (!is_null($internalSkipTokenInfo)) {
-			$matchingIndex = $internalSkipTokenInfo->getIndexOfFirstEntryInTheNextPage($result);
-			$result = array_slice($result, $matchingIndex);
-		}
+        //Apply $skiptoken option
+        $internalSkipTokenInfo = $this->request->getInternalSkipTokenInfo();
+        if (!is_null($internalSkipTokenInfo)) {
+            $matchingIndex = $internalSkipTokenInfo->getIndexOfFirstEntryInTheNextPage($result);
+            $result = array_slice($result, $matchingIndex);
+        }
 
-		//Apply $top and $skip option
-		if (!empty($result)) {
-			$top  = $this->request->getTopCount();
-			$skip = $this->request->getSkipCount();
-			if(is_null($skip)) {
-			    $skip = 0;
-			}
+        //Apply $top and $skip option
+        if (!empty($result)) {
+            $top  = $this->request->getTopCount();
+            $skip = $this->request->getSkipCount();
+            if(is_null($skip)) {
+                $skip = 0;
+            }
 
-			$result = array_slice($result, $skip, $top);
-		}
+            $result = array_slice($result, $skip, $top);
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
 
     /**

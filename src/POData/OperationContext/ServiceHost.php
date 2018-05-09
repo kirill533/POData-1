@@ -92,7 +92,7 @@ Class ServiceHost
      */
     public function __construct(IOperationContext $context = null, Request $incomingRequest)
     {
-        if(is_null($context)){
+        if (is_null($context)) {
             $this->_operationContext = new IlluminateOperationContext($incomingRequest);
         } else {
             $this->_operationContext = $context;
@@ -676,30 +676,30 @@ Class ServiceHost
      * @param string $format the short $format form
      * @return string the full mime type corresponding to the short format form for the given version
      */
-    public static function translateFormatToMime(Version $responseVersion, $format){
+    public static function translateFormatToMime(Version $responseVersion, $format) {
         //TODO: should the version switches be off of the requestVersion, not the response version? see #91
 
-        switch($format) {
+        switch ($format) {
 
             case ODataConstants::FORMAT_XML:
                 $format = MimeTypes::MIME_APPLICATION_XML;
                 break;
 
             case ODataConstants::FORMAT_ATOM:
-                $format = MimeTypes::MIME_APPLICATION_ATOM ;
+                $format = MimeTypes::MIME_APPLICATION_ATOM;
                 break;
 
             case ODataConstants::FORMAT_VERBOSE_JSON:
-                if($responseVersion == Version::v3()){
+                if ($responseVersion == Version::v3()) {
                     //only translatable in 3.0 systems
                     $format = MimeTypes::MIME_APPLICATION_JSON_VERBOSE;
                 }
                 break;
 
             case ODataConstants::FORMAT_JSON:
-                if($responseVersion == Version::v3()){
+                if ($responseVersion == Version::v3()) {
                     $format = MimeTypes::MIME_APPLICATION_JSON_MINIMAL_META;
-                } else{
+                } else {
                     $format = MimeTypes::MIME_APPLICATION_JSON;
                 }
                 break;

@@ -52,11 +52,11 @@ class ResponseWriter
             // Binary property or media resource
             if ($request->getTargetKind() == TargetKind::MEDIA_RESOURCE()) {
                 $result = $request->getTargetResult();
-                $streamInfo =  $request->getResourceStreamInfo();
+                $streamInfo = $request->getResourceStreamInfo();
                 $provider = $service->getStreamProviderWrapper();
-                $eTag = $provider->getStreamETag( $result, $streamInfo );
+                $eTag = $provider->getStreamETag($result, $streamInfo);
                 $service->getHost()->setResponseETag($eTag);
-                $responseBody = $provider->getReadStream( $result, $streamInfo );
+                $responseBody = $provider->getReadStream($result, $streamInfo);
             } else {
                 $responseBody = $request->getTargetResult();
             }
@@ -67,7 +67,7 @@ class ResponseWriter
         } else {
             $writer = $service->getODataWriterRegistry()->getWriter($request->getResponseVersion(), $responseContentType);
             //TODO: move ot Messages
-            if(is_null($writer)) throw new \Exception("no writer can handle the request");
+            if (is_null($writer)) throw new \Exception("no writer can handle the request");
 
             if (is_null($entityModel)) {  //TODO: this seems like a weird way to know that the request is for a service document..i'd think we know this some other way
                 $responseBody = $writer->writeServiceDocument($service->getProvidersWrapper())->getOutput();

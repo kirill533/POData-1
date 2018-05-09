@@ -193,7 +193,7 @@ class ServiceConfiguration
             );
         }
 
-        $this->_maxResultsPerCollection= $this->_checkIntegerNonNegativeParameter(
+        $this->_maxResultsPerCollection = $this->_checkIntegerNonNegativeParameter(
             $maxResultPerCollection, 'setMaxResultsPerCollection'
         );
     }

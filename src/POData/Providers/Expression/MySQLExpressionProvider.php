@@ -84,7 +84,7 @@ class MySQLExpressionProvider implements IExpressionProvider
      */
     public function onLogicalExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::AND_LOGICAL:
                 return $this->_prepareBinaryExpression(self::LOGICAL_AND, $left, $right);
 
@@ -107,7 +107,7 @@ class MySQLExpressionProvider implements IExpressionProvider
      */
     public function onArithmeticExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::MULTIPLY:
                 return $this->_prepareBinaryExpression(self::MULTIPLY, $left, $right);
 
@@ -139,7 +139,7 @@ class MySQLExpressionProvider implements IExpressionProvider
      */
     public function onRelationalExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::GREATERTHAN:
                 return $this->_prepareBinaryExpression(self::GREATER_THAN, $left, $right);
 
@@ -173,7 +173,7 @@ class MySQLExpressionProvider implements IExpressionProvider
      */
     public function onUnaryExpression($expressionType, $child)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::NEGATE:
                 return $this->_prepareUnaryExpression(self::NEGATE, $child);
 
@@ -239,7 +239,7 @@ class MySQLExpressionProvider implements IExpressionProvider
      */
     public function onFunctionCallExpression($functionDescription, $params)
     {
-        switch($functionDescription->name) {
+        switch ($functionDescription->name) {
             case ODataConstants::STRFUN_COMPARE:
                 return "STRCMP($params[0], $params[1])";
 
@@ -266,8 +266,7 @@ class MySQLExpressionProvider implements IExpressionProvider
 
             case ODataConstants::STRFUN_SUBSTRING:
                 return count($params) == 3 ?
-                    "SUBSTRING($params[0], $params[1] + 1, $params[2])" :
-                    "SUBSTRING($params[0], $params[1] + 1)";
+                    "SUBSTRING($params[0], $params[1] + 1, $params[2])" : "SUBSTRING($params[0], $params[1] + 1)";
 
             case ODataConstants::STRFUN_SUBSTRINGOF:
                 return "(LOCATE($params[0], $params[1]) > 0)";
@@ -285,22 +284,22 @@ class MySQLExpressionProvider implements IExpressionProvider
                 return "DATETIMECMP($params[0]; $params[1])";
 
             case ODataConstants::DATETIME_YEAR:
-                return "EXTRACT(YEAR from ".$params[0].")";
+                return "EXTRACT(YEAR from " . $params[0] . ")";
 
             case ODataConstants::DATETIME_MONTH:
-                return "EXTRACT(MONTH from ".$params[0].")";
+                return "EXTRACT(MONTH from " . $params[0] . ")";
 
             case ODataConstants::DATETIME_DAY:
-                return "EXTRACT(DAY from ".$params[0].")";
+                return "EXTRACT(DAY from " . $params[0] . ")";
 
             case ODataConstants::DATETIME_HOUR:
-                return "EXTRACT(HOUR from ".$params[0].")";
+                return "EXTRACT(HOUR from " . $params[0] . ")";
 
             case ODataConstants::DATETIME_MINUTE:
-                return "EXTRACT(MINUTE from ".$params[0].")";
+                return "EXTRACT(MINUTE from " . $params[0] . ")";
 
             case ODataConstants::DATETIME_SECOND:
-                return "EXTRACT(SECOND from ".$params[0].")";
+                return "EXTRACT(SECOND from " . $params[0] . ")";
 
             case ODataConstants::MATHFUN_ROUND:
                 return "ROUND($params[0])";

@@ -52,67 +52,67 @@ class AtomODataWriter implements IODataWriter
         $this->xmlWriter->setIndent(4);
     }
 
-	/**
-	 * Determines if the given writer is capable of writing the response or not
-	 * @param Version $responseVersion the OData version of the response
-	 * @param string $contentType the Content Type of the response
-	 * @return boolean true if the writer can handle the response, false otherwise
-	 */
-	public function canHandle(Version $responseVersion, $contentType)
-	{
+    /**
+     * Determines if the given writer is capable of writing the response or not
+     * @param Version $responseVersion the OData version of the response
+     * @param string $contentType the Content Type of the response
+     * @return boolean true if the writer can handle the response, false otherwise
+     */
+    public function canHandle(Version $responseVersion, $contentType)
+    {
 
-		$parts = explode(";", $contentType);
+        $parts = explode(";", $contentType);
 
-		//first 2 parts are for service documents, second part is for Resources
-		//TODO: i'm not sold about this first part not being constrained to v1 (or maybe v2)..but it's how WS DS works. See #94
-		return in_array(MimeTypes::MIME_APPLICATION_XML, $parts) || in_array(MimeTypes::MIME_APPLICATION_ATOMSERVICE, $parts) || in_array(MimeTypes::MIME_APPLICATION_ATOM, $parts);
-	}
+        //first 2 parts are for service documents, second part is for Resources
+        //TODO: i'm not sold about this first part not being constrained to v1 (or maybe v2)..but it's how WS DS works. See #94
+        return in_array(MimeTypes::MIME_APPLICATION_XML, $parts) || in_array(MimeTypes::MIME_APPLICATION_ATOMSERVICE, $parts) || in_array(MimeTypes::MIME_APPLICATION_ATOM, $parts);
+    }
 
-	/**
-	 * Write the given OData model in a specific response format
-	 *
-	 * @param  ODataURL|ODataURLCollection|ODataPropertyContent|ODataFeed|ODataEntry $model Object of requested content.
-	 *
-	 * @return AtomODataWriter
-	 */
-	public function write($model)
-	{
-		if ($model instanceof ODataURL) {
-			return $this->writeURL($model);
-		}
+    /**
+     * Write the given OData model in a specific response format
+     *
+     * @param  ODataURL|ODataURLCollection|ODataPropertyContent|ODataFeed|ODataEntry $model Object of requested content.
+     *
+     * @return AtomODataWriter
+     */
+    public function write($model)
+    {
+        if ($model instanceof ODataURL) {
+            return $this->writeURL($model);
+        }
 
-		if ($model instanceof ODataURLCollection) {
-			return $this->writeURLCollection($model);
-		}
+        if ($model instanceof ODataURLCollection) {
+            return $this->writeURLCollection($model);
+        }
 
-		if ($model instanceof ODataPropertyContent) {
-			return $this->writeProperties($model, true);
-		}
+        if ($model instanceof ODataPropertyContent) {
+            return $this->writeProperties($model, true);
+        }
 
-		if ($model instanceof ODataFeed) {
-			return $this->writeFeed($model, true);
-		}
+        if ($model instanceof ODataFeed) {
+            return $this->writeFeed($model, true);
+        }
 
-		if ($model instanceof ODataEntry) {
-			return $this->writeEntry($model, true);
-		}
+        if ($model instanceof ODataEntry) {
+            return $this->writeEntry($model, true);
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
     /** 
      * @param ODataURL $url the url to write.
      * 
      * @return AtomODataWriter
      */
-	protected function writeURL(ODataURL $url)
+    protected function writeURL(ODataURL $url)
     {
         $this->xmlWriter->startElement(ODataConstants::ATOM_URI_ELEMENT_NAME);
         $this->xmlWriter->writeAttribute(ODataConstants::XMLNS_NAMESPACE_PREFIX, ODataConstants::ODATA_NAMESPACE);
         $this->xmlWriter->text($url->url);
         $this->xmlWriter->endElement();
 
-	    return $this;
+        return $this;
     }
 
     /**
@@ -151,7 +151,7 @@ class AtomODataWriter implements IODataWriter
         }
 
 
-        if ($urls->nextPageLink!=null) {
+        if ($urls->nextPageLink != null) {
             $this->writeLinkNode($urls->nextPageLink, false);
         }
         $this->xmlWriter->endElement();
@@ -183,7 +183,7 @@ class AtomODataWriter implements IODataWriter
                 $feed->title
             )
             ->writeNodeValue(ODataConstants::ATOM_ID_ELEMENT_NAME, $feed->id)
-            ->writeNodeValue(ODataConstants::ATOM_UPDATED_ELEMENT_NAME, date(DATE_ATOM) )
+            ->writeNodeValue(ODataConstants::ATOM_UPDATED_ELEMENT_NAME, date(DATE_ATOM))
             ->writeLinkNode($feed->selfLink, false);
 
         if ($feed->rowCount != null) {

@@ -224,47 +224,47 @@ class RequestDescription
      * Reference to the service
      * @var IService
      */
-     private $_service;
+        private $_service;
 
     /**
      * The parts of a multipart request
      * @var array
      */
-     private $_parts;
+        private $_parts;
 
-	/**
-	 * @param SegmentDescriptor[] $segmentDescriptors Description of segments in the resource path.
-	 * @param Url $requestUri
-	 * @param Version $serviceMaxVersion
-	 * @param null|string $requestVersion
-	 * @param null|string $maxRequestVersion
+    /**
+     * @param SegmentDescriptor[] $segmentDescriptors Description of segments in the resource path.
+     * @param Url $requestUri
+     * @param Version $serviceMaxVersion
+     * @param null|string $requestVersion
+     * @param null|string $maxRequestVersion
      * @param string $dataType
-	 */
-	public function __construct($segmentDescriptors, Url $requestUri, Version $serviceMaxVersion, $requestVersion, $maxRequestVersion, $dataType = null, IService $service = null)
+     */
+    public function __construct($segmentDescriptors, Url $requestUri, Version $serviceMaxVersion, $requestVersion, $maxRequestVersion, $dataType = null, IService $service = null)
     {
         $this->segments = $segmentDescriptors;
         $this->_segmentCount = count($this->segments);
         $this->requestUrl = $requestUri;
         $this->lastSegment = $segmentDescriptors[$this->_segmentCount - 1];
-	    $this->queryType = QueryType::ENTITIES();
+        $this->queryType = QueryType::ENTITIES();
         $this->_service = $service;
         $this->_parts = array();
 
         //we use this for validation checks down in validateVersions...but maybe we should check that outside of this object...
         $this->maxServiceVersion = $serviceMaxVersion;
 
-	    //Per OData 1 & 2 spec we must return the smallest size
-	    //We start at 1.0 and move it up as features are requested
+        //Per OData 1 & 2 spec we must return the smallest size
+        //We start at 1.0 and move it up as features are requested
         $this->requiredMinResponseVersion = clone Version::v1();
         $this->requiredMinRequestVersion = clone Version::v1();
 
 
-	    //see http://www.odata.org/documentation/odata-v2-documentation/overview/#ProtocolVersioning
-	    //if requestVersion isn't there, use Service Max Version
-	    $this->requestVersion = is_null($requestVersion) ? $serviceMaxVersion : self::parseVersionHeader($requestVersion, ODataConstants::ODATAVERSIONHEADER);
+        //see http://www.odata.org/documentation/odata-v2-documentation/overview/#ProtocolVersioning
+        //if requestVersion isn't there, use Service Max Version
+        $this->requestVersion = is_null($requestVersion) ? $serviceMaxVersion : self::parseVersionHeader($requestVersion, ODataConstants::ODATAVERSIONHEADER);
 
-	    //if max version isn't there, use the request version
-	    $this->requestMaxVersion = is_null($maxRequestVersion) ? $this->requestVersion : self::parseVersionHeader($maxRequestVersion, ODataConstants::ODATAMAXVERSIONHEADER);
+        //if max version isn't there, use the request version
+        $this->requestMaxVersion = is_null($maxRequestVersion) ? $this->requestVersion : self::parseVersionHeader($maxRequestVersion, ODataConstants::ODATAMAXVERSIONHEADER);
 
         //if it's OData v3..things change a bit
         if ($this->maxServiceVersion == Version::v3()) {
@@ -417,7 +417,7 @@ class RequestDescription
      * @throws ODataException If capability negotiation fails.
      */
     public function raiseResponseVersion($major, $minor) {
-        if($this->requiredMinResponseVersion->raiseVersion($major, $minor)){
+        if ($this->requiredMinResponseVersion->raiseVersion($major, $minor)) {
             $this->validateVersions();
         }
 

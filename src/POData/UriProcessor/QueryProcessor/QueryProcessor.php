@@ -293,10 +293,10 @@ class QueryProcessor
      */
     private function _processCount()
     {
-        $inlineCount = $this->service->getHost()->getQueryStringItem( ODataConstants::HTTPQUERY_STRING_INLINECOUNT );
+        $inlineCount = $this->service->getHost()->getQueryStringItem(ODataConstants::HTTPQUERY_STRING_INLINECOUNT);
 
         //If it's not specified, we're done
-        if(is_null($inlineCount)) return;
+        if (is_null($inlineCount)) return;
 
         //If the service doesn't allow count requests..then throw an exception
         if (!$this->service->getConfiguration()->getAcceptCountRequests()) {
@@ -314,7 +314,7 @@ class QueryProcessor
 
         //You can't specify $count & $inlinecount together
         //TODO: ensure there's a test for this case see #55
-        if ($this->request->queryType == QueryType::COUNT() ) {
+        if ($this->request->queryType == QueryType::COUNT()) {
             throw ODataException::createBadRequestError(
                 Messages::queryProcessorInlineCountWithValueCount()
             );
@@ -401,26 +401,26 @@ class QueryProcessor
      */
     private function _processExpandAndSelect()
     {
-        $expand = $this->service->getHost()->getQueryStringItem( ODataConstants::HTTPQUERY_STRING_EXPAND );
+        $expand = $this->service->getHost()->getQueryStringItem(ODataConstants::HTTPQUERY_STRING_EXPAND);
 
         if (!is_null($expand)) {
-            $this->_checkExpandOrSelectApplicable(ODataConstants::HTTPQUERY_STRING_EXPAND );
+            $this->_checkExpandOrSelectApplicable(ODataConstants::HTTPQUERY_STRING_EXPAND);
         }
 
-        $select = $this->service->getHost()->getQueryStringItem( ODataConstants::HTTPQUERY_STRING_SELECT );
+        $select = $this->service->getHost()->getQueryStringItem(ODataConstants::HTTPQUERY_STRING_SELECT);
 
         if (!is_null($select)) {
             if (!$this->service->getConfiguration()->getAcceptProjectionRequests()) {
-                throw ODataException::createBadRequestError( Messages::configurationProjectionsNotAccepted() );
+                throw ODataException::createBadRequestError(Messages::configurationProjectionsNotAccepted());
             }
 
-            $this->_checkExpandOrSelectApplicable( ODataConstants::HTTPQUERY_STRING_SELECT );
+            $this->_checkExpandOrSelectApplicable(ODataConstants::HTTPQUERY_STRING_SELECT);
         }
 
         // We will generate RootProjectionNode in case of $link request also, but
         // expand and select in this case must be null (we are ensuring this above)
         // 'RootProjectionNode' is required while generating next page Link
-        if ($this->_expandSelectApplicable || $this->request->isLinkUri() ) {
+        if ($this->_expandSelectApplicable || $this->request->isLinkUri()) {
 
             $rootProjectionNode = ExpandProjectionParser::parseExpandAndSelectClause(
                     $this->request->getTargetResourceSetWrapper(),
@@ -433,13 +433,13 @@ class QueryProcessor
                     $this->service->getProvidersWrapper()
             );
             if ($rootProjectionNode->isSelectionSpecified()) {
-                $this->request->raiseMinVersionRequirement(2, 0 );
+                $this->request->raiseMinVersionRequirement(2, 0);
             }
 
             if ($rootProjectionNode->hasPagedExpandedResult()) {
-                $this->request->raiseResponseVersion( 2, 0 );
+                $this->request->raiseResponseVersion(2, 0);
             }
-            $this->request->setRootProjectionNode($rootProjectionNode );
+            $this->request->setRootProjectionNode($rootProjectionNode);
 
         }
     }

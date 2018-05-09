@@ -43,11 +43,11 @@ class JsonODataV2Writer extends JsonODataV1Writer
         $parts = explode(";", $contentType);
 
         //special case, in v3 verbose is the v2 writer
-        if($responseVersion == Version::v3()){
+        if ($responseVersion == Version::v3()) {
             return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && in_array('odata=verbose', $parts);
         }
 
-        if($responseVersion != Version::v2()){
+        if ($responseVersion != Version::v2()) {
             return false;
         }
 
@@ -63,7 +63,7 @@ class JsonODataV2Writer extends JsonODataV1Writer
      *
      * @return JsonODataV1Writer
      */
-    public function write($model){
+    public function write($model) {
         // { "d" :
         $this->_writer
             ->startObjectScope()
@@ -89,7 +89,7 @@ class JsonODataV2Writer extends JsonODataV1Writer
             $this->writeFeed($model);
             $this->_writer->endScope();
 
-        }elseif ($model instanceof ODataEntry) {
+        } elseif ($model instanceof ODataEntry) {
             $this->writeEntry($model);
         }
 
