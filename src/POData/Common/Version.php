@@ -122,12 +122,12 @@ class Version
     /** @var Version[] */
     private static $fixedVersion;
 
-    private static function fillVersions(){
-        if(is_null(self::$fixedVersion)){
+    private static function fillVersions() {
+        if (is_null(self::$fixedVersion)) {
             self::$fixedVersion = array(
-                1 => new Version(1,0),
-                2 => new Version(2,0),
-                3 => new Version(3,0),
+                1 => new Version(1, 0),
+                2 => new Version(2, 0),
+                3 => new Version(3, 0),
             );
         }
     }
@@ -139,13 +139,13 @@ class Version
     }
 
 
-    public static function v2(){
+    public static function v2() {
         self::fillVersions();
         return self::$fixedVersion[2];
     }
 
 
-    public static function v3(){
+    public static function v3() {
         self::fillVersions();
         return self::$fixedVersion[3];
     }

@@ -87,7 +87,7 @@ class NorthWindDSExpressionProvider implements IExpressionProvider
      */
     public function onLogicalExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::AND_LOGICAL:
                 return $this->_prepareBinaryExpression(self::LOGICAL_AND, $left, $right);
                 break;
@@ -110,7 +110,7 @@ class NorthWindDSExpressionProvider implements IExpressionProvider
      */
     public function onArithmeticExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::MULTIPLY:
                 return $this->_prepareBinaryExpression(self::MULTIPLY, $left, $right);
                 break;
@@ -142,7 +142,7 @@ class NorthWindDSExpressionProvider implements IExpressionProvider
      */
     public function onRelationalExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::GREATERTHAN:
                 return $this->_prepareBinaryExpression(self::GREATERTHAN, $left, $right);
                 break;
@@ -180,7 +180,7 @@ class NorthWindDSExpressionProvider implements IExpressionProvider
      */
     public function onUnaryExpression($expressionType, $child)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::NEGATE:
                 return $this->_prepareUnaryExpression(self::NEGATE, $child);
                 break;
@@ -297,103 +297,103 @@ class NorthWindDSExpressionProvider implements IExpressionProvider
     public function onFunctionCallExpression($functionDescription, $params)
     {
         switch ($functionDescription->functionName) {
-        case ODataConstants::STRFUN_COMPARE:
-            return "STRCMP($params[0]; $params[1])";
-            break;
-        case ODataConstants::STRFUN_ENDSWITH:
-          return "(($params[1]) = RIGHT(($params[0]), LEN($params[1])))";
-            break;
-        case ODataConstants::STRFUN_INDEXOF:
-          // In SQLServer the index of string starts from 1, but in OData
-          // the string start with index 0, so the below subtraction of 1
-          return "(CHARINDEX($params[1], $params[0]) - 1)";
-            break;
-        case ODataConstants::STRFUN_REPLACE:
-          return "REPLACE($params[0], $params[1], $params[2])";
-            break;
-        case ODataConstants::STRFUN_STARTSWITH:
-          return "(($params[1]) = LEFT(($params[0]), LEN($params[1])))";
-            break;
-        case ODataConstants::STRFUN_TOLOWER:
-          return "LOWER($params[0])";
-            break;
-        case ODataConstants::STRFUN_TOUPPER:
-          return "UPPER($params[0])";
-            break;
-        case ODataConstants::STRFUN_TRIM:
-          // OData supports trim function
-          // We don't have the same function SQL Server, so use SQL functions LTRIM and RTRIM together
-          // to achieve TRIM functionality.
-          return "RTRIM(LTRIM($params[0]))";
-            break;
-        case ODataConstants::STRFUN_SUBSTRING:
-          if (count($params) == 3) {
-            // 3 Param version of OData substring
-                return "SUBSTRING($params[0], $params[1] + 1, $params[2])";
-            } else {
-            // 2 Params version of OData substring
-            // We don't have the same function for SQL Server, we have only:
-            //
-            // SUBSTRING ( value_expression , start_expression , length_expression )
-            // http://msdn.microsoft.com/en-us/library/ms187748.aspx
-            //
-            // If the sum of start_expression and length_expression is greater than the number of characters 
-            // in value_expression, the whole value expression beginning at start_expression is returned
-            // In OData substring function the index start from 0, in SQL Server its from 1
-            return "SUBSTRING($params[0], $params[1] + 1, LEN($params[0]))";        	    
-            }
-            break;
-        case ODataConstants::STRFUN_SUBSTRINGOF:
-          return "(CHARINDEX($params[0], $params[1]) != 0)";
-            break;
-        case ODataConstants::STRFUN_CONCAT:
-            return "$params[0] + $params[1]";
-            break;
-        case ODataConstants::STRFUN_LENGTH:
-            return "LEN($params[0])";
-            break;
-        case ODataConstants::GUIDFUN_EQUAL:
-            return "($params[0] = $params[1])";
-            break;
-        case ODataConstants::DATETIME_COMPARE:
-            return "DATETIMECMP($params[0]; $params[1])";
-            break;
-        case ODataConstants::DATETIME_YEAR:
-            return "YEAR($params[0])";
-            break;
-        case ODataConstants::DATETIME_MONTH:
-            return "MONTH($params[0])";
-            break;
-        case ODataConstants::DATETIME_DAY:
-            return "DAY($params[0])";
-            break;
-        case ODataConstants::DATETIME_HOUR:
-            return "DATENAME(HOUR, $params[0])";
-            break;
-        case ODataConstants::DATETIME_MINUTE:
-            return "DATENAME(MINUTE, $params[0])";
-            break;
-        case ODataConstants::DATETIME_SECOND:
-            return "DATENAME(SECOND, $params[0])";
-            break;                
-        case ODataConstants::MATHFUN_ROUND:
-            return "ROUND($params[0], $this->_default_round)";
-            break;
-        case ODataConstants::MATHFUN_CEILING:
-            return "CEILING($params[0])";
-            break;
-        case ODataConstants::MATHFUN_FLOOR:
-            return "FLOOR($params[0])";
-            break;
-        case ODataConstants::BINFUL_EQUAL:
-            return "($params[0] = $params[1])";
-            break;
+            case ODataConstants::STRFUN_COMPARE:
+                return "STRCMP($params[0]; $params[1])";
+                break;
+            case ODataConstants::STRFUN_ENDSWITH:
+              return "(($params[1]) = RIGHT(($params[0]), LEN($params[1])))";
+                break;
+            case ODataConstants::STRFUN_INDEXOF:
+              // In SQLServer the index of string starts from 1, but in OData
+              // the string start with index 0, so the below subtraction of 1
+              return "(CHARINDEX($params[1], $params[0]) - 1)";
+                break;
+            case ODataConstants::STRFUN_REPLACE:
+              return "REPLACE($params[0], $params[1], $params[2])";
+                break;
+            case ODataConstants::STRFUN_STARTSWITH:
+              return "(($params[1]) = LEFT(($params[0]), LEN($params[1])))";
+                break;
+            case ODataConstants::STRFUN_TOLOWER:
+              return "LOWER($params[0])";
+                break;
+            case ODataConstants::STRFUN_TOUPPER:
+              return "UPPER($params[0])";
+                break;
+            case ODataConstants::STRFUN_TRIM:
+              // OData supports trim function
+              // We don't have the same function SQL Server, so use SQL functions LTRIM and RTRIM together
+              // to achieve TRIM functionality.
+              return "RTRIM(LTRIM($params[0]))";
+                break;
+            case ODataConstants::STRFUN_SUBSTRING:
+              if (count($params) == 3) {
+                // 3 Param version of OData substring
+                    return "SUBSTRING($params[0], $params[1] + 1, $params[2])";
+                } else {
+                // 2 Params version of OData substring
+                // We don't have the same function for SQL Server, we have only:
+                //
+                // SUBSTRING ( value_expression , start_expression , length_expression )
+                // http://msdn.microsoft.com/en-us/library/ms187748.aspx
+                //
+                // If the sum of start_expression and length_expression is greater than the number of characters 
+                // in value_expression, the whole value expression beginning at start_expression is returned
+                // In OData substring function the index start from 0, in SQL Server its from 1
+                return "SUBSTRING($params[0], $params[1] + 1, LEN($params[0]))";        	    
+                }
+                break;
+            case ODataConstants::STRFUN_SUBSTRINGOF:
+              return "(CHARINDEX($params[0], $params[1]) != 0)";
+                break;
+            case ODataConstants::STRFUN_CONCAT:
+                return "$params[0] + $params[1]";
+                break;
+            case ODataConstants::STRFUN_LENGTH:
+                return "LEN($params[0])";
+                break;
+            case ODataConstants::GUIDFUN_EQUAL:
+                return "($params[0] = $params[1])";
+                break;
+            case ODataConstants::DATETIME_COMPARE:
+                return "DATETIMECMP($params[0]; $params[1])";
+                break;
+            case ODataConstants::DATETIME_YEAR:
+                return "YEAR($params[0])";
+                break;
+            case ODataConstants::DATETIME_MONTH:
+                return "MONTH($params[0])";
+                break;
+            case ODataConstants::DATETIME_DAY:
+                return "DAY($params[0])";
+                break;
+            case ODataConstants::DATETIME_HOUR:
+                return "DATENAME(HOUR, $params[0])";
+                break;
+            case ODataConstants::DATETIME_MINUTE:
+                return "DATENAME(MINUTE, $params[0])";
+                break;
+            case ODataConstants::DATETIME_SECOND:
+                return "DATENAME(SECOND, $params[0])";
+                break;                
+            case ODataConstants::MATHFUN_ROUND:
+                return "ROUND($params[0], $this->_default_round)";
+                break;
+            case ODataConstants::MATHFUN_CEILING:
+                return "CEILING($params[0])";
+                break;
+            case ODataConstants::MATHFUN_FLOOR:
+                return "FLOOR($params[0])";
+                break;
+            case ODataConstants::BINFUL_EQUAL:
+                return "($params[0] = $params[1])";
+                break;
             case 'is_null':
             return "is_null($params[0])";
             break;
 
-        default:
-            throw new \InvalidArgumentException('onFunctionCallExpression');
+            default:
+                throw new \InvalidArgumentException('onFunctionCallExpression');
         }
     }
 
@@ -419,7 +419,7 @@ class NorthWindDSExpressionProvider implements IExpressionProvider
                 } else if ($operator == '<=') {
                     $operator = '>';
                 } else {
-                    $operator = "!".$operator;
+                    $operator = "!" . $operator;
                 }
                 return self::OPEN_BRAKET 
                     . $str[0] . ' ' . $operator 
@@ -443,7 +443,7 @@ class NorthWindDSExpressionProvider implements IExpressionProvider
             } else if ($operator == '<=') {
                 $operator = '>';
             } else {
-                $operator = "!".$operator;
+                $operator = "!" . $operator;
             }
             return self::OPEN_BRAKET
             . $str[0] . ' ' . $operator

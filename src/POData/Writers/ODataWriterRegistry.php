@@ -32,11 +32,11 @@ class ODataWriterRegistry
      *
      * @return IODataWriter|null the writer that can handle the give criteria, or null
      */
-    public function getWriter(Version $responseVersion, $contentType){
+    public function getWriter(Version $responseVersion, $contentType) {
 
-        foreach($this->writers as $writer)
+        foreach ($this->writers as $writer)
         {
-            if($writer->canHandle($responseVersion, $contentType)) return $writer;
+            if ($writer->canHandle($responseVersion, $contentType)) return $writer;
         }
 
         return null;

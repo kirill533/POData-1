@@ -93,7 +93,7 @@ class PHPExpressionProvider implements IExpressionProvider
      */
     public function onLogicalExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::AND_LOGICAL:
                 return $this->_prepareBinaryExpression(self::LOGICAL_AND, $left, $right);
 
@@ -116,7 +116,7 @@ class PHPExpressionProvider implements IExpressionProvider
      */
     public function onArithmeticExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::MULTIPLY:
                 return $this->_prepareBinaryExpression(self::MULTIPLY, $left, $right);
 
@@ -148,7 +148,7 @@ class PHPExpressionProvider implements IExpressionProvider
      */
     public function onRelationalExpression($expressionType, $left, $right)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::GREATERTHAN:
                 return $this->_prepareBinaryExpression(self::GREATER_THAN, $left, $right);
 
@@ -182,7 +182,7 @@ class PHPExpressionProvider implements IExpressionProvider
      */
     public function onUnaryExpression($expressionType, $child)
     {
-        switch($expressionType) {
+        switch ($expressionType) {
             case ExpressionType::NEGATE:
                 return $this->_prepareUnaryExpression(self::NEGATE, $child);
 
@@ -245,7 +245,7 @@ class PHPExpressionProvider implements IExpressionProvider
      */
     public function onFunctionCallExpression($functionDescription, $params)
     {
-        switch($functionDescription->name) {
+        switch ($functionDescription->name) {
             case ODataConstants::STRFUN_COMPARE:
                 return "strcmp($params[0], $params[1])";
 
@@ -272,8 +272,7 @@ class PHPExpressionProvider implements IExpressionProvider
 
             case ODataConstants::STRFUN_SUBSTRING:
                 return count($params) == 3 ?
-                    "substr($params[0], $params[1], $params[2])" :
-                    "substr($params[0], $params[1])";
+                    "substr($params[0], $params[1], $params[2])" : "substr($params[0], $params[1])";
 
             case ODataConstants::STRFUN_SUBSTRINGOF:
                 return "(strpos($params[1], $params[0]) !== false)";

@@ -50,7 +50,7 @@ class JsonODataV1Writer implements IODataWriter
      */
     public function canHandle(Version $responseVersion, $contentType)
     {
-        if($responseVersion != Version::v1()){
+        if ($responseVersion != Version::v1()) {
             return false;
         }
 
@@ -66,7 +66,7 @@ class JsonODataV1Writer implements IODataWriter
      *
      * @return JsonODataV1Writer
      */
-    public function write($model){
+    public function write($model) {
         // { "d" :
         $this->_writer
             ->startObjectScope()
@@ -85,7 +85,7 @@ class JsonODataV1Writer implements IODataWriter
         } elseif ($model instanceof ODataFeed) {
             $this->_writer->startArrayScope();
             $this->writeFeed($model);
-        }elseif ($model instanceof ODataEntry) {
+        } elseif ($model instanceof ODataEntry) {
             $this->_writer->startObjectScope();
             $this->writeEntry($model);
         }
@@ -271,10 +271,10 @@ class JsonODataV1Writer implements IODataWriter
         $this->_writer->writeName($link->title);
 
         if ($link->isExpanded) {
-            if(is_null($link->expandedResult)){
+            if (is_null($link->expandedResult)) {
                 $this->_writer->writeValue("null");
             }
-            else{
+            else {
                 $this->writeExpandedLink($link);
             }
         } else {

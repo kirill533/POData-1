@@ -146,7 +146,7 @@ class SegmentParser
      * @param string $segment
      * @param boolean $checkRights
      */
-    private function createNextSegment(SegmentDescriptor $previous, $segment, $checkRights){
+    private function createNextSegment(SegmentDescriptor $previous, $segment, $checkRights) {
         $previousKind = $previous->getTargetKind();
         if ($previousKind == TargetKind::METADATA()
             || $previousKind == TargetKind::BATCH()

@@ -317,11 +317,11 @@ abstract class BaseService implements IRequestHandler, IService
         $registry->register(new JsonODataV1Writer());
         $registry->register(new AtomODataWriter($serviceURI));
 
-        if($serviceVersion->compare(Version::v2()) > -1){
+        if ($serviceVersion->compare(Version::v2()) > -1) {
             $registry->register(new JsonODataV2Writer());
         }
 
-        if($serviceVersion->compare(Version::v3()) > -1){
+        if ($serviceVersion->compare(Version::v3()) > -1) {
             $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $serviceURI));
             $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL(), $serviceURI));
             $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::FULL(), $serviceURI));
@@ -352,7 +352,7 @@ abstract class BaseService implements IRequestHandler, IService
 
         if (is_null($responseContentType) && $request->getTargetKind() != TargetKind::MEDIA_RESOURCE()) {
             //the responseContentType can ONLY be null if it's a stream (media resource) and that stream is storing null as the content type
-            throw new ODataException( Messages::unsupportedMediaType(), 415 );
+            throw new ODataException(Messages::unsupportedMediaType(), 415);
         }
 
         $odataModelInstance = null;
@@ -529,10 +529,10 @@ abstract class BaseService implements IRequestHandler, IService
 
         //if the $format header is present it overrides the accepts header
         $format = $host->getQueryStringItem(ODataConstants::HTTPQUERY_STRING_FORMAT);
-        if(!is_null($format)){
+        if (!is_null($format)) {
 
             //There's a strange edge case..if application/json is supplied and it's V3
-            if($format == MimeTypes::MIME_APPLICATION_JSON && $requestVersion == Version::v3()){
+            if ($format == MimeTypes::MIME_APPLICATION_JSON && $requestVersion == Version::v3()) {
                 //then it's actual minimalmetadata
                 //TODO: should this be done with the header text too?
                 $format = MimeTypes::MIME_APPLICATION_JSON_MINIMAL_META;
@@ -548,7 +548,7 @@ abstract class BaseService implements IRequestHandler, IService
         //getTargetKind doesn't deal with link resources directly and this can change things
         $targetKind = $request->isLinkUri() ? TargetKind::LINK() : $request->getTargetKind();
 
-        switch($targetKind){
+        switch ($targetKind) {
             case TargetKind::METADATA():
                 return HttpProcessUtility::selectMimeType(
                     $requestAcceptText,
@@ -626,7 +626,7 @@ abstract class BaseService implements IRequestHandler, IService
                 );
 
             case TargetKind::MEDIA_RESOURCE():
-                if (!$request->isNamedStream() && !$request->getTargetResourceType()->isMediaLinkEntry()){
+                if (!$request->isNamedStream() && !$request->getTargetResourceType()->isMediaLinkEntry()) {
                     throw ODataException::createBadRequestError(
                         Messages::badRequestInvalidUriForMediaResource(
                             $host->getAbsoluteRequestUri()->getUrlAsString()
@@ -660,7 +660,7 @@ abstract class BaseService implements IRequestHandler, IService
 
 
         //If we got here, we just don't know what it is...
-        throw new ODataException( Messages::unsupportedMediaType(), 415 );
+        throw new ODataException(Messages::unsupportedMediaType(), 415);
 
     }
 
@@ -790,16 +790,16 @@ abstract class BaseService implements IRequestHandler, IService
             try {
 
                 //TODO #88...also this seems like dupe work
-                $reflectionProperty  = new \ReflectionProperty($entryObject, $eTagProperty->getName() );
+                $reflectionProperty = new \ReflectionProperty($entryObject, $eTagProperty->getName());
                 $value = $reflectionProperty->getValue($entryObject);
             } catch (\ReflectionException $reflectionException) {
                 throw ODataException::createInternalServerError(
-                    Messages::failedToAccessProperty($eTagProperty->getName(), $resourceType->getName() )
+                    Messages::failedToAccessProperty($eTagProperty->getName(), $resourceType->getName())
                 );
             }
 
             if (is_null($value)) {
-                $eTag = $eTag . $comma. 'null';
+                $eTag = $eTag . $comma . 'null';
             } else {
                 $eTag = $eTag . $comma . $type->convertToOData($value);
             }

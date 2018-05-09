@@ -825,7 +825,7 @@ class ResourceType
      */
     public static function getPrimitiveResourceType($typeCode)
     {
-        switch($typeCode) {
+        switch ($typeCode) {
             case EdmPrimitiveType::BINARY:
                 return new ResourceType(
                     new Binary(), ResourceTypeKind::PRIMITIVE,
@@ -927,6 +927,8 @@ class ResourceType
 
 
     function __wakeup() {
-        if ($this->_type instanceof ReflectionClass) $this->_type = new ReflectionClass($this->_type->name);
+        if ($this->_type instanceof ReflectionClass) {
+            $this->_type = new ReflectionClass($this->_type->name);
+        }
     }
 }
