@@ -211,7 +211,8 @@ class ExpressionParser
 
     /**
      * Parse comparison operation (eq, ne, gt, ge, lt, le)
-     * 
+     * TODO: http://host/service/Products?$filter=Name in ('Milk', 'Cheese')
+     * TODO: http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html
      * @return AbstractExpression
      */
     private function _parseComparison()
