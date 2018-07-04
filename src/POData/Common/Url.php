@@ -40,7 +40,7 @@ class Url
             throw new UrlFormatException(Messages::urlMalformedUrl($url));
         }
         
-        $path = $this->getPath();        
+        $path = urldecode($this->getPath());        
         if ($path != null) {
             $this->_segments = explode('/', trim($path, '/'));
             foreach ($this->_segments as $segment) {
