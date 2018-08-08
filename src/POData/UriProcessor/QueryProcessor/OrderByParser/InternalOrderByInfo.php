@@ -13,43 +13,29 @@ use POData\UriProcessor\QueryProcessor\AnonymousFunction;
 class InternalOrderByInfo
 {
     /**
-     * The structure holds information about the navigation properties used in the 
+     * The structure holds information about the navigation properties used in the
      * orderby clause (if any) and orderby path if IDSQP implementor want to perform
      * sorting.
-     * 
+     *
      * @var OrderByInfo
      */
     private $_orderByInfo;
 
     /**
-     * Collection of sub sorter functions corresponding to each orderby path segment.
-     * 
-     * @var AnonymousFunction[]
-     */
-    private $_subSorterFunctions;
-
-    /**
-     * The top level anonymous sorter function
-     * 
-     * @var AnonymousFunction
-     */
-    private $_sorterFunction;
-
-    /**
      * This object will be of type of the resource set identified by the request uri.
-     * 
+     *
      * @var mixed
      */
     private $_dummyObject;
 
     /**
      * Creates new instance of InternalOrderByInfo
-     * 
+     *
      * @param OrderByInfo              $orderByInfo        The structure holds
-     *                                                     information about the 
-     *                                                     navigation properties 
+     *                                                     information about the
+     *                                                     navigation properties
      *                                                     used in the orderby clause
-     *                                                     (if any) and orderby path 
+     *                                                     (if any) and orderby path
      *                                                     if IDSQP implementation wants to perform sorting.
      *
      * @param AnonymousFunction[] $subSorterFunctions Collection of sub sorter functions corresponding to each orderby path segment
@@ -59,22 +45,18 @@ class InternalOrderByInfo
      * @param AnonymousFunction        $sorterFunction     The top level anonymous sorter function.
      *
      * @param mixed                    $dummyObject        A dummy object of type
-     *                                                     of the resource set 
+     *                                                     of the resource set
      *                                                     identified by the
      *                                                     request uri.
      */
-    public function __construct(OrderByInfo $orderByInfo, $subSorterFunctions, 
-        AnonymousFunction $sorterFunction, $dummyObject
-    ) {
+    public function __construct(OrderByInfo $orderByInfo, $dummyObject) {
         $this->_orderByInfo = $orderByInfo;
-        $this->_sorterFunction = $sorterFunction;
-        $this->_subSorterFunctions = $subSorterFunctions;
         $this->_dummyObject = $dummyObject;
     }
 
     /**
      * Get reference to order information to pe passed to IDSQP implementation calls
-     * 
+     *
      * @return OrderByInfo
      */
     public function getOrderByInfo()
@@ -84,7 +66,7 @@ class InternalOrderByInfo
 
     /**
      * Get reference to the orderby path segment information.
-     * 
+     *
      * @return OrderByPathSegment[]
      */
     public function getOrderByPathSegments()
@@ -93,28 +75,8 @@ class InternalOrderByInfo
     }
 
     /**
-     * Gets reference to the top level sorter function. 
-     * 
-     * @return AnonymousFunction
-     */
-    public function getSorterFunction()
-    {
-        return $this->_sorterFunction;
-    }
-
-    /**
-     * Gets collection of sub sorter functions
-     * 
-     * @return AnonymousFunction[]
-     */
-    public function getSubSorterFunctions()
-    {
-        return $this->_subSorterFunctions;  
-    }
-
-    /**
      * Gets a dummy object of type of the resource set identified by the request uri.
-     * 
+     *
      * @return mixed
      */
     public function &getDummyObject()
@@ -123,15 +85,15 @@ class InternalOrderByInfo
     }
 
     /**
-     * Build value of $skiptoken from the given object which will be the 
+     * Build value of $skiptoken from the given object which will be the
      * last object in the page.
-     * 
-     * @param mixed $lastObject entity instance from which skiptoken needs 
+     *
+     * @param mixed $lastObject entity instance from which skiptoken needs
      *                          to be built.
-     * 
+     *
      * @return string
-     * 
-     * @throws ODataException If reflection exception occurs while accessing 
+     *
+     * @throws ODataException If reflection exception occurs while accessing
      *                        property.
      */
     public function buildSkipTokenValue($lastObject)
@@ -150,31 +112,31 @@ class InternalOrderByInfo
                     );
                     $dummyProperty->setAccessible(true);
                     $currentObject = $dummyProperty->getValue($currentObject);
-                    if (is_null($currentObject)) {                        
+                    if (is_null($currentObject)) {
                             $nextPageLink .= 'null, ';
                             break;
                     } else if ($isLastSegment) {
                         $type = $subPathSegment->getInstanceType();
                         // assert($type implements IType)
-                        // If this is a string then do utf8_encode to convert 
+                        // If this is a string then do utf8_encode to convert
                         // utf8 decoded characters to
-                        // corrospoding utf8 char (e.g. � to í), then do a 
+                        // corrospoding utf8 char (e.g. � to í), then do a
                         // urlencode to convert í to %C3%AD
                         // urlencode is needed for datetime and guid too
-                        // if ($type instanceof String || $type instanceof DateTime 
+                        // if ($type instanceof String || $type instanceof DateTime
                         //     || $type instanceof Guid) {
                         //    if ($type instanceof String) {
                         //        $currentObject = utf8_encode($currentObject);
-                        //    } 
+                        //    }
 
                         //    $currentObject = urlencode($currentObject);
                         //}
 
-                        // call IType::convertToOData to attach reuqired suffix 
+                        // call IType::convertToOData to attach reuqired suffix
                         // and prepfix.
-                        // e.g. $valueM, $valueF, datetime'$value', guid'$value', 
+                        // e.g. $valueM, $valueF, datetime'$value', guid'$value',
                         // '$value' etc..
-                        // Also we can think about moving above urlencode to this 
+                        // Also we can think about moving above urlencode to this
                         // function
                         $value = $type->convertToOData($currentObject);
                         $nextPageLink .= $value . ', ';

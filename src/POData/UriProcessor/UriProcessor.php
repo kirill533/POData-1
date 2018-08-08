@@ -691,7 +691,7 @@ class UriProcessor
                         )->results;
                         if (!empty($result1)) {
                             $internalOrderByInfo = $expandedProjectionNode->getInternalOrderByInfo();
-                            if (!is_null($internalOrderByInfo)) {
+                            /*if (!is_null($internalOrderByInfo)) {
                                 $orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
                                 usort($result1, $orderByFunction);
                                 unset($internalOrderByInfo);
@@ -699,7 +699,7 @@ class UriProcessor
                                 if (!is_null($takeCount)) {
                                     $result1 = array_slice($result1, 0, $takeCount);
                                 }
-                            }
+                            }*/
 
                             $entry->$expandedPropertyName = $result1;
                             $projectedProperty = $expandedProjectionNode->getResourceProperty();
@@ -750,6 +750,7 @@ class UriProcessor
                     )->results;
                     if (!empty($result1)) {
                         $internalOrderByInfo = $expandedProjectionNode->getInternalOrderByInfo();
+                        /*
                         if (!is_null($internalOrderByInfo)) {
                             $orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
                             usort($result1, $orderByFunction);
@@ -759,6 +760,7 @@ class UriProcessor
                                 $result1 = array_slice($result1, 0, $takeCount);
                             }
                         }
+                        */
 
                         $result->$expandedPropertyName = $result1;
                         $projectedProperty7 = $expandedProjectionNode->getResourceProperty();

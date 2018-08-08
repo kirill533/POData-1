@@ -30,13 +30,6 @@ use POData\Common\Messages;
  */
 class OrderByParser
 {
-    /**
-     * Collection of anonymous sorter function corresponding to
-     * each orderby path segment.
-     *
-     * @var AnonymousFunction[]
-     */
-    private $_comparisonFunctions = array();
 
     /**
      * The top level sorter function generated from orderby path
@@ -121,14 +114,11 @@ class OrderByParser
         $orderByPathSegments = $orderByParser->_readOrderBy($orderBy);
         $orderByParser->_buildOrderByTree($orderByPathSegments);
         $orderByParser->_createOrderInfo($orderByPathSegments);
-        $orderByParser->_generateTopLevelComparisonFunction();
         //Recursively release the resources
         $orderByParser->_rootOrderByNode->free();
         //creates internal order info wrapper
         $internalOrderInfo = new InternalOrderByInfo(
             $orderByParser->_orderByInfo,
-            $orderByParser->_comparisonFunctions,
-            $orderByParser->_topLevelComparisonFunction,
             $orderByParser->_dummyObject
         );
         unset($orderByParser->_orderByInfo);
@@ -270,8 +260,6 @@ class OrderByParser
                             $orderBySubPathSegment, $resourceProperty,
                             $ascending
                         );
-                        $this->_comparisonFunctions[]
-                            = $node->buildComparisonFunction($ancestors);
                     } else if ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCE_REFERENCE || $resourceProperty->getKind() == ResourcePropertyKind::KEY_RESOURCE_REFERENCE) {
                         $node = new OrderByNode(
                             $orderBySubPathSegment, $resourceProperty,
@@ -387,36 +375,6 @@ class OrderByParser
         }
 
         $this->_orderByInfo = new OrderByInfo($orderByPathSegments, empty($navigationPropertiesInThePath) ? null : $navigationPropertiesInThePath);
-    }
-
-    /**
-     * Generates top level comparison function from sub comparison functions.
-     *
-     * @return void
-     */
-    private function _generateTopLevelComparisonFunction()
-    {
-        $comparisonFunctionCount = count($this->_comparisonFunctions);
-        $this->_assertion($comparisonFunctionCount > 0);
-        $parameters = $this->_comparisonFunctions[0]->getParameters();
-        //$parameters[] = '&$matchLevel = 0';
-        if ($comparisonFunctionCount == 1) {
-            $this->_topLevelComparisonFunction = $this->_comparisonFunctions[0];
-        } else {
-            $code = null;
-            for ($i = 0; $i < $comparisonFunctionCount; $i++) {
-                $subComparisonFunctionName = substr($this->_comparisonFunctions[$i]->getReference(), 1);
-                $code .= "\$result = call_user_func_array(chr(0) . '$subComparisonFunctionName', array($parameters[0], $parameters[1]));";
-                $code .= "
-                         if (\$result != 0) {
-                            return \$result;
-                         }
-                         ";
-            }
-
-            $code .= "return \$result;";
-            $this->_topLevelComparisonFunction = new AnonymousFunction($parameters, $code);
-        }
     }
 
     /**
