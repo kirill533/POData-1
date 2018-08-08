@@ -12,7 +12,6 @@ use POData\IService;
 use POData\Providers\Metadata\ResourceProperty;
 use POData\Providers\Metadata\ResourceSetWrapper;
 use POData\Providers\Metadata\ResourceStreamInfo;
-use POData\UriProcessor\QueryProcessor\QueryProcessor;
 use POData\UriProcessor\UriProcessor;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\SegmentParser;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetSource;
@@ -24,7 +23,6 @@ use POData\UriProcessor\QueryProcessor\ExpressionParser\FilterInfo;
 use POData\UriProcessor\QueryProcessor\ExpandProjectionParser\RootProjectionNode;
 use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Query\QueryType;
-use Verdant\XML2Array;
 
 
 /**
@@ -78,8 +76,8 @@ class RequestDescription
      */
     private $requiredMinRequestVersion;
 
-	/** @var Version */
-	private $maxServiceVersion;
+    /** @var Version */
+    private $maxServiceVersion;
 
     /**
      * Collection of known data service versions.
@@ -117,12 +115,12 @@ class RequestDescription
     private $_containerName;
 
 
-	/**
-	 * The count option specified in the request.
-	 *
-	 * @var QueryType
-	 */
-	public $queryType;
+    /**
+     * The count option specified in the request.
+     *
+     * @var QueryType
+     */
+    public $queryType;
 
     /**
      * Number of segments.
@@ -226,51 +224,51 @@ class RequestDescription
      * Reference to the service
      * @var IService
      */
-     private $_service;
+        private $_service;
 
     /**
      * The parts of a multipart request
      * @var array
      */
-     private $_parts;
+        private $_parts;
 
-	/**
-	 * @param SegmentDescriptor[] $segmentDescriptors Description of segments in the resource path.
-	 * @param Url $requestUri
-	 * @param Version $serviceMaxVersion
-	 * @param $requestVersion
-	 * @param $maxRequestVersion
+    /**
+     * @param SegmentDescriptor[] $segmentDescriptors Description of segments in the resource path.
+     * @param Url $requestUri
+     * @param Version $serviceMaxVersion
+     * @param null|string $requestVersion
+     * @param null|string $maxRequestVersion
      * @param string $dataType
-	 */
-	public function __construct($segmentDescriptors, Url $requestUri, Version $serviceMaxVersion, $requestVersion, $maxRequestVersion, $dataType = null, IService $service = null)
+     */
+    public function __construct($segmentDescriptors, Url $requestUri, Version $serviceMaxVersion, $requestVersion, $maxRequestVersion, $dataType = null, IService $service = null)
     {
         $this->segments = $segmentDescriptors;
         $this->_segmentCount = count($this->segments);
         $this->requestUrl = $requestUri;
         $this->lastSegment = $segmentDescriptors[$this->_segmentCount - 1];
-	    $this->queryType = QueryType::ENTITIES();
+        $this->queryType = QueryType::ENTITIES();
         $this->_service = $service;
         $this->_parts = array();
 
         //we use this for validation checks down in validateVersions...but maybe we should check that outside of this object...
         $this->maxServiceVersion = $serviceMaxVersion;
 
-	    //Per OData 1 & 2 spec we must return the smallest size
-	    //We start at 1.0 and move it up as features are requested
+        //Per OData 1 & 2 spec we must return the smallest size
+        //We start at 1.0 and move it up as features are requested
         $this->requiredMinResponseVersion = clone Version::v1();
         $this->requiredMinRequestVersion = clone Version::v1();
 
 
-	    //see http://www.odata.org/documentation/odata-v2-documentation/overview/#ProtocolVersioning
-	    //if requestVersion isn't there, use Service Max Version
-	    $this->requestVersion = is_null($requestVersion) ? $serviceMaxVersion : self::parseVersionHeader($requestVersion, ODataConstants::ODATAVERSIONHEADER);
+        //see http://www.odata.org/documentation/odata-v2-documentation/overview/#ProtocolVersioning
+        //if requestVersion isn't there, use Service Max Version
+        $this->requestVersion = is_null($requestVersion) ? $serviceMaxVersion : self::parseVersionHeader($requestVersion, ODataConstants::ODATAVERSIONHEADER);
 
-	    //if max version isn't there, use the request version
-	    $this->requestMaxVersion = is_null($maxRequestVersion) ? $this->requestVersion : self::parseVersionHeader($maxRequestVersion, ODataConstants::ODATAMAXVERSIONHEADER);
+        //if max version isn't there, use the request version
+        $this->requestMaxVersion = is_null($maxRequestVersion) ? $this->requestVersion : self::parseVersionHeader($maxRequestVersion, ODataConstants::ODATAMAXVERSIONHEADER);
 
         //if it's OData v3..things change a bit
-        if($this->maxServiceVersion == Version::v3()){
-            if(is_null($maxRequestVersion))
+        if ($this->maxServiceVersion == Version::v3()) {
+            if (is_null($maxRequestVersion))
             {
                 //if max request version isn't specified we use the service max version instead of the request version
                 //thus we favour newer versions
@@ -307,6 +305,7 @@ class RequestDescription
 
     /**
      * Define request data from body
+     * @param string $dataType
      */
     private function _readData($dataType) {
         $this->_data = null;
@@ -321,12 +320,10 @@ class RequestDescription
                     }
                 }
             }
-        }
-        elseif ($dataType === MimeTypes::MIME_APPLICATION_JSON) {
+        } elseif ($dataType === MimeTypes::MIME_APPLICATION_JSON) {
             $data = json_decode($string, true);
             $this->_data = $data;
-        }
-        elseif (explode(';', $dataType)[0] === MimeTypes::MIME_MULTIPART_MIXED) {
+        } elseif (explode(';', $dataType)[0] === MimeTypes::MIME_MULTIPART_MIXED) {
             preg_match('/boundary=(.*)$/', $dataType, $matches);
             $boundary = $matches[1];
 
@@ -337,20 +334,22 @@ class RequestDescription
             // loop data blocks
             foreach ($a_blocks as $id => $block)
             {
-                if (empty($block))
-                continue;
+                if (empty($block)) {
+                                continue;
+                }
 
                 $contentType = null;
                 $requestMethod = null;
                 $requestUrl = null;
 
                 foreach (explode("\n", $block) as $line) {
-                    if (empty($line)) continue;
+                    if (empty($line)) {
+                        continue;
+                    }
                     $m = array();
                     if (preg_match('/Content-Type:\s*(.*?)\s*$/', $line, $m)) {
                         $contentType = trim($m[1]);
-                    }
-                    else if (preg_match('/^(GET|PUT|POST|PATCH|DELETE)\s+(.*?)(\s+HTTP\/\d\.\d)?\s*$/', $line, $m)) {
+                    } else if (preg_match('/^(GET|PUT|POST|PATCH|DELETE)\s+(.*?)(\s+HTTP\/\d\.\d)?\s*$/', $line, $m)) {
                         $requestMethod = trim($m[1]);
                         $requestUrl = new Url(trim($m[2]), false);
                     }
@@ -402,9 +401,9 @@ class RequestDescription
      * @throws ODataException If capability negotiation fails.
      */
     public function raiseMinVersionRequirement($major, $minor) {
-        if($this->requiredMinRequestVersion->raiseVersion($major, $minor))
+        if ($this->requiredMinRequestVersion->raiseVersion($major, $minor))
         {
-	        $this->validateVersions();
+            $this->validateVersions();
         }
     }
 
@@ -418,8 +417,8 @@ class RequestDescription
      * @throws ODataException If capability negotiation fails.
      */
     public function raiseResponseVersion($major, $minor) {
-        if($this->requiredMinResponseVersion->raiseVersion($major, $minor)){
-	        $this->validateVersions();
+        if ($this->requiredMinResponseVersion->raiseVersion($major, $minor)) {
+            $this->validateVersions();
         }
 
     }
@@ -810,7 +809,7 @@ class RequestDescription
      */
     public function setRootProjectionNode(RootProjectionNode &$rootProjectionNode)
     {
-        $this->_rootProjectionNode =  $rootProjectionNode;
+        $this->_rootProjectionNode = $rootProjectionNode;
     }
 
     /**
@@ -947,7 +946,7 @@ class RequestDescription
     public function getResponseVersion()
     {
 
-	    return $this->requiredMinResponseVersion;
+        return $this->requiredMinResponseVersion;
     }
 
     /**
@@ -975,7 +974,7 @@ class RequestDescription
     {
         if (is_null(self::$_knownDataServiceVersions)) {
             self::$_knownDataServiceVersions = array(
-	            new Version(1, 0),
+                new Version(1, 0),
                 new Version(2, 0),
                 new Version(3, 0)
             );
@@ -1004,32 +1003,32 @@ class RequestDescription
      */
     public function validateVersions() {
 
-	    //If the request version is below the minimum version required by supplied request arguments..throw an exception
+        //If the request version is below the minimum version required by supplied request arguments..throw an exception
         if ($this->requestVersion->compare($this->requiredMinRequestVersion) < 0) {
-			throw ODataException::createBadRequestError(
+            throw ODataException::createBadRequestError(
                 Messages::requestVersionTooLow(
-	                $this->requestVersion->toString(),
-	                $this->requiredMinRequestVersion->toString()
+                    $this->requestVersion->toString(),
+                    $this->requiredMinRequestVersion->toString()
                 )
             );
         }
 
-	    //If the requested max version is below the version required to fulfill the response...throw an exception
+        //If the requested max version is below the version required to fulfill the response...throw an exception
         if ($this->requestMaxVersion->compare($this->requiredMinResponseVersion) < 0) {
-			throw ODataException::createBadRequestError(
+            throw ODataException::createBadRequestError(
                 Messages::requestVersionTooLow(
-	                $this->requestMaxVersion->toString(),
-	                $this->requiredMinResponseVersion->toString()
+                    $this->requestMaxVersion->toString(),
+                    $this->requiredMinResponseVersion->toString()
                 )
             );
         }
 
         //If the max version supported by the service is below the version required to fulfill the response..throw an exception
         if ($this->maxServiceVersion->compare($this->requiredMinResponseVersion) < 0) {
-			throw ODataException::createBadRequestError(
+            throw ODataException::createBadRequestError(
                 Messages::requestVersionIsBiggerThanProtocolVersion(
-	                $this->requiredMinResponseVersion->toString(),
-	                $this->maxServiceVersion->toString()
+                    $this->requiredMinResponseVersion->toString(),
+                    $this->maxServiceVersion->toString()
                 )
             );
         }
@@ -1060,9 +1059,9 @@ class RequestDescription
         for ($i = 0; $i < $libNameIndex; $i++) {
             if ($versionHeader[$i] == '.') {
 
-	            //Throw an exception if we find more than 1 dot
-	            if ($dotIndex != -1) {
-					throw ODataException::createBadRequestError(
+                //Throw an exception if we find more than 1 dot
+                if ($dotIndex != -1) {
+                    throw ODataException::createBadRequestError(
                         Messages::requestDescriptionInvalidVersionHeader(
                             $versionHeader,
                             $headerName
@@ -1072,7 +1071,7 @@ class RequestDescription
 
                 $dotIndex = $i;
             } else if ($versionHeader[$i] < '0' || $versionHeader[$i] > '9') {
-				throw ODataException::createBadRequestError(
+                throw ODataException::createBadRequestError(
                     Messages::requestDescriptionInvalidVersionHeader(
                         $versionHeader,
                         $headerName
@@ -1082,14 +1081,14 @@ class RequestDescription
         }
 
 
-	    $major = intval(substr($versionHeader, 0, $dotIndex));
-	    $minor = 0;
+        $major = intval(substr($versionHeader, 0, $dotIndex));
+        $minor = 0;
 
-	   //Apparently the . is optional
+        //Apparently the . is optional
         if ($dotIndex != -1) {
             if ($dotIndex == 0) {
-	            //If it starts with a ., throw an exception
-				throw ODataException::createBadRequestError(
+                //If it starts with a ., throw an exception
+                throw ODataException::createBadRequestError(
                     Messages::requestDescriptionInvalidVersionHeader(
                         $versionHeader,
                         $headerName
@@ -1102,8 +1101,8 @@ class RequestDescription
 
         $version = new Version($major, $minor);
 
-	    //TODO: move this somewhere...
-	    /*
+        //TODO: move this somewhere...
+        /*
         $isSupportedVersion = false;
         foreach (self::getKnownDataServiceVersions() as $version1) {
             if ($version->compare($version1) == 0) {
