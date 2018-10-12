@@ -553,7 +553,7 @@ class ObjectModelSerializerBase
             }
         }
 
-        return $resultSetCount == $pageSize;
+        return $resultSetCount > 0 && $resultSetCount == $pageSize;
     }
 
     /**

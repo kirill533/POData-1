@@ -389,7 +389,7 @@ class UriProcessor
 
             if ($segment->getTargetSource() == TargetSource::ENTITY_SET) {
                 $this->handleSegmentTargetsToResourceSet($segment);
-            } else if ($requestTargetKind == TargetKind::RESOURCE) {
+            } else if ($requestTargetKind == TargetKind::RESOURCE()) {
                 if (is_null($segment->getPrevious()->getResult())) {
                     throw ODataException::createResourceNotFoundError(
                         $segment->getPrevious()->getIdentifier()

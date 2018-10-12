@@ -661,7 +661,7 @@ class ExpressionParser
         // be converted to language specific function call by expression
         // provider
         $string = new StringType();
-        if ($left->typeIs($string) && $right->typeIs($string)) {
+        if ($left->typeIs($string) && $right->typeIs($string) && !in_array($expressionToken->Text, [ODataConstants::KEYWORD_EQUAL, ODataConstants::KEYWORD_NOT_EQUAL])) {
             $strcmpFunctions = FunctionDescription::stringComparisonFunctions();
             $left = new FunctionCallExpression($strcmpFunctions[0], array($left, $right));
             $right = new ConstantExpression(0, new Int32());
