@@ -583,7 +583,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
         $fakeQueryResult->results = array();
 
         Phockito::when($this->mockQueryProvider->getResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
 	        $this->mockFilterInfo,
             $orderBy,
@@ -594,7 +594,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
         $wrapper = $this->getMockedWrapper();
 
         $actual = $wrapper->getResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -614,7 +614,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
 
 
         Phockito::when($this->mockQueryProvider->getResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -626,7 +626,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
 
         try{
             $wrapper->getResourceSet(
-                QueryType::ENTITIES(),
+                QueryType::ENTITIES,
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -828,7 +828,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
         $fakeQueryResult->results = null; //null is not an array
 
         Phockito::when($this->mockQueryProvider->getResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
 	        $this->mockFilterInfo,
             $orderBy,
@@ -840,7 +840,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
 
         try{
             $wrapper->getResourceSet(
-                QueryType::ENTITIES(),
+                QueryType::ENTITIES,
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -850,7 +850,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
             $this->fail("expected exception not thrown");
         }
         catch(ODataException $ex){
-            $this->assertEquals(Messages::queryProviderResultsMissing("IQueryProvider::getResourceSet", QueryType::ENTITIES()), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing("IQueryProvider::getResourceSet", QueryType::ENTITIES), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
 
@@ -910,7 +910,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
         $fakeSourceEntity = new \stdClass();
 
         Phockito::when($this->mockQueryProvider->getRelatedResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
             $fakeSourceEntity,
             $this->mockResourceSet2,
@@ -924,7 +924,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
         $wrapper = $this->getMockedWrapper();
 
         $actual = $wrapper->getRelatedResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
             $fakeSourceEntity,
             $this->mockResourceSet2,
@@ -948,7 +948,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
         $fakeSourceEntity = new \stdClass();
 
         Phockito::when($this->mockQueryProvider->getRelatedResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
             $fakeSourceEntity,
             $this->mockResourceSet2,
@@ -963,7 +963,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
 
         try{
             $wrapper->getRelatedResourceSet(
-                QueryType::ENTITIES(),
+                QueryType::ENTITIES,
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -1202,7 +1202,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
         $fakeSourceEntity = new \stdClass();
 
         Phockito::when($this->mockQueryProvider->getRelatedResourceSet(
-            QueryType::ENTITIES(),
+            QueryType::ENTITIES,
             $this->mockResourceSet,
             $fakeSourceEntity,
             $this->mockResourceSet2,
@@ -1217,7 +1217,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
 
         try{
             $wrapper->getRelatedResourceSet(
-                QueryType::ENTITIES(),
+                QueryType::ENTITIES,
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -1230,7 +1230,7 @@ class ProvidersWrapperTest extends BaseUnitTestCase
             $this->fail("expected exception not thrown");
         }
         catch(ODataException $ex){
-            $this->assertEquals(Messages::queryProviderResultsMissing("IQueryProvider::getRelatedResourceSet", QueryType::ENTITIES()), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing("IQueryProvider::getRelatedResourceSet", QueryType::ENTITIES), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
 

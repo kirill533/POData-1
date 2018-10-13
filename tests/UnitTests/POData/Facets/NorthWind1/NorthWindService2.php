@@ -29,7 +29,7 @@ class NorthWindService2 extends BaseServiceTestWrapper
         $config->setEntitySetAccessRule('*', EntitySetRights::ALL);
         $config->setAcceptCountRequests(true);
         $config->setAcceptProjectionRequests(true);
-        $config->setMaxDataServiceVersion(ProtocolVersion::V2());
+        $config->setMaxDataServiceVersion(ProtocolVersion::V2);
     }
 
 	/**

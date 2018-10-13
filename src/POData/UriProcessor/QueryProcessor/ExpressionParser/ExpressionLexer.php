@@ -117,7 +117,7 @@ class ExpressionLexer
     /**
      * To get the text being parsed
      * 
-     * @return char[]
+     * @return string
      */
     public function getExpressionText()
     {

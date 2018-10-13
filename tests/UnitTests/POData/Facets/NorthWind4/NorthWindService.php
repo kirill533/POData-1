@@ -35,7 +35,7 @@ class NorthWindService extends BaseService
         $config->setEntitySetAccessRule('*', EntitySetRights::ALL);
         $config->setAcceptCountRequests(true);
         $config->setAcceptProjectionRequests(true);
-        $config->setMaxDataServiceVersion(ProtocolVersion::V3());
+        $config->setMaxDataServiceVersion(ProtocolVersion::V3);
     }
 
 	/**
@@ -76,7 +76,7 @@ class NorthWindService extends BaseService
         $this->createProviders();
         $this->getHost()->validateQueryParameters();
         $requestMethod = $this->getOperationContext()->incomingRequest()->getMethod();
-        if ($requestMethod != HTTPRequestMethod::GET()) {
+        if ($requestMethod != HTTPRequestMethod::GET) {
             throw ODataException::createNotImplementedError(Messages::onlyReadSupport($requestMethod));
         }
 

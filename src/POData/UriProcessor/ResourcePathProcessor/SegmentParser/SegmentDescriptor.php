@@ -106,7 +106,7 @@ class SegmentDescriptor
     public function __construct()
     {
         $this->_singleResult = false;
-        $this->_targetKind = TargetKind::NOTHING();
+        $this->_targetKind = TargetKind::NOTHING;
         $this->_targetSource = TargetSource::NONE;
     }
 

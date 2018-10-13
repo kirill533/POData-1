@@ -109,7 +109,7 @@ class ServiceConfiguration
         $this->_acceptCountRequest = false;
         $this->_acceptProjectionRequest = false;
 
-        $this->maxVersion = ProtocolVersion::V3(); //We default to the highest version
+        $this->maxVersion = ProtocolVersion::V3; //We default to the highest version
 
         $this->_validateETagHeader = true;
     }
@@ -382,13 +382,13 @@ class ServiceConfiguration
     public function getMaxDataServiceVersion()
     {
         switch ($this->maxVersion) {
-            case ProtocolVersion::V1():
+            case ProtocolVersion::V1:
                 return new Version(1, 0);
 
-            case ProtocolVersion::V2():
+            case ProtocolVersion::V2:
                 return new Version(2, 0);
 
-            case ProtocolVersion::V3():
+            case ProtocolVersion::V3:
             default:
                 return new Version(3, 0);
         }

@@ -145,7 +145,7 @@ class UriProcessor
         } elseif ($requestMethod == HTTPRequestMethod::PUT) {
             $this->executePut();
         } elseif ($requestMethod == HTTPRequestMethod::POST) {
-            if ($this->request->getLastSegment()->getTargetKind() == TargetKind::BATCH()) {
+            if ($this->request->getLastSegment()->getTargetKind() == TargetKind::BATCH) {
                 $this->executeBatch();
             } else {
                 $this->executePost();
@@ -282,14 +282,14 @@ class UriProcessor
 
                 if ($segment->getTargetSource() == TargetSource::ENTITY_SET) {
                     $this->handleSegmentTargetsToResourceSet($segment);
-                } else if ($requestTargetKind == TargetKind::RESOURCE()) {
+                } else if ($requestTargetKind == TargetKind::RESOURCE) {
                     if (is_null($segment->getPrevious()->getResult())) {
                         throw ODataException::createResourceNotFoundError(
                             $segment->getPrevious()->getIdentifier()
                         );
                     }
                     $this->_handleSegmentTargetsToRelatedResource($segment);
-                } else if ($requestTargetKind == TargetKind::LINK()) {
+                } else if ($requestTargetKind == TargetKind::LINK) {
                     $segment->setResult($segment->getPrevious()->getResult());
                 } else if ($segment->getIdentifier() == ODataConstants::URI_COUNT_SEGMENT) {
                     // we are done, $count will the last segment and
@@ -297,7 +297,7 @@ class UriProcessor
                     $segment->setResult($this->request->getCountValue());
                     break;
                 } else {
-                    if ($requestTargetKind == TargetKind::MEDIA_RESOURCE()) {
+                    if ($requestTargetKind == TargetKind::MEDIA_RESOURCE) {
                         if (is_null($segment->getPrevious()->getResult())) {
                             throw ODataException::createResourceNotFoundError(
                                 $segment->getPrevious()->getIdentifier()
@@ -389,14 +389,14 @@ class UriProcessor
 
             if ($segment->getTargetSource() == TargetSource::ENTITY_SET) {
                 $this->handleSegmentTargetsToResourceSet($segment);
-            } else if ($requestTargetKind == TargetKind::RESOURCE()) {
+            } else if ($requestTargetKind == TargetKind::RESOURCE) {
                 if (is_null($segment->getPrevious()->getResult())) {
                     throw ODataException::createResourceNotFoundError(
                         $segment->getPrevious()->getIdentifier()
                     );
                 }
                 $this->_handleSegmentTargetsToRelatedResource($segment);
-            } else if ($requestTargetKind == TargetKind::LINK()) {
+            } else if ($requestTargetKind == TargetKind::LINK) {
                 $segment->setResult($segment->getPrevious()->getResult());
             } else if ($segment->getIdentifier() == ODataConstants::URI_COUNT_SEGMENT) {
                 // we are done, $count will the last segment and
@@ -404,7 +404,7 @@ class UriProcessor
                 $segment->setResult($this->request->getCountValue());
                 break;
             } else {
-                if ($requestTargetKind == TargetKind::MEDIA_RESOURCE()) {
+                if ($requestTargetKind == TargetKind::MEDIA_RESOURCE) {
                     if (is_null($segment->getPrevious()->getResult())) {
                         throw ODataException::createResourceNotFoundError(
                             $segment->getPrevious()->getIdentifier()
@@ -676,7 +676,7 @@ class UriProcessor
                         $resourceSetOfProjectedProperty = $expandedProjectionNode->getResourceSetWrapper()->getResourceSet();
                         $projectedProperty1 = $expandedProjectionNode->getResourceProperty();
                         $result1 = $this->providers->getRelatedResourceSet(
-                            QueryType::ENTITIES(), //it's always entities for an expansion
+                            QueryType::ENTITIES, //it's always entities for an expansion
                             $currentResourceSet,
                             $entry,
                             $resourceSetOfProjectedProperty,
@@ -735,7 +735,7 @@ class UriProcessor
                     $resourceSetOfProjectedProperty2 = $expandedProjectionNode->getResourceSetWrapper()->getResourceSet();
                     $projectedProperty4 = $expandedProjectionNode->getResourceProperty();
                     $result1 = $this->providers->getRelatedResourceSet(
-                        QueryType::ENTITIES(), //it's always entities for an expansion
+                        QueryType::ENTITIES, //it's always entities for an expansion
                         $currentResourceSet2,
                         $result,
                         $resourceSetOfProjectedProperty2,

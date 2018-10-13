@@ -246,7 +246,7 @@ class RequestDescription
         $this->_segmentCount = count($this->segments);
         $this->requestUrl = $requestUri;
         $this->lastSegment = $segmentDescriptors[$this->_segmentCount - 1];
-        $this->queryType = QueryType::ENTITIES();
+        $this->queryType = QueryType::ENTITIES;
         $this->_service = $service;
         $this->_parts = array();
 
@@ -866,8 +866,8 @@ class RequestDescription
     public function needExecution()
     {
         return !$this->_isExecuted
-            && ($this->lastSegment->getTargetKind() != TargetKind::METADATA())
-            && ($this->lastSegment->getTargetKind() != TargetKind::SERVICE_DIRECTORY());
+            && ($this->lastSegment->getTargetKind() != TargetKind::METADATA)
+            && ($this->lastSegment->getTargetKind() != TargetKind::SERVICE_DIRECTORY);
     }
 
     /**
@@ -877,7 +877,7 @@ class RequestDescription
      */
     public function isLinkUri()
     {
-        return (($this->_segmentCount > 2) && ($this->segments[$this->_segmentCount - 2]->getTargetKind() == TargetKind::LINK()));
+        return (($this->_segmentCount > 2) && ($this->segments[$this->_segmentCount - 2]->getTargetKind() == TargetKind::LINK));
     }
 
     /**
@@ -887,7 +887,7 @@ class RequestDescription
      */
     public function isMediaResource()
     {
-        return ($this->lastSegment->getTargetKind() == TargetKind::MEDIA_RESOURCE());
+        return ($this->lastSegment->getTargetKind() == TargetKind::MEDIA_RESOURCE);
     }
 
     /**

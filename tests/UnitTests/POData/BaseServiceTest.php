@@ -51,7 +51,7 @@ class BaseServiceTest extends BaseUnitTestCase {
 		//will change this once that request pipeline is cleaned up
 		Phockito::when($service->getODataWriterRegistry())->return($this->mockRegistry);
 		$fakeConfig = new ServiceConfiguration($this->mockMetaProvider);
-		$fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V1());
+		$fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V1);
 		Phockito::when($service->getConfiguration())->return($fakeConfig);
 
 		//fake the service url
@@ -81,7 +81,7 @@ class BaseServiceTest extends BaseUnitTestCase {
 		//will change this once that request pipeline is cleaned up
 		Phockito::when($service->getODataWriterRegistry())->return($this->mockRegistry);
 		$fakeConfig = new ServiceConfiguration($this->mockMetaProvider);
-		$fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
+		$fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
 		Phockito::when($service->getConfiguration())->return($fakeConfig);
 
 		//fake the service url
@@ -112,7 +112,7 @@ class BaseServiceTest extends BaseUnitTestCase {
 		//will change this once that request pipeline is cleaned up
 		Phockito::when($service->getODataWriterRegistry())->return($this->mockRegistry);
 		$fakeConfig = new ServiceConfiguration($this->mockMetaProvider);
-		$fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V3());
+		$fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V3);
 		Phockito::when($service->getConfiguration())->return($fakeConfig);
 
 		//fake the service url

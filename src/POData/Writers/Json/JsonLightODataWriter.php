@@ -153,7 +153,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
      */
     protected function writeTopLevelMeta($fragment)
     {
-        if ($this->metadataLevel == JsonLightMetadataLevel::NONE())
+        if ($this->metadataLevel == JsonLightMetadataLevel::NONE)
         {
             return;
         }
@@ -167,7 +167,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
 
     protected function writePropertyMeta(ODataProperty $property)
     {
-        if ($this->metadataLevel != JsonLightMetadataLevel::FULL())
+        if ($this->metadataLevel != JsonLightMetadataLevel::FULL)
         {
             //Only full meta level outputs this info
             return $this;
@@ -204,7 +204,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
      */
     protected function writeEntryMetadata(ODataEntry $entry) {
 
-        if ($this->metadataLevel != JsonLightMetadataLevel::FULL())
+        if ($this->metadataLevel != JsonLightMetadataLevel::FULL)
         {
             //Only full meta level outputs this info
             return $this;
@@ -232,7 +232,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
      */
     protected function writeLink(ODataLink $link) {
 
-        if ($this->metadataLevel == JsonLightMetadataLevel::FULL())
+        if ($this->metadataLevel == JsonLightMetadataLevel::FULL)
         {
             //Interestingly the fullmetadata outputs this metadata..even if the thing is expanded
             $this->_writer
@@ -316,7 +316,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
 
     protected function writeComplexPropertyMeta(ODataProperty $property)
     {
-        if ($this->metadataLevel == JsonLightMetadataLevel::FULL()) {
+        if ($this->metadataLevel == JsonLightMetadataLevel::FULL) {
             $this->_writer
                 ->writeName(ODataConstants::JSON_LIGHT_METADATA_TYPE_STRING)
                 ->writeValue($property->typeName);

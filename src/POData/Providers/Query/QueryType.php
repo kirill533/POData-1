@@ -2,15 +2,15 @@
 
 namespace POData\Providers\Query;
 
-use MyCLabs\Enum\Enum;
+use SplEnum;
 
 
 /**
- * @method static \POData\Providers\Query\QueryType ENTITIES()
+ * @method static \POData\Providers\Query\QueryType ENTITIES
  * @method static \POData\Providers\Query\QueryType COUNT()
  * @method static \POData\Providers\Query\QueryType ENTITIES_WITH_COUNT()
  */
-class QueryType extends Enum {
+class QueryType extends SplEnum {
 
     const ENTITIES = "ENTITIES";
     const COUNT = "COUNT";

@@ -33,7 +33,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 		$oDataUrl = new ODataURL();
 		$oDataUrl->url = 'http://services.odata.org/OData/OData.svc/Suppliers(0)';
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($oDataUrl);
 		$this->assertSame($writer, $result);
 		
@@ -63,7 +63,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 		                                      );
 
 		$oDataUrlCollection->count = null; //simulate no $inlinecount
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($oDataUrlCollection);
 		$this->assertSame($writer, $result);
 
@@ -91,7 +91,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 
 		$oDataUrlCollection->count = 44; //simulate an $inlinecount
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($oDataUrlCollection);
 		$this->assertSame($writer, $result);
 
@@ -217,7 +217,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 		$oDataFeed->rowCount = null;
 
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($oDataFeed);
 		$this->assertSame($writer, $result);
 
@@ -242,7 +242,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 		//Now we'll simulate an $inlinecount=allpages by specifying a count
 		$oDataFeed->rowCount = 33;
 
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($oDataFeed);
 		$this->assertSame($writer, $result);
 
@@ -466,7 +466,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 		$oDataFeed->rowCount = null; //simulate no inline count
 
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($oDataFeed);
 		$this->assertSame($writer, $result);
 
@@ -508,7 +508,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 		$oDataFeed->rowCount = 55; //simulate  $inlinecount=allpages
 
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($oDataFeed);
 		$this->assertSame($writer, $result);
 
@@ -588,7 +588,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 		
     	$entry->links = array($link);
     	
-    	$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+    	$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($entry);
 		$this->assertSame($writer, $result);
 
@@ -657,7 +657,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 		
 		$propContent->properties = array($prop1);
 		
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($propContent);
 		$this->assertSame($writer, $result);
 
@@ -782,7 +782,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 		
 		$entry->propertyContent = $entryPropContent;
 		
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($entry);
 		$this->assertSame($writer, $result);
 
@@ -824,7 +824,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
     	$content = new ODataPropertyContent();
     	$content->properties = array($property);
 
-    	$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+    	$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
     	$result = $writer->write($content);
 	    $this->assertSame($writer, $result);
 
@@ -965,7 +965,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 
 
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($entry);
 		$this->assertSame($writer, $result);
 
@@ -1047,7 +1047,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 
 
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($entry);
 		$this->assertSame($writer, $result);
 
@@ -1271,7 +1271,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 
 
 
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 		$result = $writer->write($entry);
 		$this->assertSame($writer, $result);
 
@@ -1316,7 +1316,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
         Phockito::when($this->mockProvider->getResourceSets())
             ->return(array());
 
-        $writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+        $writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
         $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n\n        ]\n    }\n}";
@@ -1344,7 +1344,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
             ->return($fakeResourceSets);
 
 
-        $writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+        $writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
         $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n            \"Name 1\",\"XML escaped stuff \\\" ' <> & ?\"\n        ]\n    }\n}";
@@ -1358,7 +1358,7 @@ class JsonLightODataWriterNoMetadataTest extends BaseUnitTestCase
 	 * @dataProvider canHandleProvider
 	 */
 	public function testCanHandle($id, $version, $contentType, $expected){
-		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
+		$writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $this->serviceBase);
 
 		$actual = $writer->canHandle($version, $contentType);
 
