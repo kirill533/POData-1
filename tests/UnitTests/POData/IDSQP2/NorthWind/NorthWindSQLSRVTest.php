@@ -21,33 +21,33 @@ class NorthWindSQLSRVTest extends TestCase
 	function testStringCompareSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=CustomerID gt \'ALFKI\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=CustomerID gt \'ALFKI\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((CustomerID >  'ALFKI'))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("((CustomerID >  'ALFKI'))", $sqlexpression);
 
 	}
 
@@ -57,33 +57,33 @@ class NorthWindSQLSRVTest extends TestCase
 	function testFunctionCallSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=replace(CustomerID, \'LFK\', \'RTT\') eq \'ARTTI\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=replace(CustomerID, \'LFK\', \'RTT\') eq \'ARTTI\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $check = !is_null($uriProcessor);
-        $this->assertTrue($check);
+		$uriProcessor = $dataService->handleRequest();
+		$check = !is_null($uriProcessor);
+		$this->assertTrue($check);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((REPLACE(CustomerID, 'LFK', 'RTT') =  'ARTTI'))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(REPLACE(CustomerID, 'LFK', 'RTT') = 'ARTTI')", $sqlexpression);
 
 	}
 
@@ -93,33 +93,33 @@ class NorthWindSQLSRVTest extends TestCase
 	function testNullabilityCheckSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=CustomerID eq null',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=CustomerID eq null',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(CustomerID = NULL)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(CustomerID = NULL)", $sqlexpression);
 
 	}
 	
@@ -129,32 +129,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testNegationSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Orders';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=-OrderID eq -10248',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Orders';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=-OrderID eq -10248',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(-(OrderID) = -10248)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(-(OrderID) = -10248)", $sqlexpression);
 
 	}
 	
@@ -164,32 +164,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testDateTimeComparisionSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Orders';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=OrderDate eq datetime\'1996-07-04\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Orders';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=OrderDate eq datetime\'1996-07-04\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((OrderDate =  '1996-07-04'))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("((OrderDate =  '1996-07-04'))", $sqlexpression);
 
 	}
 
@@ -199,32 +199,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testYearFunctionCallSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Orders';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=year(OrderDate) eq  year(datetime\'1996-07-09\')',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Orders';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=year(OrderDate) eq  year(datetime\'1996-07-09\')',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(YEAR(OrderDate) = YEAR('1996-07-09'))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(YEAR(OrderDate) = YEAR('1996-07-09'))", $sqlexpression);
 
 	}
 
@@ -234,32 +234,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testYearFunctionCallWithAriRelSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Orders';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=year(OrderDate) add 2 eq 1998',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Orders';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=year(OrderDate) add 2 eq 1998',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((YEAR(OrderDate) + 2) = 1998)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("((YEAR(OrderDate) + 2) = 1998)", $sqlexpression);
 
 	}
 	
@@ -269,32 +269,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testCeilFloorFunctionCallSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Orders';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=ceiling(floor(Freight)) eq 32',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Orders';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=ceiling(floor(Freight)) eq 32',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(CEILING(FLOOR(Freight)) = 32)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(CEILING(FLOOR(Freight)) = 32)", $sqlexpression);
 
 	}
 	
@@ -304,32 +304,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testRoundFunctionCallSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Orders';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=round(Freight) eq 34',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Orders';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=round(Freight) eq 34',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(ROUND(Freight, 0) = 34)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(ROUND(Freight, 0) = 34)", $sqlexpression);
 
 	}
 
@@ -339,32 +339,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testModOperatorSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Orders';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=Freight mod 10 eq 2.38',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Orders';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=Freight mod 10 eq 2.38',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((Freight % 10) = 2.38)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("((Freight % 10) = 2.38)", $sqlexpression);
 
 	}
 	
@@ -374,32 +374,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testSubString2ParamSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=substring(CompanyName, 1) eq \'lfreds Futterkiste\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=substring(CompanyName, 1) eq \'lfreds Futterkiste\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((SUBSTRING(CompanyName, 1 + 1, LEN(CompanyName)) =  'lfreds Futterkiste'))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(SUBSTRING(CompanyName, 1 + 1, LEN(CompanyName)) = 'lfreds Futterkiste')", $sqlexpression);
 
 	}
 	
@@ -408,32 +408,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testSubString3ParamSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=substring(CompanyName, 1, 6) eq \'lfreds\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=substring(CompanyName, 1, 6) eq \'lfreds\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((SUBSTRING(CompanyName, 1 + 1, 6) =  'lfreds'))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(SUBSTRING(CompanyName, 1 + 1, 6) = 'lfreds')", $sqlexpression);
 	}
 	
 	/**
@@ -442,32 +442,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testSubStringTrimSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=trim(\'  ALFKI  \') eq CustomerID',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=trim(\'  ALFKI  \') eq CustomerID',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((RTRIM(LTRIM('  ALFKI  ')) =  CustomerID))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(RTRIM(LTRIM('  ALFKI  ')) = CustomerID)", $sqlexpression);
 
 	}
 	
@@ -476,32 +476,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testEndsWithSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=endswith(CustomerID, \'KI\')',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=endswith(CustomerID, \'KI\')',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(('KI') = RIGHT((CustomerID), LEN('KI')))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(('KI') = RIGHT((CustomerID), LEN('KI')))", $sqlexpression);
 	}
 	
 	/**
@@ -509,32 +509,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testStartsWithSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=startswith(CustomerID, \'AL\')',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=startswith(CustomerID, \'AL\')',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(('AL') = LEFT((CustomerID), LEN('AL')))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(('AL') = LEFT((CustomerID), LEN('AL')))", $sqlexpression);
 	}
 
 	/**
@@ -542,32 +542,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testIndexOfSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=indexof(CustomerID, \'FKI\') eq 2',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=indexof(CustomerID, \'FKI\') eq 2',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((CHARINDEX('FKI', CustomerID) - 1) = 2)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("((CHARINDEX('FKI', CustomerID) - 1) = 2)", $sqlexpression);
 
 	}
 
@@ -576,32 +576,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testReplaceSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=replace(CompanyName, \' \', \'\') eq \'AlfredsFutterkiste\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=replace(CompanyName, \' \', \'\') eq \'AlfredsFutterkiste\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((REPLACE(CompanyName, ' ', '') =  'AlfredsFutterkiste'))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(REPLACE(CompanyName, ' ', '') = 'AlfredsFutterkiste')", $sqlexpression);
 
 	}
 	
@@ -610,32 +610,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testSubStringOfSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=substringof(\'Alfreds\', CompanyName)',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=substringof(\'Alfreds\', CompanyName)',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(CHARINDEX('Alfreds', CompanyName) != 0)", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(CHARINDEX('Alfreds', CompanyName) != 0)", $sqlexpression);
 	}
 
 	/**
@@ -643,32 +643,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testSubStringOfIndexOfSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=substringof(\'Alfreds\', CompanyName) and indexof(CustomerID, \'FKI\') eq 2',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=substringof(\'Alfreds\', CompanyName) and indexof(CustomerID, \'FKI\') eq 2',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((CHARINDEX('Alfreds', CompanyName) != 0) AND ((CHARINDEX('FKI', CustomerID) - 1) = 2))", $sqlexpression);
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("((CHARINDEX('Alfreds', CompanyName) != 0) AND ((CHARINDEX('FKI', CustomerID) - 1) = 2))", $sqlexpression);
 	}
 
 	
@@ -677,34 +677,32 @@ class NorthWindSQLSRVTest extends TestCase
 	 */
 	function testSubConcatSQLServer()
 	{
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=concat(concat(CustomerID, \', \'), ContactName) eq \'ALFKI, Maria Anders\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=concat(concat(CustomerID, \', \'), ContactName) eq \'ALFKI, Maria Anders\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((CustomerID + ', ' + ContactName =  'ALFKI, Maria Anders'))", $sqlexpression);
-
-
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(CustomerID + ', ' + ContactName = 'ALFKI, Maria Anders')", $sqlexpression);
 	}
 	
 	/**
@@ -713,35 +711,32 @@ class NorthWindSQLSRVTest extends TestCase
 	function testLevel2PropertyAccessSQLServer()
 	{
 
-        $serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
-        $resourcePath = 'Customers';
-        $requestUri = $serviceUri . $resourcePath;
-        $hostInfo = array(
-            'AbsoluteServiceUri' => new Url($serviceUri),
-            'AbsoluteRequestUri' => new Url($requestUri),
-            'QueryString' => '$filter=Address/Country eq \'USA\'',
-            'DataServiceVersion' => new Version(3, 0),
-            'MaxDataServiceVersion' => new Version(3, 0),
-        );
+		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
+		$resourcePath = 'Customers';
+		$requestUri = $serviceUri . $resourcePath;
+		$hostInfo = array(
+			'AbsoluteServiceUri' => new Url($serviceUri),
+			'AbsoluteRequestUri' => new Url($requestUri),
+			'QueryString' => '$filter=Address/Country eq \'USA\'',
+			'DataServiceVersion' => new Version(3, 0),
+			'MaxDataServiceVersion' => new Version(3, 0),
+		);
 
-        $host = new ServiceHostTestFake($hostInfo);
-        $dataService = new NorthWindService();
-        $dataService->setHost($host);
+		$host = new ServiceHostTestFake($hostInfo);
+		$dataService = new NorthWindService();
+		$dataService->setHost($host);
 
-        $uriProcessor = $dataService->handleRequest();
-        $this->assertNotNull($uriProcessor);
+		$uriProcessor = $dataService->handleRequest();
+		$this->assertNotNull($uriProcessor);
 
-        $requestDescription = $uriProcessor->getRequest();
-        $this->assertNotNull($requestDescription);
+		$requestDescription = $uriProcessor->getRequest();
+		$this->assertNotNull($requestDescription);
 
-        $filterInfo = $requestDescription->getFilterInfo();
-        $this->assertNotNull($filterInfo);
+		$filterInfo = $requestDescription->getFilterInfo();
+		$this->assertNotNull($filterInfo);
 
-        $sqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("((Country =  'USA'))", $sqlexpression);
-
+		$sqlexpression = $filterInfo->getExpressionAsString();
+		$this->AssertEquals("(Country = 'USA')", $sqlexpression);
 	}
-	
-
 }
 

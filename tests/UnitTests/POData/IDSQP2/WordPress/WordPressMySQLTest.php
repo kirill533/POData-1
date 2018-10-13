@@ -45,7 +45,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
         
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(STRCMP(post_title, 'OData PHP Producer') = 0)", $mysqlexpression);
+        $this->AssertEquals("(post_title = 'OData PHP Producer')", $mysqlexpression);
 
 	}
 
@@ -80,8 +80,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(STRCMP(REPLACE(post_title,'PHP','Java'), 'OData Java Producer') = 0)", $mysqlexpression);
-
+        $this->AssertEquals("(REPLACE(post_title,'PHP','Java') = 'OData Java Producer')", $mysqlexpression);
 	}
 
 	/**
@@ -391,7 +390,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(STRCMP(SUBSTRING(post_title, 1 + 1), 'Data PHP Producer') = 0)", $mysqlexpression);
+        $this->AssertEquals("(SUBSTRING(post_title, 1 + 1) = 'Data PHP Producer')", $mysqlexpression);
 
 	}
 	
@@ -426,7 +425,7 @@ class WordPressMySQLTest extends TestCase
             $this->assertNotNull($filterInfo);
 
 			$mysqlexpression = $filterInfo->getExpressionAsString();
-			$this->AssertEquals("(STRCMP(SUBSTRING(post_title, 1 + 1, 6), 'Data P') = 0)", $mysqlexpression);
+			$this->AssertEquals("(SUBSTRING(post_title, 1 + 1, 6) = 'Data P')", $mysqlexpression);
 
 	}
 	
@@ -461,8 +460,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(STRCMP(TRIM('  OData PHP Producer   '), post_title) = 0)", $mysqlexpression);
-
+        $this->AssertEquals("(TRIM('  OData PHP Producer   ') = post_title)", $mysqlexpression);
 	}
 	
 	/**
