@@ -609,30 +609,30 @@ class ProvidersWrapper
      * @param QueryResult $queryResult
      * @param string $methodName
      */
-    private function ValidateQueryResult($queryResult, QueryType $queryType, $methodName){
+    private function ValidateQueryResult($queryResult, QueryType $queryType, $methodName) {
         if (!$queryResult instanceof QueryResult) {
             throw ODataException::createInternalServerError(
                 Messages::queryProviderReturnsNonQueryResult($methodName)
             );
         }
 
-        if($queryType == QueryType::COUNT() || $queryType == QueryType::ENTITIES_WITH_COUNT()){
+        if ($queryType == QueryType::COUNT() || $queryType == QueryType::ENTITIES_WITH_COUNT()) {
             //and the provider is supposed to handle the ordered paging they must return a count!
-            if($this->queryProvider->handlesOrderedPaging() && !is_numeric($queryResult->count)){
+            if ($this->queryProvider->handlesOrderedPaging() && !is_numeric($queryResult->count)) {
                 throw ODataException::createInternalServerError(
                     Messages::queryProviderResultCountMissing($methodName, $queryType)
                 );
             }
 
             //If POData is supposed to handle the ordered aging they must return results! (possibly empty)
-            if(!$this->queryProvider->handlesOrderedPaging() && !is_array($queryResult->results)){
+            if (!$this->queryProvider->handlesOrderedPaging() && !is_array($queryResult->results)) {
                 throw ODataException::createInternalServerError(
                     Messages::queryProviderResultsMissing($methodName, $queryType)
                 );
             }
         }
 
-        if(($queryType == QueryType::ENTITIES() || $queryType == QueryType::ENTITIES_WITH_COUNT()) && !is_array($queryResult->results)){
+        if (($queryType == QueryType::ENTITIES() || $queryType == QueryType::ENTITIES_WITH_COUNT()) && !is_array($queryResult->results)) {
             throw ODataException::createInternalServerError(
                 Messages::queryProviderResultsMissing($methodName, $queryType)
             );

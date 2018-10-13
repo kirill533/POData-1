@@ -188,7 +188,7 @@ class WordPressQueryProvider implements IQueryProvider
                 $query = "SELECT * FROM `wp_posts` WHERE"
                         ." wp_posts.post_type = 'post'"
                         ." AND wp_posts.post_status = 'publish'"
-                        ." AND wp_posts.ID = ".$namedKeyValues['PostID'][0];
+                        ." AND wp_posts.ID = " . $namedKeyValues['PostID'][0];
                 $stmt = mysql_query($query);
               
                 //If resource not found return null to the library
@@ -204,7 +204,7 @@ class WordPressQueryProvider implements IQueryProvider
                         ." FROM `wp_terms` AS t INNER JOIN `wp_term_taxonomy` as tt"
                         ." ON tt.term_id = t.term_id"
                         ." WHERE tt.taxonomy = 'post_tag'"
-                        ." AND t.term_id = ".$namedKeyValues['TagID'][0];
+                        ." AND t.term_id = " . $namedKeyValues['TagID'][0];
                 $stmt = mysql_query($query);
               
                 //If resource not found return null to the library
@@ -220,7 +220,7 @@ class WordPressQueryProvider implements IQueryProvider
                         ." FROM `wp_terms` AS t INNER JOIN `wp_term_taxonomy` as tt"
                         ." ON tt.term_id = t.term_id"
                         ." WHERE tt.taxonomy = 'category'"
-                        ." AND t.term_id = ".$namedKeyValues['CategoryID'][0];
+                        ." AND t.term_id = " . $namedKeyValues['CategoryID'][0];
                 $stmt = mysql_query($query);
               
                 //If resource not found return null to the library
@@ -234,7 +234,7 @@ class WordPressQueryProvider implements IQueryProvider
             case 'Comments':
                 $query = "SELECT * FROM `wp_comments`"
                         ." WHERE comment_approved = 1" 
-                        ." AND comment_ID = ".$namedKeyValues['CommentID'][0];
+                        ." AND comment_ID = " . $namedKeyValues['CommentID'][0];
                 $stmt = mysql_query($query);
               
                 //If resource not found return null to the library
@@ -323,7 +323,7 @@ class WordPressQueryProvider implements IQueryProvider
                         $query .= " AND $filter";
                     }
                     $stmt = mysql_query($query);
-                    if ( $stmt === false) {            
+                    if ($stmt === false) {            
                             die(mysql_error());
                     }
                         
@@ -481,7 +481,7 @@ class WordPressQueryProvider implements IQueryProvider
                             ." ON tr.term_taxonomy_id = tt.term_taxonomy_id"
                             ." WHERE tt.taxonomy IN ('post_tag')"
                             ." AND tr.object_id IN ($sourceEntityInstance->PostID)"
-                            ." AND tt.term_id = ".$namedKeyValues['TagID'][0];
+                            ." AND tt.term_id = " . $namedKeyValues['TagID'][0];
                     $stmt = mysql_query($query);
                     $result = $this->_serializeTags($stmt);
                 } elseif ($navigationPropName == 'Categories') {
@@ -493,14 +493,14 @@ class WordPressQueryProvider implements IQueryProvider
                             ." ON tr.term_taxonomy_id = tt.term_taxonomy_id"
                             ." WHERE tt.taxonomy IN ('category')"
                             ." AND tr.object_id IN ($sourceEntityInstance->PostID)"
-                            ." AND tt.term_id = ".$namedKeyValues['CategoryID'][0];
+                            ." AND tt.term_id = " . $namedKeyValues['CategoryID'][0];
                     $stmt = mysql_query($query);
                     $result = $this->_serializeCategories($stmt);
                 } else if ($navigationPropName == 'Comments') {
                     $query = "SELECT * FROM `wp_comments`"
                             ." WHERE comment_approved = 1" 
                             ." AND comment_post_ID = $sourceEntityInstance->PostID"
-                            ." AND comment_ID = ".$namedKeyValues['CommentID'][0];
+                            ." AND comment_ID = " . $namedKeyValues['CommentID'][0];
                     $stmt = mysql_query($query);
                     $result = $this->_serializeComments($stmt);
                 } else {
@@ -519,7 +519,7 @@ class WordPressQueryProvider implements IQueryProvider
                                 ." WHERE tt.term_id = $sourceEntityInstance->TagID"
                                 ." AND p.post_type = 'post'"
                                 ." AND p.post_status = 'publish'"
-                                ." AND p.ID = ".$namedKeyValues['PostID'][0];
+                                ." AND p.ID = " . $namedKeyValues['PostID'][0];
                     $stmt = mysql_query($query);
                     $result = $this->_serializePosts($stmt);
                 } else {
@@ -538,7 +538,7 @@ class WordPressQueryProvider implements IQueryProvider
                                 ." WHERE tt.term_id = $sourceEntityInstance->CategoryID"
                                 ." AND p.post_type = 'post'"
                                 ." AND p.post_status = 'publish'"
-                                ." AND p.ID = ".$namedKeyValues['PostID'][0];
+                                ." AND p.ID = " . $namedKeyValues['PostID'][0];
                     $stmt = mysql_query($query);
                     $result = $this->_serializePosts($stmt);
                 } else {
@@ -556,14 +556,14 @@ class WordPressQueryProvider implements IQueryProvider
                             ." wp_posts.post_type = 'post'"
                             ." AND wp_posts.post_status = 'publish'"
                             ." AND wp_posts.post_author = $sourceEntityInstance->UserID"
-                            ." AND wp_posts.ID = ".$namedKeyValues['PostID'][0];
+                            ." AND wp_posts.ID = " . $namedKeyValues['PostID'][0];
                         $stmt = mysql_query($query);
                         $result = $this->_serializePosts($stmt);
                 } elseif ($navigationPropName == 'Comments') {
                         $query = "SELECT * FROM `wp_comments`"
                             ." WHERE comment_approved = 1" 
                             ." AND wp_comments.user_id = $sourceEntityInstance->UserID"
-                            ." AND wp_comments.comment_ID = ".$namedKeyValues['CommentID'][0];
+                            ." AND wp_comments.comment_ID = " . $namedKeyValues['CommentID'][0];
                         $stmt = mysql_query($query);
                         $result = $this->_serializeComments($stmt);
                 } else {

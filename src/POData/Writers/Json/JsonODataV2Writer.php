@@ -18,39 +18,39 @@ use POData\Common\ODataConstants;
  */
 class JsonODataV2Writer extends JsonODataV1Writer
 {
-	//The key difference between 1 and 2 is that in 2 collection results
-	//are wrapped in a "result" array.  this is to allow a place for collection metadata to be placed
-	//
-	//IE {d : [ item1, item2, item3] }
-	//is now { d : { results :[item1, item2, item3], meta1 : x, meta2 : y }
-	//So we override the collection methods to shove this stuff in there
+    //The key difference between 1 and 2 is that in 2 collection results
+    //are wrapped in a "result" array.  this is to allow a place for collection metadata to be placed
+    //
+    //IE {d : [ item1, item2, item3] }
+    //is now { d : { results :[item1, item2, item3], meta1 : x, meta2 : y }
+    //So we override the collection methods to shove this stuff in there
 
-	protected $dataArrayName = ODataConstants::JSON_RESULT_NAME;
+    protected $dataArrayName = ODataConstants::JSON_RESULT_NAME;
 
-	protected $rowCountName = ODataConstants::JSON_ROWCOUNT_STRING;
+    protected $rowCountName = ODataConstants::JSON_ROWCOUNT_STRING;
 
-	protected $nextLinkName = ODataConstants::JSON_NEXT_STRING;
+    protected $nextLinkName = ODataConstants::JSON_NEXT_STRING;
 
 
-	/**
-	 * Determines if the given writer is capable of writing the response or not
-	 * @param Version $responseVersion the OData version of the response
-	 * @param string $contentType the Content Type of the response
-	 * @return boolean true if the writer can handle the response, false otherwise
-	 */
-	public function canHandle(Version $responseVersion, $contentType)
-	{
-		$parts = explode(";", $contentType);
+    /**
+     * Determines if the given writer is capable of writing the response or not
+     * @param Version $responseVersion the OData version of the response
+     * @param string $contentType the Content Type of the response
+     * @return boolean true if the writer can handle the response, false otherwise
+     */
+    public function canHandle(Version $responseVersion, $contentType)
+    {
+        $parts = explode(";", $contentType);
 
-		//special case, in v3 verbose is the v2 writer
-		if($responseVersion == Version::v3()){
-			return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (in_array('odata=verbose', $parts) || in_array('odata=minimal', $parts));
-		}
+        //special case, in v3 verbose is the v2 writer
+        if($responseVersion == Version::v3()){
+            return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (in_array('odata=verbose', $parts) || in_array('odata=minimal', $parts));
+        }
 
-		if($responseVersion != Version::v2()){
-			return false;
-		}
-	}
+        if($responseVersion != Version::v2()){
+            return false;
+        }
+    }
 
 
     /**

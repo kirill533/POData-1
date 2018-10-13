@@ -98,7 +98,9 @@ class IndentedTextWriter
      */
     public function decreaseIndent()
     {
-        if ($this->indentLevel > 0) $this->indentLevel--;
+        if ($this->indentLevel > 0) {
+            $this->indentLevel--;
+        }
         return $this;
     }
 

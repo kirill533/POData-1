@@ -273,8 +273,7 @@ class JsonODataV1Writer implements IODataWriter
         if ($link->isExpanded) {
             if (is_null($link->expandedResult)) {
                 $this->_writer->writeValue("null");
-            }
-            else {
+            } else {
                 $this->writeExpandedLink($link);
             }
         } else {

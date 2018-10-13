@@ -690,37 +690,37 @@ class ExpressionParser
 
         $null = new NullType();
         if ($left->typeIs($null) || $right->typeIs($null)) {
-          // If the end user is responsible for implementing IExpressionProvider
-          // then the sub-tree for a nullability check would be:
-          //
-          //          RelationalExpression(EQ/NE)
-          //                    |
-          //               ------------
-          //               |           |
-          //               |           |
-          //            CustomerID    NULL
-          //
-          // Otherwise (In case of default PHPExpressionProvider):
-          //
-          //  CustomerID eq null
-          //  ==================
-          //
-          //              FunctionCallExpression(is_null)
-          //                       |
-          //                       |- Signature => bool (typeof(CustomerID))
-          //                       |- args => {CustomerID}
-          //
-          //
-          //  CustomerID ne null
-          //  ==================
-          //
-          //              UnaryExpression (not)
-          //                       |
-          //              FunctionCallExpression(is_null)
-          //                       |
-          //                       |- Signature => bool (typeof(CustomerID))
-          //                       |- args => {CustomerID}
-          //
+            // If the end user is responsible for implementing IExpressionProvider
+            // then the sub-tree for a nullability check would be:
+            //
+            //          RelationalExpression(EQ/NE)
+            //                    |
+            //               ------------
+            //               |           |
+            //               |           |
+            //            CustomerID    NULL
+            //
+            // Otherwise (In case of default PHPExpressionProvider):
+            //
+            //  CustomerID eq null
+            //  ==================
+            //
+            //              FunctionCallExpression(is_null)
+            //                       |
+            //                       |- Signature => bool (typeof(CustomerID))
+            //                       |- args => {CustomerID}
+            //
+            //
+            //  CustomerID ne null
+            //  ==================
+            //
+            //              UnaryExpression (not)
+            //                       |
+            //              FunctionCallExpression(is_null)
+            //                       |
+            //                       |- Signature => bool (typeof(CustomerID))
+            //                       |- args => {CustomerID}
+            //
             if ($isPHPExpressionProvider) {
                 $arg = $left->typeIs($null) ? $right : $left;
                 $isNullFunctionDescription = new FunctionDescription('is_null', new Boolean(), array($arg->getType()));

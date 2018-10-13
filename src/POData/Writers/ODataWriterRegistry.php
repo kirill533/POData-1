@@ -36,7 +36,9 @@ class ODataWriterRegistry
 
         foreach ($this->writers as $writer)
         {
-            if ($writer->canHandle($responseVersion, $contentType)) return $writer;
+            if ($writer->canHandle($responseVersion, $contentType)) {
+                return $writer;
+            }
         }
 
         return null;

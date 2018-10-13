@@ -625,7 +625,7 @@ class UriProcessor
         if (!empty($result)) {
             $top  = $this->request->getTopCount();
             $skip = $this->request->getSkipCount();
-            if(is_null($skip)) {
+            if (is_null($skip)) {
                 $skip = 0;
             }
 
