@@ -296,7 +296,9 @@ class QueryProcessor
         $inlineCount = $this->service->getHost()->getQueryStringItem(ODataConstants::HTTPQUERY_STRING_INLINECOUNT);
 
         //If it's not specified, we're done
-        if (is_null($inlineCount)) return;
+        if (is_null($inlineCount)) {
+            return;
+        }
 
         //If the service doesn't allow count requests..then throw an exception
         if (!$this->service->getConfiguration()->getAcceptCountRequests()) {
