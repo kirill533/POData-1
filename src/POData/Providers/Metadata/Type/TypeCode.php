@@ -6,7 +6,7 @@ namespace POData\Providers\Metadata\Type;
  * Class TypeCode
  * @package POData\Providers\Metadata\Type
  */
-class TypeCode
+class TypeCode extends SplEnum
 {
     const BINARY     = 1;
     const BOOLEAN    = 2;

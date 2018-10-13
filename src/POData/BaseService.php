@@ -451,17 +451,18 @@ abstract class BaseService implements IRequestHandler, IService
                         $this->_serviceHost->setResponseETag($eTag);
                     }
                 } else if ($requestTargetKind == TargetKind::COMPLEX_OBJECT()) {
-
+                    $targetResourceType = $request->getTargetResourceType();
                     $odataModelInstance = $objectModelSerializer->writeTopLevelComplexObject(
                         $result,
                         $request->getProjectedProperty()->getName(),
-                        $request->getTargetResourceType()
+                        $targetResourceType
                     );
                 } else if ($requestTargetKind == TargetKind::BAG()) {
+                    $targetResourceType = $request->getTargetResourceType();
                     $odataModelInstance = $objectModelSerializer->writeTopLevelBagObject(
                         $result,
                         $request->getProjectedProperty()->getName(),
-                        $request->getTargetResourceType(),
+                        $targetResourceType,
                         $odataModelInstance
                     );
                 } else if ($requestTargetKind == TargetKind::PRIMITIVE()) {
