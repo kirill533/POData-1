@@ -38,11 +38,9 @@ class InternalOrderByInfo
      *                                                     (if any) and orderby path
      *                                                     if IDSQP implementation wants to perform sorting.
      *
-     * @param AnonymousFunction[] $subSorterFunctions Collection of sub sorter functions corresponding to each orderby path segment
      *
      *
      *
-     * @param AnonymousFunction        $sorterFunction     The top level anonymous sorter function.
      *
      * @param mixed                    $dummyObject        A dummy object of type
      *                                                     of the resource set
