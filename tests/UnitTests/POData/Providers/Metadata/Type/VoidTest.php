@@ -97,7 +97,7 @@ class VoidTest extends TestCase {
 
 	public function testValidateSuccess()
 	{
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 
 		$type = $this->getAsIType();
 
@@ -112,7 +112,7 @@ class VoidTest extends TestCase {
 	public function testValidateFailure()
 	{
 
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 
 		$type = $this->getAsIType();
 
@@ -125,7 +125,7 @@ class VoidTest extends TestCase {
 
 	public function testConvert()
 	{
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 
 		$type = $this->getAsIType();
 
@@ -138,7 +138,7 @@ class VoidTest extends TestCase {
 
 	public function testConvertToOData()
 	{
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 
 		$type = $this->getAsIType();
 

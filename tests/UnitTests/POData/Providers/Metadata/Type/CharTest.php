@@ -97,7 +97,7 @@ class CharTest extends TestCase {
 
 	public function testValidateSuccess()
 	{
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 
 		$type = $this->getAsIType();
 
@@ -112,7 +112,7 @@ class CharTest extends TestCase {
 	public function testValidateFailure()
 	{
 
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 
 		$type = $this->getAsIType();
 

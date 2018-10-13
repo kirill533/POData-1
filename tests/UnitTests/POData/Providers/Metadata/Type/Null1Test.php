@@ -72,7 +72,7 @@ class Null1Test extends TestCase {
 
 	public function testCompatibleWith()
 	{
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 
 		$type = $this->getAsIType();
 
@@ -155,7 +155,7 @@ class Null1Test extends TestCase {
 
 	public function testConvertToOData()
 	{
-		$this->setExpectedException('POData\Common\NotImplementedException');
+		$this->expectException('POData\Common\NotImplementedException');
 		$type = $this->getAsIType();
 
 		$value = "afaefasevaswee";
