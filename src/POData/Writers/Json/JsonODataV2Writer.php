@@ -47,9 +47,7 @@ class JsonODataV2Writer extends JsonODataV1Writer
             return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (in_array('odata=verbose', $parts) || in_array('odata=minimal', $parts));
         }
 
-        if($responseVersion != Version::v2()){
-            return false;
-        }
+        return $responseVersion == Version::v2();
     }
 
 
