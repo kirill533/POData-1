@@ -2,6 +2,8 @@
 
 namespace POData\Providers\Metadata\Type;
 
+use SplEnum;
+
 /**
  * Class TypeCode
  * @package POData\Providers\Metadata\Type

@@ -462,8 +462,7 @@ abstract class BaseService implements IRequestHandler, IService
                     $odataModelInstance = $objectModelSerializer->writeTopLevelBagObject(
                         $result,
                         $request->getProjectedProperty()->getName(),
-                        $targetResourceType,
-                        $odataModelInstance
+                        $targetResourceType
                     );
                 } else if ($requestTargetKind == TargetKind::PRIMITIVE()) {
                     $odataModelInstance = $objectModelSerializer->writeTopLevelPrimitive(
