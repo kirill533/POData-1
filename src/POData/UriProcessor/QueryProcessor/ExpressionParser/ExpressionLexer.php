@@ -46,7 +46,7 @@ class ExpressionLexer
     /**     
      * Text being parsed
      * 
-     * @var char[]
+     * @var string
      */
     private $_text;
 

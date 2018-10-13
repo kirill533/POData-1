@@ -6,7 +6,7 @@ namespace POData\UriProcessor\QueryProcessor\ExpressionParser;
  * Class ExpressionTokenId
  * @package POData\UriProcessor\QueryProcessor\ExpressionParser
  */
-class ExpressionTokenId
+class ExpressionTokenId extends SplEnum
 {
     //Unknown.
     const UNKNOWN = 1;
