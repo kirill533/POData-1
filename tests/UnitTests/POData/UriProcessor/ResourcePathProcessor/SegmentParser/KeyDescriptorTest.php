@@ -5,11 +5,12 @@ namespace UnitTests\POData\UriProcessor\ResourcePathProcessor\SegmentParser;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
 use POData\Common\InvalidOperationException;
 use POData\Common\ODataException;
+use PHPUnit\Framework\TestCase;
 
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 
 
-class KeyDescriptorTest extends \PHPUnit_Framework_TestCase
+class KeyDescriptorTest extends TestCase
 {
     protected function setUp()
     {        

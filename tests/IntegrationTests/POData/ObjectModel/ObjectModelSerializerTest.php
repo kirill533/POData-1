@@ -15,10 +15,10 @@ use POData\Common\Url;
 use POData\Common\UrlFormatException;
 use POData\Common\ODataException;
 use POData\OperationContext\ServiceHost;
+use PHPUnit\Framework\TestCase;
+use POData\HttpProcessUtility;
 
- use POData\HttpProcessUtility;
-
-class TestObjectModelSerializer extends PHPUnit_Framework_TestCase
+class TestObjectModelSerializer extends TestCase
 {	
     protected function setUp()
     {

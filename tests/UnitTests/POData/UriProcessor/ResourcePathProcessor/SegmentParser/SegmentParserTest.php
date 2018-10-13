@@ -13,8 +13,9 @@ use POData\Common\ODataException;
 
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use POData\Providers\Query\IQueryProvider;
+use PHPUnit\Framework\TestCase;
 
-class SegmentParserTest extends \PHPUnit_Framework_TestCase
+class SegmentParserTest extends TestCase
 {
     private $_metadataProvider;
     private $providersWrapper;

@@ -3,8 +3,9 @@
 namespace UnitTests\POData\OperationContext\Web;
 
 use POData\OperationContext\Web\IncomingRequest;
+use PHPUnit\Framework\TestCase;
 
-class IncomingRequestTest extends \PHPUnit_Framework_TestCase {
+class IncomingRequestTest extends TestCase {
 
     public function testIncomingRequestDoesNotDecodeTooEarlyInParseProcess()
     {

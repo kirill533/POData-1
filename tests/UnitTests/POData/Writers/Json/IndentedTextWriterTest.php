@@ -3,8 +3,9 @@
 namespace UnitTests\POData\Writers\Json;
 
 use POData\Writers\Json\IndentedTextWriter;
+use PHPUnit\Framework\TestCase;
 
-class IndentedTextWriterTest extends \PHPUnit_Framework_TestCase {
+class IndentedTextWriterTest extends TestCase {
 
 	public function testWriteLine()
 	{

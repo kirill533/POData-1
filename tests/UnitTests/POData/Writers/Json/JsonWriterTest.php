@@ -5,8 +5,9 @@ namespace UnitTests\POData\Writers\Json;
 use POData\Providers\Metadata\Type\Guid;
 use POData\Writers\Json\JsonWriter;
 use POData\Common\ODataConstants;
+use PHPUnit\Framework\TestCase;
 
-class JsonWriterTest extends \PHPUnit_Framework_TestCase {
+class JsonWriterTest extends TestCase {
 
 	public function testWriteValueNoType(){
 

@@ -9,8 +9,9 @@ use POData\Common\ODataException;
 
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use POData\Providers\Metadata\IMetadataProvider;
+use PHPUnit\Framework\TestCase;
 
-class ExpressionParser2Test extends \PHPUnit_Framework_TestCase
+class ExpressionParser2Test extends TestCase
 {
 	/**
 	 * @var IMetadataProvider

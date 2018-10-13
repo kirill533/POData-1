@@ -7,12 +7,12 @@ use POData\Providers\Metadata\Type\DateTime;
 use POData\Common\Url;
 use POData\Common\Version;
 use POData\Common\ODataException;
-
+use PHPUnit\Framework\TestCase;
 use UnitTests\POData\Facets\ServiceHostTestFake;
 use UnitTests\POData\Facets\NorthWind4\NorthWindService;
 
 
-class NorthWindSQLSRVTest extends \PHPUnit_Framework_TestCase
+class NorthWindSQLSRVTest extends TestCase
 {
 
 	/**

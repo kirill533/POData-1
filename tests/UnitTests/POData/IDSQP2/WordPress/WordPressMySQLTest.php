@@ -6,11 +6,11 @@ use POData\Providers\Metadata\Type\DateTime;
 use POData\Common\Url;
 use POData\Common\Version;
 use POData\Common\ODataException;
-
+use PHPUnit\Framework\TestCase;
 use UnitTests\POData\Facets\ServiceHostTestFake;
 use UnitTests\POData\Facets\WordPress2\WordPressDataService;
 
-class WordPressMySQLTest extends \PHPUnit_Framework_testCase
+class WordPressMySQLTest extends TestCase
 {
 
 

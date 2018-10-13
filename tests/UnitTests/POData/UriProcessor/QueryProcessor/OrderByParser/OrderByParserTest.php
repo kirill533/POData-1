@@ -18,10 +18,11 @@ use UnitTests\POData\Facets\NorthWind1\Customer2;
 use UnitTests\POData\Facets\NorthWind1\Order2;
 use UnitTests\POData\Facets\NorthWind1\Order_Details2;
 use UnitTests\POData\Facets\NorthWind1\Product2;
+use PHPUnit\Framework\TestCase;
 
 use POData\Providers\Query\IQueryProvider;
 
-class OrderByParserTest extends \PHPUnit_Framework_TestCase
+class OrderByParserTest extends TestCase
 {
 	/** @var  IQueryProvider */
 	protected $mockQueryProvider;

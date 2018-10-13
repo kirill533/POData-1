@@ -16,10 +16,10 @@ use POData\Providers\ProvidersWrapper;
 use POData\Common\Version;
 use POData\Common\MimeTypes;
 
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 use Phockito;
 
-class JsonODataV2WriterTest extends PhockitoUnitTestCase
+class JsonODataV2WriterTest extends BaseUnitTestCase
 {
 
 

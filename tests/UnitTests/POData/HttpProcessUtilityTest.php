@@ -8,11 +8,11 @@ use POData\Common\MimeTypes;
 
 
 
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 use Phockito;
 
 
-class HttpProcessUtilityTest extends PhockitoUnitTestCase {
+class HttpProcessUtilityTest extends BaseUnitTestCase {
 
 
     public function testSelectMimeTypeEmptyAvailableTypes(){

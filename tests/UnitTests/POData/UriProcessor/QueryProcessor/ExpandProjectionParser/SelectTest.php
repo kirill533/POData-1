@@ -9,11 +9,12 @@ use POData\Providers\ProvidersWrapper;
 use POData\Configuration\ServiceConfiguration;
 use POData\UriProcessor\QueryProcessor\ExpandProjectionParser\ExpandProjectionParser;
 use POData\Common\ODataException;
+use PHPUnit\Framework\TestCase;
 
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use UnitTests\POData\Facets\NorthWind1\NorthWindQueryProvider;
 
-class SelectTest extends \PHPUnit_Framework_TestCase
+class SelectTest extends TestCase
 {   
     protected function setUp()
     {

@@ -13,9 +13,9 @@ use POData\Common\ODataException;
 use POData\OperationContext\ServiceHost;
 use POData\Common\MimeTypes;
 use POData\HttpProcessUtility;
+use PHPUnit\Framework\TestCase;
 
-
-class ServiceHostTest extends PHPUnit_Framework_TestCase
+class ServiceHostTest extends TestCase
 {	
     protected function setUp()
     {

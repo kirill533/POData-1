@@ -2,7 +2,7 @@
 use POData\Common\Url;
 use POData\Common\ODataException;
 use POData\OperationContext\ServiceHost;
-
+use PHPUnit\Framework\TestCase;
 use UnitTests\POData\Facets\NorthWind2\DataServiceHost1;
 
 //require_once(dirname(__FILE__) . "/./../Resources/NorthWind2/NorthWindDataService.php");
@@ -11,7 +11,7 @@ use UnitTests\POData\Facets\NorthWind2\DataServiceHost1;
 
 
 use POData\Common\Version;
-class UriProcessorExecutionTest extends PHPUnit_Framework_TestCase
+class UriProcessorExecutionTest extends TestCase
 {
 
 

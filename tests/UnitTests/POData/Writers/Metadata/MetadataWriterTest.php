@@ -13,12 +13,12 @@ use POData\Providers\Metadata\IMetadataProvider;
 use POData\Common\ODataException;
 use POData\Writers\Metadata\MetadataWriter;
 use POData\Common\Version;
-
+use PHPUnit\Framework\TestCase;
 
 use UnitTests\POData\Facets\NorthWind2\NorthWindMetadata;
 use POData\Providers\Query\IQueryProvider;
 
-class MetadataWriterTest extends PHPUnit_Framework_TestCase
+class MetadataWriterTest extends TestCase
 {
 	/** @var  IQueryProvider */
 	protected $mockQueryProvider;

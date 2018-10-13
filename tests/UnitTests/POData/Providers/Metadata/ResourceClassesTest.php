@@ -18,11 +18,11 @@ use POData\Providers\Metadata\Type\EdmPrimitiveType;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Int16;
 use POData\Common\InvalidOperationException;
-
+use PHPUnit\Framework\TestCase;
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 
 
-class ResourceClassesTest extends \PHPUnit_Framework_TestCase
+class ResourceClassesTest extends TestCase
 {
     protected function setUp()
     {

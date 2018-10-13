@@ -7,7 +7,7 @@ build:
     coverage:
       tests:
         override:
-          - command: mkdir -p build/logs && phpunit --coverage-clover build/logs/clover.xml
+          - command: mkdir -p build/logs && vendor/bin/phpunit --coverage-clover build/logs/clover.xml
             coverage:
               file: build/logs/clover.xml
               format: clover

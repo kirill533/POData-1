@@ -15,10 +15,10 @@ use POData\Providers\Query\IQueryProvider;
 use UnitTests\POData\Facets\NorthWind2\NorthWindMetadata;
 
 
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 use Phockito;
 
-class SkipTokenParser2Test extends PhockitoUnitTestCase
+class SkipTokenParser2Test extends BaseUnitTestCase
 {
 
     /** @var  IQueryProvider */

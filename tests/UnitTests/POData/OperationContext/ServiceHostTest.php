@@ -6,10 +6,10 @@ use POData\OperationContext\ServiceHost;
 use POData\Common\ODataConstants;
 use POData\Common\Version;
 
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 use Phockito;
 
-class ServiceHostTest extends PhockitoUnitTestCase {
+class ServiceHostTest extends BaseUnitTestCase {
 
 	//TOOD: should i use MimeTypes constants for these?
 	//TODO: should i use the data generator instead of all these tests?

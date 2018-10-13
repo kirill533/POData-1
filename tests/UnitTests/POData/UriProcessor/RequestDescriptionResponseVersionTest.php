@@ -16,7 +16,7 @@ use POData\Common\ODataException;
 
 
 use Phockito;
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 
 //OData has some interesting version negotiations
 //from http://www.odata.org/documentation/odata-v2-documentation/overview/#ProtocolVersioning
@@ -34,7 +34,7 @@ use PhockitoUnit\PhockitoUnitTestCase;
 // in V3, the default is to return everything as v3 unless the max doesn't allow it
 
 
-class RequestDescriptionResponseVersionTest extends PhockitoUnitTestCase
+class RequestDescriptionResponseVersionTest extends BaseUnitTestCase
 {
 
 	/** @var  IService */

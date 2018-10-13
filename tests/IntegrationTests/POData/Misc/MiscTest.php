@@ -13,9 +13,10 @@ use POData\Common\UrlFormatException;
 use POData\Common\ODataException;
 use POData\OperationContext\ServiceHost;
 use POData\Common\MimeTypes;
+use PHPUnit\Framework\TestCase;
 
 
-class TestETag extends PHPUnit_Framework_TestCase
+class TestETag extends TestCase
 {	
     const BASE_SERIVE_URL = 'http://localhost:8089/NorthWind.svc';
 

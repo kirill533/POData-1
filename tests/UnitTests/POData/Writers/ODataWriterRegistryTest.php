@@ -9,10 +9,10 @@ use POData\Writers\ODataWriterRegistry;
 use POData\UriProcessor\RequestDescription;
 use POData\Writers\IODataWriter;
 
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 use Phockito;
 
-class ODataWriterRegistryTest extends PhockitoUnitTestCase {
+class ODataWriterRegistryTest extends BaseUnitTestCase {
 
 	/** @var  IODataWriter */
 	protected $mockWriter1;

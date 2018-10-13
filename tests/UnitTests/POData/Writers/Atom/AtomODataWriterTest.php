@@ -17,10 +17,10 @@ use POData\Common\Version;
 use POData\Common\MimeTypes;
 
 use Phockito;
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 
 
-class AtomODataWriterTest extends PhockitoUnitTestCase
+class AtomODataWriterTest extends BaseUnitTestCase
 {
 	/**
 	 * Removes the updated tag from an XML string

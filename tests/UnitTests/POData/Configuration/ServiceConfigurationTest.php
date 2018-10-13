@@ -7,10 +7,10 @@ use POData\Configuration\EntitySetRights;
 use POData\Configuration\ProtocolVersion;
 use POData\Common\InvalidOperationException;
 use POData\Providers\Metadata\IMetadataProvider;
-
+use PHPUnit\Framework\TestCase;
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 
-class ServiceConfigurationTest extends \PHPUnit_Framework_TestCase
+class ServiceConfigurationTest extends TestCase
 {
 	/** @var  IMetadataProvider */
     private $_northWindMetadata;

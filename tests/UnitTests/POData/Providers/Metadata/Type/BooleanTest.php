@@ -22,8 +22,9 @@ use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\TypeCode;
 use POData\Providers\Metadata\Type\VoidType;
+use PHPUnit\Framework\TestCase;
 
-class BooleanTest extends \PHPUnit_Framework_TestCase {
+class BooleanTest extends TestCase {
 
 	/**
 	 * @return IType

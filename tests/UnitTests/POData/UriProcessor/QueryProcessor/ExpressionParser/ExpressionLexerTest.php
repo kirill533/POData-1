@@ -5,8 +5,9 @@ namespace UnitTests\POData\UriProcessor\QueryProcessor\ExpressionParser;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
 use POData\Common\ODataException;
+use PHPUnit\Framework\TestCase;
 
-class ExpressionLexerTest extends \PHPUnit_Framework_TestCase
+class ExpressionLexerTest extends TestCase
 {
     protected function setUp()
     {

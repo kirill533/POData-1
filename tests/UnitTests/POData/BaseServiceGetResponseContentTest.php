@@ -16,11 +16,11 @@ use POData\Common\MimeTypes;
 use POData\OperationContext\ServiceHost;
 use POData\Common\Version;
 
-use PhockitoUnit\PhockitoUnitTestCase;
+use UnitTests\BaseUnitTestCase;
 use Phockito;
 
 
-class BaseServiceGetResponseContentTest extends PhockitoUnitTestCase {
+class BaseServiceGetResponseContentTest extends BaseUnitTestCase {
 
 	/** @var  RequestDescription */
 	protected $mockRequest;
