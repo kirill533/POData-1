@@ -48,7 +48,7 @@ class MetadataWriterTest extends TestCase
         $this->assertEquals($providersWrapper->getContainerName(), 'NorthWindEntities');
         $this->assertEquals($providersWrapper->getContainerNamespace(), 'NorthWind');
         
-        $this->assertStringStartsWith('<edmx:Edmx Version="1.0"',$metadata);
+        $this->assertStringStartsWith('<?xml version="1.0" encoding="UTF-8"?>\n<edmx:Edmx Version="1.0"',$metadata);
         
         $customerResourceSet = $providersWrapper->resolveResourceSet('Customers');
         $this->assertEquals($customerResourceSet->getName(), 'Customers');

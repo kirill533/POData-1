@@ -599,7 +599,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(STRCMP(REPLACE(post_title,' ',''), 'ODataPHPProducer') = 0)", $mysqlexpression);
+        $this->AssertEquals("(REPLACE(post_title,' ','') = 'ODataPHPProducer')", $mysqlexpression);
 
 	}
 	
@@ -708,7 +708,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertTrue($check);
         
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(STRCMP(CONCAT(CONCAT(post_title,', '),'Open source now'), 'OData .NET Producer, Open source now') = 0)", $mysqlexpression);
+        $this->AssertEquals("(CONCAT(CONCAT(post_title,', '),'Open source now') = 'OData .NET Producer, Open source now')", $mysqlexpression);
 
 	}
 	

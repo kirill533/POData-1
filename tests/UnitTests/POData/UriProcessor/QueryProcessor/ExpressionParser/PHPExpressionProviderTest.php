@@ -210,7 +210,7 @@ class PHPExpressionProviderTest extends TestCase
         $odataUriExpression = 'replace(CustomerID, \'LFK\', \'RTT\') eq \'ARTTI\'';
         $parser->resetParser($odataUriExpression);
         $actualPHPExpression = $expressionProcessor->processExpression($parser->parseFilter());
-        $expectedPHPExpression = '(!(is_null($lt->CustomerID)) && (strcmp(str_replace(\'LFK\', \'RTT\', $lt->CustomerID), \'ARTTI\') == 0))';
+        $expectedPHPExpression = '(!(is_null($lt->CustomerID)) && (str_replace(\'LFK\', \'RTT\', $lt->CustomerID) = \'ARTTI\'))';
         $this->assertEquals($expectedPHPExpression, $actualPHPExpression);
 
         $odataUriExpression = 'startswith(CustomerID, \'AL\')';
