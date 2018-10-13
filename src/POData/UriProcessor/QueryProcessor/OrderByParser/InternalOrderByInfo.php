@@ -4,7 +4,6 @@ namespace POData\UriProcessor\QueryProcessor\OrderByParser;
 
 use POData\Common\Messages;
 use POData\Common\ODataException;
-use POData\UriProcessor\QueryProcessor\AnonymousFunction;
 
 /**
  * Class InternalOrderByInfo
