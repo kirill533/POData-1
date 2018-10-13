@@ -43,7 +43,7 @@ class JsonODataV2Writer extends JsonODataV1Writer
         $parts = explode(";", $contentType);
 
         //special case, in v3 verbose is the v2 writer
-        if($responseVersion == Version::v3()){
+        if ($responseVersion == Version::v3()) {
             return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (in_array('odata=verbose', $parts) || in_array('odata=minimal', $parts));
         }
 
