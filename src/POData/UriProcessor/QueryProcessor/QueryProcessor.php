@@ -74,12 +74,12 @@ class QueryProcessor
         //The query targets a resource collection
         $this->_setQueryApplicable = ($request->getTargetKind() == TargetKind::RESOURCE && !$isSingleResult);
         //Or it's a $count resource (although $inlinecount isn't applicable in this case..but there's a check somewhere else for this
-        $this->_setQueryApplicable |= $request->queryType == QueryType::COUNT();
+        $this->_setQueryApplicable |= $request->queryType == QueryType::COUNT;
 
         //Paging is allowed if
         //The request targets a resource collection
         //and the request isn't for a $count segment
-        $this->_pagingApplicable = $this->request->getTargetKind() == TargetKind::RESOURCE && !$isSingleResult && ($request->queryType != QueryType::COUNT());
+        $this->_pagingApplicable = $this->request->getTargetKind() == TargetKind::RESOURCE && !$isSingleResult && ($request->queryType != QueryType::COUNT);
 
         $targetResourceType = $this->request->getTargetResourceType();
         $targetResourceSetWrapper = $this->request->getTargetResourceSetWrapper();
@@ -267,7 +267,7 @@ class QueryProcessor
         $kind = $this->request->getTargetKind();
         if (!($kind == TargetKind::RESOURCE
             || $kind == TargetKind::COMPLEX_OBJECT
-            || $this->request->queryType == QueryType::COUNT())
+            || $this->request->queryType == QueryType::COUNT)
         ) {
             throw ODataException::createBadRequestError(
                 Messages::queryProcessorQueryFilterOptionNotApplicable()
@@ -316,7 +316,7 @@ class QueryProcessor
 
         //You can't specify $count & $inlinecount together
         //TODO: ensure there's a test for this case see #55
-        if ($this->request->queryType == QueryType::COUNT()) {
+        if ($this->request->queryType == QueryType::COUNT) {
             throw ODataException::createBadRequestError(
                 Messages::queryProcessorInlineCountWithValueCount()
             );

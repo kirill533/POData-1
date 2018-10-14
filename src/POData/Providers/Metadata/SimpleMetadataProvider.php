@@ -257,7 +257,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      * @param ResourceType $resourceType resource type to which key property
      *                                   is to be added
      * @param string       $name         name of the key property
-     * @param TypeCode     $typeCode     type of the key property
+     * @param int     $typeCode     type of the key property
      * 
      * @return void
      */
@@ -272,7 +272,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      * @param ResourceType $resourceType resource type to which key property
      *                                   is to be added
      * @param string       $name         name of the key property
-     * @param TypeCode     $typeCode     type of the key property
+     * @param int     $typeCode     type of the key property
      * @param Boolean      $isBag        property is bag or not
      * 
      * @return void
@@ -381,7 +381,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      * 
      * @param ResourceType $resourceType   Resource type
      * @param string       $name           name of the property
-     * @param TypeCode     $typeCode       type of property
+     * @param int          $typeCode       type of property
      * @param boolean      $isKey          property is key or not
      * @param boolean      $isBag          property is bag or not
      * @param boolean      $isETagProperty property is etag or not

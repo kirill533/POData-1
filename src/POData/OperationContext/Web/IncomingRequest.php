@@ -33,7 +33,7 @@ class IncomingRequest implements IHTTPRequest
     /**
      * The request method (GET, POST, PUT, DELETE or MERGE)
      * 
-     * @var HTTPRequestMethod HttpVerb
+     * @var string HttpVerb
      */
     private $_method;
 
@@ -215,7 +215,7 @@ class IncomingRequest implements IHTTPRequest
      * Value will be set from the value of the HTTP method of the 
      * incoming Web request.
      * 
-     * @return HTTPRequestMethod $_header[HttpRequestHeaderMethod]
+     * @return string $_header[HttpRequestHeaderMethod]
      */
     public function getMethod()
     {

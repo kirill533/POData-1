@@ -3,9 +3,6 @@
 
 namespace POData\Writers\Json;
 
-
-use SplEnum;
-
 /**
  * Class JsonLightMetadataLevel
  * @package POData\Writers\Json
@@ -14,7 +11,7 @@ use SplEnum;
  * @method static \POData\Writers\Json\JsonLightMetadataLevel MINIMAL
  * @method static \POData\Writers\Json\JsonLightMetadataLevel FULL()
  */
-class JsonLightMetadataLevel extends SplEnum {
+class JsonLightMetadataLevel {
     //using these const because it makes them easy to use in writer canHandle..but maybe not such a good idea
     const NONE = "odata=nometadata";
 

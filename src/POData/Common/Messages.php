@@ -686,11 +686,11 @@ class Messages
     /**
      *
      * @param string $methodName method name
-     * @param QueryType $queryType
+     * @param string $queryType
      *
      * @return string The message
      */
-    public static function queryProviderResultCountMissing($methodName, QueryType $queryType)
+    public static function queryProviderResultCountMissing($methodName, $queryType)
     {
         return "The implementation of the method $methodName must return a QueryResult instance with a count for queries of type $queryType.";
     }
@@ -699,11 +699,11 @@ class Messages
     /**
      *
      * @param string $methodName method name
-     * @param QueryType $queryType
+     * @param string $queryType
      *
      * @return string The message
      */
-    public static function queryProviderResultsMissing($methodName, QueryType $queryType)
+    public static function queryProviderResultsMissing($methodName, $queryType)
     {
         return "The implementation of the method $methodName must return a QueryResult instance with an array of results for queries of type $queryType.";
     }
@@ -2149,23 +2149,23 @@ class Messages
     /**
      * Message to show error when data service found a request method other than GET.
      *
-     * @param HTTPRequestMethod $method Request method
+     * @param string $method Request method
      *
      * @return string The formatted message
      */
-    public static function onlyReadSupport(HTTPRequestMethod $method)
+    public static function onlyReadSupport($method)
     {
-        return "This release of library support only GET (read) request, received a request with method $method";
+        return "This release of library support only GET (read) request, received a request with method {$method}";
     }
 
     /**
      * Message to show error when data service found a request with an unsupported method.
      *
-     * @param HTTPRequestMethod $method Request method
+     * @param string $method Request method
      *
      * @return string The formatted message
      */
-    public static function unsupportedMethod(HTTPRequestMethod $method)
+    public static function unsupportedMethod($method)
     {
         return "This release of library support only GET PUT and POST requests, received a request with method $method";
     }

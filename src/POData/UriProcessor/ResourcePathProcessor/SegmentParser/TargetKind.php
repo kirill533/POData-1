@@ -2,9 +2,6 @@
 
 namespace POData\UriProcessor\ResourcePathProcessor\SegmentParser;
 
-
-use SplEnum;
-
 /**
  * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind NOTHING
  * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind SERVICE_DIRECTORY
@@ -19,7 +16,7 @@ use SplEnum;
  * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind MEDIA_RESOURCE
  * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind BAG
  */
-class TargetKind extends SplEnum
+class TargetKind
 {
     /**
      * Nothing specific is being requested.

@@ -35,7 +35,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
     /**
      * The request method (GET, POST, PUT, DELETE or MERGE)
      *
-     * @var HTTPRequestMethod HttpVerb
+     * @var string HttpVerb
      */
     private $_method;
 

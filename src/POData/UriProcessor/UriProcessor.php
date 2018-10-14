@@ -588,7 +588,7 @@ class UriProcessor
 
         //a bit surprising, but $skip and $top affects $count so update it here, not above
         //IE  data.svc/Collection/$count?$top=10 returns 10 even if Collection has 11+ entries
-        if ($this->request->queryType == QueryType::COUNT()) {
+        if ($this->request->queryType == QueryType::COUNT) {
             if ($this->providers->handlesOrderedPaging()) {
                 $this->request->setCountValue($result->count);
             } else {

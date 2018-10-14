@@ -609,14 +609,14 @@ class ProvidersWrapper
      * @param QueryResult $queryResult
      * @param string $methodName
      */
-    private function ValidateQueryResult($queryResult, QueryType $queryType, $methodName) {
+    private function ValidateQueryResult($queryResult, $queryType, $methodName) {
         if (!$queryResult instanceof QueryResult) {
             throw ODataException::createInternalServerError(
                 Messages::queryProviderReturnsNonQueryResult($methodName)
             );
         }
 
-        if ($queryType == QueryType::COUNT() || $queryType == QueryType::ENTITIES_WITH_COUNT()) {
+        if ($queryType == QueryType::COUNT || $queryType == QueryType::ENTITIES_WITH_COUNT()) {
             //and the provider is supposed to handle the ordered paging they must return a count!
             if ($this->queryProvider->handlesOrderedPaging() && !is_numeric($queryResult->count)) {
                 throw ODataException::createInternalServerError(
@@ -642,7 +642,7 @@ class ProvidersWrapper
     /**
      * Gets collection of entities belongs to an entity set
      *
-     * @param QueryType $queryType indicates if this is a query for a count, entities, or entities with a count
+     * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
      * @param ResourceSet $resourceSet The entity set containing the entities that need to be fetched
      * @param FilterInfo $filterInfo represents the $filter parameter of the OData query.  NULL if no $filter specified
      * @param InternalOrderByInfo $orderBy The orderBy information
@@ -653,7 +653,7 @@ class ProvidersWrapper
      *
      * @return QueryResult
      */
-    public function getResourceSet(QueryType $queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip, $skiptoken = null, $expansion = null)
+    public function getResourceSet($queryType, ResourceSet $resourceSet, $filterInfo, $orderBy, $top, $skip, $skiptoken = null, $expansion = null)
     {
 
         $queryResult = $this->queryProvider->getResourceSet(
@@ -758,7 +758,7 @@ class ProvidersWrapper
     /**
      * Get related resource set for a resource
      *
-     * @param QueryType $queryType indicates if this is a query for a count, entities, or entities with a count
+     * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
      * @param ResourceSet $sourceResourceSet The entity set containing the source entity
      * @param object $sourceEntity The source entity instance.
      * @param ResourceSet      $targetResourceSet    The resource set of containing the target of the navigation property
@@ -773,7 +773,7 @@ class ProvidersWrapper
      * @throws ODataException
      */
     public function getRelatedResourceSet(
-        QueryType $queryType,
+        $queryType,
         ResourceSet $sourceResourceSet,
         $sourceEntity,
         ResourceSet $targetResourceSet,

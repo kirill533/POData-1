@@ -46,7 +46,7 @@ class BaseServiceGetResponseContentTest extends BaseUnitTestCase {
 	/**
 	 * @dataProvider provider
 	 */
-	public function testGetResponseContentType($id, TargetKind $target, Version $version, $acceptsHeader, $format, $expectedValue)
+	public function testGetResponseContentType($id, $target, Version $version, $acceptsHeader, $format, $expectedValue)
 	{
 
 		Phockito::when($this->mockRequest->getTargetKind())

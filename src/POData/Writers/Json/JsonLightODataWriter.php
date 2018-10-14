@@ -26,7 +26,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
 {
 
     /**
-     * @var JsonLightMetadataLevel
+     * @var string
      */
     protected $metadataLevel;
 
@@ -42,7 +42,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
     /**
      * @param string $absoluteServiceUri
      */
-    public function __construct(JsonLightMetadataLevel $metadataLevel, $absoluteServiceUri)
+    public function __construct($metadataLevel, $absoluteServiceUri)
     {
         if (strlen($absoluteServiceUri) == 0)
         {

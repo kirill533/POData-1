@@ -224,9 +224,9 @@ class SegmentDescriptor
     /**
      * Sets the kind of resource targeted by this segment
      * 
-     * @param TargetKind $targetKind The kind of resource
+     * @param string $targetKind The kind of resource
      */
-    public function setTargetKind(TargetKind $targetKind)
+    public function setTargetKind($targetKind)
     {
         $this->_targetKind = $targetKind;
     }

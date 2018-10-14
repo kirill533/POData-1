@@ -38,7 +38,7 @@ interface IQueryProvider
      * IE: http://host/EntitySet
      *  http://host/EntitySet?$skip=10&$top=5&filter=Prop gt Value
      *
-     * @param QueryType $queryType indicates if this is a query for a count, entities, or entities with a count
+     * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
      * @param ResourceSet $resourceSet The entity set containing the entities to fetch
      * @param FilterInfo $filterInfo represents the $filter parameter of the OData query.  NULL if no $filter specified
      * @param mixed $orderBy sorted order if we want to get the data in some specific order
@@ -48,7 +48,7 @@ interface IQueryProvider
      * @return QueryResult
      */
     public function getResourceSet(
-        QueryType $queryType,
+        $queryType,
         ResourceSet $resourceSet,
         $filterInfo = null,
         $orderBy = null,
@@ -78,7 +78,7 @@ interface IQueryProvider
      * IE: http://host/EntitySet(1L)/NavigationPropertyToCollection
      * http://host/EntitySet?$expand=NavigationPropertyToCollection
      *
-     * @param QueryType $queryType indicates if this is a query for a count, entities, or entities with a count
+     * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
      * @param ResourceSet $sourceResourceSet The entity set containing the source entity
      * @param object $sourceEntityInstance The source entity instance.
      * @param ResourceSet      $targetResourceSet    The resource set of containing the target of the navigation property
@@ -92,7 +92,7 @@ interface IQueryProvider
      *
      */
     public function getRelatedResourceSet(
-        QueryType $queryType,
+        $queryType,
         ResourceSet $sourceResourceSet,
         $sourceEntityInstance,
         ResourceSet $targetResourceSet,

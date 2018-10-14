@@ -60,12 +60,12 @@ class NorthWindQueryProvider4 implements IQueryProvider
 	 * @param mixed $orderBy sorted order if we want to get the data in some specific order
 	 * @param int $top number of records which  need to be skip
 	 * @param String $skipToken value indicating what records to skip
-	 * @param QueryType $queryType indicates if this is a query for a count, entities, or entities with a count
+	 * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
 	 *
 	 * @return QueryResult
 	 */
 	public function getResourceSet(
-		QueryType $queryType,
+		$queryType,
 		ResourceSet $resourceSet,
 		$filter = null,
 		$orderBy = null,
@@ -99,7 +99,7 @@ class NorthWindQueryProvider4 implements IQueryProvider
 	 * IE: http://host/EntitySet(1L)/NavigationPropertyToCollection
 	 * http://host/EntitySet?$expand=NavigationPropertyToCollection
 	 *
-	 * @param QueryType $queryType indicates if this is a query for a count, entities, or entities with a count
+	 * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
 	 * @param ResourceSet $sourceResourceSet The entity set containing the source entity
 	 * @param object $sourceEntityInstance The source entity instance.
 	 * @param ResourceSet $targetResourceSet    The resource set of containing the target of the navigation property
@@ -113,7 +113,7 @@ class NorthWindQueryProvider4 implements IQueryProvider
 	 *
 	 */
 	public function getRelatedResourceSet(
-		QueryType $queryType,
+		$queryType,
 		ResourceSet $sourceResourceSet,
 		$sourceEntityInstance,
 		ResourceSet $targetResourceSet,

@@ -958,7 +958,7 @@ class RequestDescription
     public function isETagHeaderAllowed()
     {
         return $this->lastSegment->isSingleResult()
-            && ($this->queryType != QueryType::COUNT())
+            && ($this->queryType != QueryType::COUNT)
             && !$this->isLinkUri()
             && (is_null($this->_rootProjectionNode)
                 || !($this->_rootProjectionNode->isExpansionSpecified())

@@ -84,7 +84,7 @@ class ResourcePathProcessor
                 throw ODataException::createBadRequestError(Messages::configurationCountNotAccepted());
             }
 
-            $request->queryType = QueryType::COUNT();
+            $request->queryType = QueryType::COUNT;
             // use of $count requires request DataServiceVersion
             // and MaxDataServiceVersion greater than or equal to 2.0
 

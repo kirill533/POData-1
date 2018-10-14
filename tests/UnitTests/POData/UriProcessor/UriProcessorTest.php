@@ -2362,7 +2362,7 @@ class UriProcessorTest extends BaseUnitTestCase
 		$fakeQueryResult->results = array(1,2,3);
 		Phockito::when(
 			$this->mockProvidersWrapper->getResourceSet(
-				QueryType::COUNT(),
+				QueryType::COUNT,
 				$this->mockCollectionResourceSetWrapper,
 				null,
 				null,
@@ -2403,7 +2403,7 @@ class UriProcessorTest extends BaseUnitTestCase
 		$fakeQueryResult->count = 10; //note this differs from the size of the results array
 		Phockito::when(
 			$this->mockProvidersWrapper->getResourceSet(
-				QueryType::COUNT(),
+				QueryType::COUNT,
 				$this->mockCollectionResourceSetWrapper,
 				null,
 				null,
@@ -2662,7 +2662,7 @@ class UriProcessorTest extends BaseUnitTestCase
         $fakeQueryResult->results = array(1,2,3);
         Phockito::when(
             $this->mockProvidersWrapper->getResourceSet(
-                QueryType::COUNT(),
+                QueryType::COUNT,
                 $this->mockCollectionResourceSetWrapper,
                 null,
                 null,
@@ -2704,7 +2704,7 @@ class UriProcessorTest extends BaseUnitTestCase
         $fakeQueryResult->count = 10; //note this differs from the size of the results array
         Phockito::when(
             $this->mockProvidersWrapper->getResourceSet(
-                QueryType::COUNT(),
+                QueryType::COUNT,
                 $this->mockCollectionResourceSetWrapper,
                 null,
                 null,

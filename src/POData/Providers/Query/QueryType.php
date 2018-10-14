@@ -2,15 +2,9 @@
 
 namespace POData\Providers\Query;
 
-use SplEnum;
-
-
 /**
- * @method static \POData\Providers\Query\QueryType ENTITIES
- * @method static \POData\Providers\Query\QueryType COUNT()
- * @method static \POData\Providers\Query\QueryType ENTITIES_WITH_COUNT()
  */
-class QueryType extends SplEnum {
+class QueryType {
 
     const ENTITIES = "ENTITIES";
     const COUNT = "COUNT";

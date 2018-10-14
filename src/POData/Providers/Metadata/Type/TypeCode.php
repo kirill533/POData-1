@@ -2,13 +2,11 @@
 
 namespace POData\Providers\Metadata\Type;
 
-use SplEnum;
-
 /**
  * Class TypeCode
  * @package POData\Providers\Metadata\Type
  */
-class TypeCode extends SplEnum
+class TypeCode
 {
     const BINARY     = 1;
     const BOOLEAN    = 2;
