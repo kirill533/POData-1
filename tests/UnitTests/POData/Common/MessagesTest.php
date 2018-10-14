@@ -187,6 +187,7 @@ class MessagesTest extends BaseUnitTestCase {
 			'bothIfMatchAndIfNoneMatchHeaderSpecified',
 			'eTagNotAllowedForNonExistingResource',
 			'onlyReadSupport',
+			'unsupportedMethod',
 			'badRequestInvalidUriForThisVerb',
 			'noDataForThisVerb',
 			'badRequestInvalidUriForMediaResource',

@@ -74,7 +74,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
 
         //It must be app/json and have the right odata= piece
         $metadata = array_filter($parts, function($item) { return strpos($item, 'odata') !== false; });
-        return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (empty($metadata) || in_array($this->metadataLevel->getValue(), $metadata));
+        return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (empty($metadata) || in_array($this->metadataLevel, $metadata));
     }
 
 
