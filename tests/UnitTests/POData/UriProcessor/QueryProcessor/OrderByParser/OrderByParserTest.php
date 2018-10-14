@@ -32,16 +32,6 @@ class OrderByParserTest extends TestCase
 	    $this->mockQueryProvider = \Phockito::mock('POData\Providers\Query\IQueryProvider');
     }
 
-    public function testOrderByWithSyntaxError()
-    {
-        //If a path segment contains ( should throw synax error
-        
-        //only asc or desc are allowed as a default segment last segment
-        //so if asc/desc is last then next should be end or comma
-
-        //multiple commas not allowed
-    } 
-
     //All all test case (which are +ve) check the generated function and
 
     /**
@@ -240,13 +230,6 @@ class OrderByParserTest extends TestCase
             $this->assertStringEndsWith("(Check the resource set of the navigation property 'Customer' is visible)", $odataException->getMessage());
         }
 
-    }
-
-    /**
-     * test parser with multiple path segment which has common ancestors     
-     */
-    public function testOrderByWithMultiplePathSegment2()
-    {
     }
 
     /**

@@ -47,7 +47,7 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("((CustomerID > 'ALFKI'))", $sqlexpression);
+		$this->AssertEquals("((CustomerID >  'ALFKI'))", $sqlexpression);
 
 	}
 
