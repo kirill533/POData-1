@@ -326,7 +326,7 @@ class QueryProcessor
 
 
         if ($inlineCount === ODataConstants::URI_ROWCOUNT_ALLOPTION) {
-            $this->request->queryType = QueryType::ENTITIES_WITH_COUNT();
+            $this->request->queryType = QueryType::ENTITIES_WITH_COUNT;
 
             $this->request->raiseMinVersionRequirement(2, 0);
             $this->request->raiseResponseVersion(2, 0);

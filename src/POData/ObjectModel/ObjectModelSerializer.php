@@ -104,7 +104,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
         $relativeUri = $this->request->getIdentifier();
         $feed = new ODataFeed();
 
-        if ($this->request->queryType == QueryType::ENTITIES_WITH_COUNT()) {
+        if ($this->request->queryType == QueryType::ENTITIES_WITH_COUNT) {
             $feed->rowCount = $this->request->getCountValue();
         }
 
@@ -169,7 +169,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
             }
         }
 
-        if ($this->request->queryType == QueryType::ENTITIES_WITH_COUNT()) {
+        if ($this->request->queryType == QueryType::ENTITIES_WITH_COUNT) {
             $urls->count = $this->request->getCountValue();
         }
 

@@ -573,7 +573,7 @@ class UriProcessor
 
         // Note $inlinecount=allpages means include the total count regardless of paging..so we set the counts first
         // regardless if POData does the paging or not.
-        if ($this->request->queryType == QueryType::ENTITIES_WITH_COUNT()) {
+        if ($this->request->queryType == QueryType::ENTITIES_WITH_COUNT) {
             if ($this->providers->handlesOrderedPaging()) {
                 $this->request->setCountValue($result->count);
             } else {

@@ -43,7 +43,7 @@ interface IHTTPRequest
     /**
      * Get the HTTP method/verb of the HTTP Request
      *
-     * @return HTTPRequestMethod
+     * @return string
      */
     public function getMethod();
 

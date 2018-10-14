@@ -40,10 +40,10 @@ class RequestAdapter extends IncomingRequest implements IHTTPRequest
     /**
      * Get the HTTP method/verb of the HTTP Request
      *
-     * @return HTTPRequestMethod
+     * @return string
      */
     public function getMethod()
     {
-        return new HTTPRequestMethod($_SERVER['REQUEST_METHOD']);
+        return $_SERVER['REQUEST_METHOD'];
     }
 }

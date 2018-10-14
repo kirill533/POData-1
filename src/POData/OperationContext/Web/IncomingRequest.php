@@ -57,7 +57,7 @@ class IncomingRequest implements IHTTPRequest
      */
     public function __construct()
     {
-        $this->_method = new HTTPRequestMethod($_SERVER['REQUEST_METHOD']);
+        $this->_method = $_SERVER['REQUEST_METHOD'];
         $this->_queryOptions = null;
         $this->_queryOptionsCount = null;
         $this->_headers = null;

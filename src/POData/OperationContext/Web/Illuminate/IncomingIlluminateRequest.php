@@ -64,7 +64,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
         $this->_headers = null;
         $this->_queryOptions = null;
         $this->_queryOptionsCount = null;
-        $this->_method = new HTTPRequestMethod($this->request->getMethod());
+        $this->_method = $this->request->getMethod();
     }
 
     /**
@@ -116,7 +116,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
     }
 
     /**
-     * @return HTTPRequestMethod
+     * @return string
      */
     public function getMethod()
     {

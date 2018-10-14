@@ -616,7 +616,7 @@ class ProvidersWrapper
             );
         }
 
-        if ($queryType == QueryType::COUNT || $queryType == QueryType::ENTITIES_WITH_COUNT()) {
+        if ($queryType == QueryType::COUNT || $queryType == QueryType::ENTITIES_WITH_COUNT) {
             //and the provider is supposed to handle the ordered paging they must return a count!
             if ($this->queryProvider->handlesOrderedPaging() && !is_numeric($queryResult->count)) {
                 throw ODataException::createInternalServerError(
@@ -632,7 +632,7 @@ class ProvidersWrapper
             }
         }
 
-        if (($queryType == QueryType::ENTITIES || $queryType == QueryType::ENTITIES_WITH_COUNT()) && !is_array($queryResult->results)) {
+        if (($queryType == QueryType::ENTITIES || $queryType == QueryType::ENTITIES_WITH_COUNT) && !is_array($queryResult->results)) {
             throw ODataException::createInternalServerError(
                 Messages::queryProviderResultsMissing($methodName, $queryType)
             );

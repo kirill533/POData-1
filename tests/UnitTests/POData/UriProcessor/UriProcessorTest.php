@@ -1125,7 +1125,7 @@ class UriProcessorTest extends BaseUnitTestCase
         $internalOrderByInfo = $requestDescription->getInternalOrderByInfo();
         $this->assertNotNull($internalOrderByInfo);
 
-	    $this->assertEquals(QueryType::ENTITIES_WITH_COUNT(), $requestDescription->queryType);
+	    $this->assertEquals(QueryType::ENTITIES_WITH_COUNT, $requestDescription->queryType);
 
 
     }
@@ -2541,7 +2541,7 @@ class UriProcessorTest extends BaseUnitTestCase
 		$fakeQueryResult->count = 10; //note this is different than the size of the array
 		Phockito::when(
 			$this->mockProvidersWrapper->getResourceSet(
-				QueryType::ENTITIES_WITH_COUNT(),
+				QueryType::ENTITIES_WITH_COUNT,
 				$this->mockCollectionResourceSetWrapper,
 				null,
 				null,
@@ -2586,7 +2586,7 @@ class UriProcessorTest extends BaseUnitTestCase
 		$fakeQueryResult->count = 10;
 		Phockito::when(
 			$this->mockProvidersWrapper->getResourceSet(
-				QueryType::ENTITIES_WITH_COUNT(),
+				QueryType::ENTITIES_WITH_COUNT,
 				$this->mockCollectionResourceSetWrapper,
 				null,
 				null,
@@ -2749,7 +2749,7 @@ class UriProcessorTest extends BaseUnitTestCase
         $fakeQueryResult->count = 10; //note this is different than the size of the array
         Phockito::when(
             $this->mockProvidersWrapper->getResourceSet(
-                QueryType::ENTITIES_WITH_COUNT(),
+                QueryType::ENTITIES_WITH_COUNT,
                 $this->mockCollectionResourceSetWrapper,
                 null,
                 null,
@@ -2793,7 +2793,7 @@ class UriProcessorTest extends BaseUnitTestCase
         $fakeQueryResult->count = 10;
         Phockito::when(
             $this->mockProvidersWrapper->getResourceSet(
-                QueryType::ENTITIES_WITH_COUNT(),
+                QueryType::ENTITIES_WITH_COUNT,
                 $this->mockCollectionResourceSetWrapper,
                 null,
                 null,
