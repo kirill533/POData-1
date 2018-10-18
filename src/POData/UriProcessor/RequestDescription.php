@@ -447,7 +447,7 @@ class RequestDescription
     /**
      * Gets kind of resource targeted by the resource path.
      *
-     * @return TargetKind
+     * @return int
      */
     public function getTargetKind()
     {
@@ -457,7 +457,7 @@ class RequestDescription
     /**
      * Gets kind of 'source of data' targeted by the resource path.
      *
-     * @return TargetSource
+     * @return int
      */
     public function getTargetSource()
     {

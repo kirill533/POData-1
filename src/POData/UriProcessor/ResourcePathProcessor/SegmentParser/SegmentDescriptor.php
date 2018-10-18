@@ -277,7 +277,7 @@ class SegmentDescriptor
     /**
      * Gets the kind of 'source of data' for this segment
      * 
-     * @return TargetSource
+     * @return int
      */
     public function getTargetSource()
     {
