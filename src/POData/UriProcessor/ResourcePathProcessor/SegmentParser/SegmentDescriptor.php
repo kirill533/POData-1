@@ -63,14 +63,14 @@ class SegmentDescriptor
     /**
      * The kind of resource targeted by this segment
      * 
-     * @var TargetKind
+     * @var int
      */
     private $_targetKind;
 
     /**
      * The kind of 'source of data' for this segment
      * 
-     * @var TargetSource
+     * @var int
      */
     private $_targetSource;
     
@@ -214,7 +214,7 @@ class SegmentDescriptor
     /**
      * Gets the kind of resource targeted by this segment
      * 
-     * @return TargetKind
+     * @return int
      */
     public function getTargetKind()
     {

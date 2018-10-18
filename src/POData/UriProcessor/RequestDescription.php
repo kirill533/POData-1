@@ -118,7 +118,7 @@ class RequestDescription
     /**
      * The count option specified in the request.
      *
-     * @var QueryType
+     * @var string
      */
     public $queryType;
 
