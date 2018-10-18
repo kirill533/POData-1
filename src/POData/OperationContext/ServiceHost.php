@@ -457,7 +457,7 @@ Class ServiceHost
     /**
      * Get the value of If-Match header of the request
      * 
-     * @return string 
+     * @return null|string
      */
     public function getRequestIfMatch()
     {
@@ -469,7 +469,7 @@ Class ServiceHost
     /**
      * Gets the value of If-None-Match header of the request
      * 
-     * @return string
+     * @return null|string
      */
     public function getRequestIfNoneMatch()
     {

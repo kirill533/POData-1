@@ -465,10 +465,10 @@ abstract class BaseService implements IRequestHandler, IService
                         $targetResourceType
                     );
                 } else if ($requestTargetKind == TargetKind::PRIMITIVE) {
+                    $projectedProperty = $request->getProjectedProperty();
                     $odataModelInstance = $objectModelSerializer->writeTopLevelPrimitive(
                         $result,
-                        $request->getProjectedProperty(),
-                        $odataModelInstance
+                        $projectedProperty
                     );
                 } else if ($requestTargetKind == TargetKind::PRIMITIVE_VALUE) {
                     // Code path for primitive value (Since its primitve no need for
