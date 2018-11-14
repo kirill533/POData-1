@@ -825,6 +825,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
             }
         }
     }
+
     /**
      * Convert the given primitive value to string.
      * Note: This method will not handle null primitive value.
@@ -845,8 +846,11 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
             $stringValue = ($primitiveValue === true) ? 'true' : 'false';
         } else if ($type instanceof Binary) {
             $stringValue = base64_encode($primitiveValue);
-        } else if ($type instanceof DateTime && $primitiveValue instanceOf \DateTime) {
+        } else if (($type instanceof DateTime || $type instanceof StringType) && $primitiveValue instanceof \DateTime) {
             $stringValue = $primitiveValue->format(\DateTime::ATOM);
+        } else if ($type instanceof StringType && $primitiveValue instanceof \DateInterval) {
+            $stringValue = (($primitiveValue->d * 86400) + ($primitiveValue->h * 3600) + ($primitiveValue->i * 60) + $primitiveValue->s) * 1000;
+           // $stringValue = intval($primitiveValue->format('%s'))*1000; // Miliszekundumokkáé
         } else if ($type instanceof StringType) {
             $stringValue = mb_convert_encoding($primitiveValue, 'UTF-8');
         } else {

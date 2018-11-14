@@ -26,8 +26,8 @@ class ODataException extends \Exception
      * Create new instance of ODataException
      *
      * @param string $message    The error message
-     * @param int $statusCode The status code
-     * @param int|null $errorCode  The error code
+     * @param string $statusCode The status code
+     * @param string $errorCode  The error code
      *
      * @return ODataException
      */

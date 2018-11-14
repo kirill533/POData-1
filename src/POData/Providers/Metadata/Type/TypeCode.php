@@ -26,4 +26,6 @@ class TypeCode
     const STRING     = 16;
     const VOID       = 17;
     const NULL1      = 18;
+    const TIME       = 19;
+    const TIMESPAN   = 20;
 }

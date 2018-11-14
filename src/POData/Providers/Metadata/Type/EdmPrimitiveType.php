@@ -22,4 +22,5 @@ class EdmPrimitiveType
     const SBYTE    = TypeCode::SBYTE;
     const SINGLE   = TypeCode::SINGLE;
     const STRING   = TypeCode::STRING;
+    const TIMESPAN = TypeCode::TIMESPAN;
 }

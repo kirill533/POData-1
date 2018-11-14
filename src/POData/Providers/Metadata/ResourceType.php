@@ -916,6 +916,13 @@ class ResourceType
                     'String', 'Edm'
                 );
                 break;
+            case EdmPrimitiveType::TIMESPAN:
+                return new ResourceType(
+                    new StringType(),
+                    ResourceTypeKind::PRIMITIVE,
+                    'TimeSpan', 'Edm'
+                );
+                break;
             default:
                 throw new InvalidArgumentException(
                     Messages::commonNotValidPrimitiveEDMType(
