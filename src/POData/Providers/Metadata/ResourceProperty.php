@@ -77,7 +77,7 @@ class ResourceProperty
     /**
      * Check whether current property is of kind specified by the parameter
      *
-     * @param ResourcePropertyKind $kind kind to check
+     * @param int $kind kind to check
      *
      * @return boolean
      */
