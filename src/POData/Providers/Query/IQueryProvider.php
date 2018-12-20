@@ -144,4 +144,6 @@ interface IQueryProvider
         ResourceSet $targetResourceSet,
         ResourceProperty $targetProperty
     );
+
+    public function getCustomProperties($entryObject);
 }

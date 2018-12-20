@@ -23,4 +23,6 @@ class EdmPrimitiveType
     const SINGLE   = TypeCode::SINGLE;
     const STRING   = TypeCode::STRING;
     const TIMESPAN = TypeCode::TIMESPAN;
+    const TIME     = TypeCode::DATETIME;
+
 }

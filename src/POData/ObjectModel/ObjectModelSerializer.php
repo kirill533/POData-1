@@ -304,6 +304,14 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
             $entry->title = $title;
             $entry->editLink = $relativeUri;
             $entry->type = $actualResourceType->getFullName();
+
+            $entry->customProperties = new ODataPropertyContent();
+
+            $this->_writeCustomProperties(
+                $entryObject,
+                $entry->customProperties
+            );
+
             $odataPropertyContent = new ODataPropertyContent();
             $this->_writeObjectProperties(
                 $entryObject,
@@ -360,6 +368,23 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
                 $end = end($entryObjects);
                 $feed->nextPageLink = $this->getNextLinkUri($end, $absoluteUri);
             }
+        }
+    }
+
+    private function _writeCustomProperties(
+        $customObject,
+        ODataPropertyContent &$odataPropertyContent
+    )
+    {
+        $properties = $this->service->getQueryProvider()->getCustomProperties($customObject);
+
+        //First write out primitve types
+        foreach ($properties as $name => $value) {
+            $odataProperty = new ODataProperty();
+            $odataProperty->name = $name;
+            $odataProperty->typeName = 'Edm.String';
+            $odataProperty->value = json_encode($value);
+            $odataPropertyContent->properties[] = $odataProperty;
         }
     }
 
