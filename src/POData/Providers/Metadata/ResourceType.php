@@ -17,6 +17,7 @@ use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\EdmPrimitiveType;
 use POData\Providers\Metadata\Type\IType;
+use POData\Providers\Metadata\Type\Time;
 use POData\Common\Messages;
 use POData\Common\InvalidOperationException;
 use ReflectionClass;

@@ -165,6 +165,8 @@ class JsonODataV1Writer implements IODataWriter
             $this->writeLink($link);
         }
 
+        $this->writeCustomProperties($entry->customProperties);
+
         $this->writeProperties($entry->propertyContent);
 
 
@@ -302,6 +304,35 @@ class JsonODataV1Writer implements IODataWriter
         }
 
         $this->_writer->endScope();
+    }
+
+
+    /**
+     * Write the given collection of properties.
+     * (properties of an entity or complex type)
+     *
+     * @param ODataPropertyContent $properties Collection of properties.
+     *
+     * @return JsonODataV1Writer
+     */
+    protected function writeCustomProperties(ODataPropertyContent $properties)
+    {
+        foreach ($properties->properties as $name => $property) {
+
+            $this->writePropertyMeta($property);
+            $this->_writer->writeName($property->name);
+
+            if ($property->value == null) {
+                $this->_writer->writeValue("null");
+            } elseif ($property->value instanceof ODataPropertyContent) {
+                $this->writeComplexProperty($property);
+            } elseif ($property->value instanceof ODataBagContent) {
+                $this->writeBagContent($property->value);
+            } else {
+                $this->_writer->writeValue($property->value, $property->typeName);
+            }
+        }
+        return $this;
     }
 
 

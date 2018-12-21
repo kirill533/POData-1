@@ -208,12 +208,12 @@ class UriProcessor
                 throw ODataException::createBadRequestError(Messages::noDataForThisVerb($requestMethod));
             }
 
-            $entity = $uriProcessor->providers->postResource($resourceSet, $data);
+            $result = $uriProcessor->providers->postResource($resourceSet, $data);
 
             $segment->setSingleResult(true);
-            $segment->setResult($entity);
+            $segment->setResult($result);
 
-            return $entity;
+            return $result;
         };
 
         $segments = $this->request->getSegments();
@@ -223,6 +223,11 @@ class UriProcessor
                 $this->applyQueryOptions($segment, $callback);
             }
         }
+            //?? TODO : TEST
+            // Apply $select and $expand options to result set, this function will be always applied
+            // irrespective of return value of IDSQP2::canApplyQueryOptions which means library will
+            // not delegate $expand/$select operation to IDSQP2 implementation
+        $this->handleExpansion();
     }
 
     /**

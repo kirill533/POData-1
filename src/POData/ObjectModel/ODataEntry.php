@@ -84,5 +84,9 @@ class ODataEntry
      */
     public $resourceSetName;
     
-
+    /**
+     * Array of custom properties to serialize in key => value format.
+     * @var array
+     */
+    public $customProperties = array();
 }
