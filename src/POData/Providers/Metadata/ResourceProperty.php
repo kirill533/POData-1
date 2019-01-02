@@ -34,7 +34,7 @@ class ResourceProperty
      *  PrimitiveType + Key
      *  PrimitiveType + ETag
      *
-     * @var ResourcePropertyKind
+     * @var integer
      */
     private $_kind;
 
@@ -48,7 +48,7 @@ class ResourceProperty
     /**
      * @param string               $name                  Name of the property
      * @param string               $mimeType              Mime type of the property
-     * @param ResourcePropertyKind $kind                  The kind of property
+     * @param integer              $kind                  The kind of property
      * @param ResourceType         $propertyResourceType ResourceType of the property
      *
      * @throws InvalidArgumentException
@@ -77,7 +77,7 @@ class ResourceProperty
     /**
      * Check whether current property is of kind specified by the parameter
      *
-     * @param ResourcePropertyKind $kind kind to check
+     * @param integer $kind kind to check
      *
      * @return boolean
      */
@@ -109,7 +109,7 @@ class ResourceProperty
     /**
      * Get property kind
      *
-     * @return ResourcePropertyKind
+     * @return integer
      */
     public function getKind()
     {
@@ -152,8 +152,8 @@ class ResourceProperty
     /**
      * Check once kind is of another kind.
      *
-     * @param ResourcePropertyKind $kind1 First kind
-     * @param ResourcePropertyKind $kind2 second kind
+     * @param integer $kind1 First kind
+     * @param integer $kind2 second kind
      *
      * @return boolean
      */
@@ -165,7 +165,7 @@ class ResourceProperty
     /**
      * Checks whether resource property kind is valid or not
      *
-     * @param ResourcePropertyKind $kind The kind to validate
+     * @param integer $kind The kind to validate
      *
      * @return boolean
      */
@@ -186,7 +186,7 @@ class ResourceProperty
     /**
      * Check the specified resource kind is valid resource kind for property kind
      *
-     * @param ResourcePropertyKind $pKind The kind of resource property
+     * @param integer $pKind The kind of resource property
      * @param ResourceTypeKind     $rKind The kind of resource type
      *
      * @return boolean True if resource type kind and property kind matches
