@@ -615,8 +615,11 @@ class UriProcessor
         //Apply (implicit and explicit) $orderby option
         $internalOrderByInfo = $this->request->getInternalOrderByInfo();
         if (!is_null($internalOrderByInfo)) {
-//            $orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
-//            usort($result, $orderByFunction);
+            $orderByFunction = $internalOrderByInfo->getSorterFunction();
+            if ($orderByFunction instanceof \POData\UriProcessor\QueryProcessor\AnonymousFunction) {
+                $orderByFunction = $orderByFunction->getReference();
+            }
+            usort($result, $orderByFunction);
         }
 
         //Apply $skiptoken option
@@ -693,7 +696,7 @@ class UriProcessor
                         )->results;
                         if (!empty($result1)) {
                             $internalOrderByInfo = $expandedProjectionNode->getInternalOrderByInfo();
-                            /*if (!is_null($internalOrderByInfo)) {
+                            if (!is_null($internalOrderByInfo)) {
                                 $orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
                                 usort($result1, $orderByFunction);
                                 unset($internalOrderByInfo);
@@ -701,7 +704,7 @@ class UriProcessor
                                 if (!is_null($takeCount)) {
                                     $result1 = array_slice($result1, 0, $takeCount);
                                 }
-                            }*/
+                            }
 
                             $entry->$expandedPropertyName = $result1;
                             $projectedProperty = $expandedProjectionNode->getResourceProperty();

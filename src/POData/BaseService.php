@@ -322,9 +322,9 @@ abstract class BaseService implements IRequestHandler, IService
         }
 
         if ($serviceVersion->compare(Version::v3()) > -1) {
-            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $serviceURI));
-            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL, $serviceURI));
             $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::FULL, $serviceURI));
+            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL, $serviceURI));
+            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::NONE, $serviceURI));
         }
     }
 
@@ -492,6 +492,11 @@ abstract class BaseService implements IRequestHandler, IService
                 $responseContentType .= ';charset=utf-8';
             }
         }
+
+        //It must be app/json and have the right odata= piece
+        $parts = explode(";", $this->getHost()->getRequestAccept());
+        $metadata = array_filter($parts, function($item) { return strpos($item, 'odata') !== false; });
+        $responseContentType .= ';' . implode(';', $metadata);
 
         if ($hasResponseBody) {
             ResponseWriter::write(

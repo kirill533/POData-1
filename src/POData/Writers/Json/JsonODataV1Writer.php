@@ -360,7 +360,6 @@ class JsonODataV1Writer implements IODataWriter
             } else {
                 $this->_writer->writeValue($property->value, $property->typeName);
             }
-
         }
 
         return $this;

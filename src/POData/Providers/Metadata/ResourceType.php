@@ -948,4 +948,53 @@ class ResourceType
             $this->_type = new ReflectionClass($this->_type->name);
         }
     }
+
+    /**
+     * @param string $property
+     * @param mixed  $entity
+     * @param mixed  $value
+     *
+     * @return ResourceType
+     */
+    public function setPropertyValue($entity, $property, $value)
+    {
+        if ($entity instanceof \stdClass) {
+            $entity->$property = $value;
+            return;
+        }
+        $targ = $this->unpackEntityForPropertyGetSet($entity);
+        \POData\Common\ReflectionHandler::setProperty($targ, $property, $value);
+
+        return $this;
+    }
+
+    /**
+     * @param $entity
+     * @return mixed|null
+     */
+    private function unpackEntityForPropertyGetSet($entity)
+    {
+        $targ = ($entity instanceof \POData\Providers\Query\QueryResult)
+            ? (is_array($entity->results) && 0 < count($entity->results)) ? $entity->results[0] : null
+            : $entity;
+        return $targ;
+    }
+
+    /**
+     * @param $entity
+     * @param $property
+     * @return mixed
+     */
+    public function getPropertyValue($entity, $property)
+    {
+        if ($entity instanceof \stdClass) {
+            if (property_exists($entity, $property)) {
+                return $entity->$property;
+            } else {
+                return null;
+            }
+        }
+        $targ = $this->unpackEntityForPropertyGetSet($entity);
+        return \POData\Common\ReflectionHandler::getProperty($targ, $property);
+    }
 }

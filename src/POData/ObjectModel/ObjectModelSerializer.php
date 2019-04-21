@@ -110,6 +110,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
 
         $needPop = $this->pushSegmentForRoot();
         $targetResourceType = $this->request->getTargetResourceType();
+
         $this->_writeFeedElements(
             $entryObjects,
             $targetResourceType,
@@ -157,6 +158,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
     public function writeUrlElements($entryObjects)
     {
         $urls = new ODataURLCollection();
+
         if (!empty($entryObjects)) {
             $i = 0;
             foreach ($entryObjects as $entryObject) {
@@ -367,6 +369,51 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
             if ($this->needNextPageLink(count($entryObjects))) {
                 $end = end($entryObjects);
                 $feed->nextPageLink = $this->getNextLinkUri($end, $absoluteUri);
+            }
+
+
+            // GET NEXT SEQUENCE NUMBER
+            $tableName = $resourceType->getCustomState()->getName();
+            if (substr($tableName, -3) == 'Set') {
+                $tableName = substr($tableName, 0, -3);
+            }
+
+            $datasetId = 24;
+
+            // Get dataset schema
+            $pbiModule = \Bim_Pbi_Model_Pbi::getModuleInstance();
+            $dataset = $pbiModule->getResource()->loadDataset($datasetId);
+            $schema = $pbiModule->getDatasetManager()->getDatasetSchemaManager()->getSchemaForDataset($dataset);
+
+            $sourceTable = $schema->getSourceTableByPbiTable($tableName);
+
+            if ($sourceTable != 'no_source') {
+                $input = new \BimLib\SalesCube\Input\DwhInput();
+                $input->setExactSnMatch(true);
+                $input->setPath(\BimLib\SalesCube\Input\DwhInput::createPathString($datasetId, $sourceTable));
+
+                $sToken = -1;
+
+                $info = $this->request->getInternalSkipTokenInfo();
+                if ($info) {
+                    $info = $info->getSkipTokenInfo();
+                    if ($info) {
+                        $info->getOrderByKeysInToken();
+                        $val = $info->getOrderByKeysInToken();
+                        $sToken = intval($val[0][0]);
+                    }
+                }
+
+                if ($sToken == -1) {
+                    $sToken = $input->getFirstSn();
+                }
+
+                $nextSn = $input->getNextSn($sToken);
+                if ($nextSn) {
+                    $feed->nextPageLink = $this->getNextLinkUriForSN($nextSn, $absoluteUri);
+                } else {
+                    // $feed->deltaPageLink = ...;
+                }
             }
         }
     }
@@ -625,6 +672,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
                             $inlineFeed = new ODataFeed();
                             $link->isCollection = true;
                             $currentResourceType = $currentResourceSetWrapper->getResourceType();
+
                             $this->_writeFeedElements(
                                 $navigationPropertyInfo->value,
                                 $currentResourceType,

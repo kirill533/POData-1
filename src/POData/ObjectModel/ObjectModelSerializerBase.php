@@ -433,6 +433,33 @@ class ObjectModelSerializerBase
     }
 
     /**
+     * Get next page link from the given entity instance.
+     *
+     * @param int $lastObject Last object serialized to be
+     *                            used for generating $skiptoken.
+     * @param string $absoluteUri Absolute response URI.
+     *
+     * @return ODataLink for the link for next page.
+     */
+    protected function getNextLinkUriForSN($sn, $absoluteUri)
+    {
+        $skipToken = $sn;
+        $this->assert(!is_null($skipToken), '!is_null($skipToken)');
+        $queryParameterString = null;
+        if ($this->isRootResourceSet()) {
+            $queryParameterString = $this->getNextPageLinkQueryParametersForRootResourceSet();
+        } else {
+            $queryParameterString = $this->getNextPageLinkQueryParametersForExpandedResourceSet();
+        }
+
+        $queryParameterString .= '$skiptoken=' . $skipToken;
+        $odalaLink = new ODataLink();
+        $odalaLink->name = ODataConstants::ATOM_LINK_NEXT_ATTRIBUTE_STRING;
+        $odalaLink->url = rtrim($absoluteUri, '/') . '?' . $queryParameterString;
+        return $odalaLink;
+    }
+
+    /**
      * Builds the string corresponding to query parameters for top level results
      * (result set identified by the resource path) to be put in next page link.
      *

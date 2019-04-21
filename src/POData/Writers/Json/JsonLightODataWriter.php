@@ -55,6 +55,12 @@ class JsonLightODataWriter extends JsonODataV2Writer
      */
     public function __construct($metadataLevel, $absoluteServiceUri)
     {
+//        try {
+//            throw new \Exception('');
+//        } catch (\Exception $e) {
+//            var_export($e->getTraceAsString());
+//            exit;
+//        }
         if (strlen($absoluteServiceUri) == 0)
         {
             throw new \Exception("absoluteServiceUri must not be empty or null");
@@ -85,6 +91,15 @@ class JsonLightODataWriter extends JsonODataV2Writer
 
         //It must be app/json and have the right odata= piece
         $metadata = array_filter($parts, function($item) { return strpos($item, 'odata') !== false; });
+//        var_export($parts);
+//        var_export($metadata);
+//        try {
+//            throw new \exception('');
+//        } catch (\exception $e) {
+//            var_export($e->gettraceasstring());
+//            exit;
+//        }
+//        exit;
         return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (empty($metadata) || in_array($this->metadataLevel, $metadata));
     }
 
@@ -110,6 +125,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
             $this->writeTopLevelMeta($model->properties[0]->typeName);
             $this->writeTopLevelProperty($model->properties[0]);
         } elseif ($model instanceof ODataFeed) {
+
             $this->writeTopLevelMeta($model->title);
             $this->writeRowCount($model->rowCount);
             $this->writeNextPageLink($model->nextPageLink);
@@ -164,6 +180,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
      */
     protected function writeTopLevelMeta($fragment)
     {
+        //var_export($this->metadataLevel);exit;
         if ($this->metadataLevel == JsonLightMetadataLevel::NONE)
         {
             return;
@@ -291,16 +308,14 @@ class JsonLightODataWriter extends JsonODataV2Writer
      */
     protected function writeNextPageLink(ODataLink $nextPageLinkUri = null)
     {
-        /*
 		// "__next" : uri
 		if ($nextPageLinkUri != null) {
 			$this->_writer
-				->writeName(ODataConstants::JSON_NEXT_STRING)
+				->writeName('odata.nextLink')
 				->writeValue($nextPageLinkUri->url);
 		}
 
 		return $this;
-		*/
     }
 
 
@@ -405,5 +420,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
         ;
 
         return $this;
+
     }
+
 }
