@@ -1,4 +1,15 @@
 <?php
+/**
+ * BIM Modules.
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ *
+ * @copyright Copyright (c) Kyrylo Kostiukov 2019 - All Rights Reserved
+ * @author Kyrylo Kostiukov <kyrylo.kostiukov@bimproject.net>
+ * @license Commercial BIM Software License 1.1 (BIM 1.1) https://www.bimproject.net/bim-license-v1.1.txt
+ * @project magento-bim
+ */
 
 namespace POData\Writers\Atom;
 
@@ -60,7 +71,7 @@ class AtomODataWriter implements IODataWriter
      */
     public function canHandle(Version $responseVersion, $contentType)
     {
-
+        return false;
         $parts = explode(";", $contentType);
 
         //first 2 parts are for service documents, second part is for Resources

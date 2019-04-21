@@ -2,6 +2,7 @@
 
 namespace POData\UriProcessor\QueryProcessor\OrderByParser;
 
+use POData\Providers\Metadata\Entity\IDynamic;
 use POData\UriProcessor\QueryProcessor\AnonymousFunction;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;
@@ -106,7 +107,17 @@ class OrderByParser
     ) {
         $orderByParser = new OrderByParser($providerWrapper);
         try {
-            $orderByParser->_dummyObject = $resourceType->getInstanceType()->newInstanceWithoutConstructor();
+            $instance = $resourceType->getInstanceType();
+            if ($instance instanceof IDynamic) {
+                $obj = new \stdClass();
+                foreach ($instance->getPropertyNames() as $key) {
+                    $obj->$key = null;
+                }
+                $orderByParser->dummyObject = $obj;
+            } else {
+                assert($instance instanceof \ReflectionClass, get_class($instance));
+                $orderByParser->dummyObject = $instance->newInstanceWithoutConstructor();
+            }
         } catch (\ReflectionException $reflectionException) {
             throw ODataException::createInternalServerError(Messages::orderByParserFailedToCreateDummyObject());
         }

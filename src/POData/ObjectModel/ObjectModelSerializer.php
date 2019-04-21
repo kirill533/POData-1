@@ -383,7 +383,7 @@ class ObjectModelSerializer extends ObjectModelSerializerBase
             $odataProperty = new ODataProperty();
             $odataProperty->name = $name;
             $odataProperty->typeName = 'Edm.String';
-            $odataProperty->value = json_encode($value);
+            $odataProperty->value = $value;//json_encode($value);
             $odataPropertyContent->properties[] = $odataProperty;
         }
     }

@@ -2,6 +2,8 @@
 
 namespace POData\Providers\Metadata;
 
+use POData\Providers\Metadata\Entity\Dynamic;
+use POData\Providers\Metadata\Entity\IDynamic;
 use POData\Providers\Metadata\Type\Binary;
 use POData\Providers\Metadata\Type\Boolean;
 use POData\Providers\Metadata\Type\Byte;
@@ -179,7 +181,7 @@ class ResourceType
     /**
      * Create new instance of ResourceType
      *
-     * @param ReflectionClass|IType $instanceType     Instance type for the resource,
+     * @param ReflectionClass|IType|IDynamic $instanceType     Instance type for the resource,
      *                                                for entity and
      *                                                complex this will
      *                                                be 'ReflectionClass' and for
@@ -222,7 +224,7 @@ class ResourceType
                 );
             }
         } else {
-            if (!($instanceType instanceof ReflectionClass)) {
+            if (!($instanceType instanceof ReflectionClass) && !($instanceType instanceof IDynamic)) {
                 throw new InvalidArgumentException(
                     Messages::resourceTypeTypeShouldReflectionClass('$instanceType')
                 );
@@ -289,7 +291,7 @@ class ResourceType
      * then this function returns refernece to ReflectionClass instance for the type.
      * If resource type describes a primitive type then this function returns ITYpe.
      *
-     * @return ReflectionClass|IType
+     * @return ReflectionClass|IType|IDynamic
      */
     public function getInstanceType()
     {
@@ -935,6 +937,13 @@ class ResourceType
 
 
     function __wakeup() {
+
+        if (is_string($this->_type)) {
+            $this->_type = new ReflectionClass($this->_type);
+        } else if (is_array($this->type) && !empty($this->_type['isDynamic'])) {
+            $this->_type = new Dynamic($this->_type['properties']);
+        }
+
         if ($this->_type instanceof ReflectionClass) {
             $this->_type = new ReflectionClass($this->_type->name);
         }

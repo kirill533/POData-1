@@ -11,7 +11,7 @@ use POData\Providers\Metadata\ResourceTypeKind;
 use POData\Providers\Metadata\ResourceType;
 use POData\Common\InvalidOperationException;
 use POData\Providers\Metadata\IMetadataProvider;
-
+use POData\Providers\Metadata\Entity\IDynamic;
 
 /**
  * Class SimpleMetadataProvider
@@ -188,7 +188,7 @@ class SimpleMetadataProvider implements IMetadataProvider
     /**
      * Add an entity type
      * 
-     * @param \ReflectionClass $refClass  reflection class of the entity
+     * @param \ReflectionClass|IDynamic $refClass  reflection class of the entity
      * @param string $name name of the entity
      * @param string $namespace namespace of the data source
      * 
@@ -196,7 +196,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      *
      * @throws InvalidOperationException when the name is already in use
      */
-    public function addEntityType(\ReflectionClass $refClass, $name, $namespace = null)
+    public function addEntityType($refClass, $name, $namespace = null)
     {
         if (array_key_exists($name, $this->resourceTypes)) {
             throw new InvalidOperationException('Type with same name already added');
@@ -375,31 +375,24 @@ class SimpleMetadataProvider implements IMetadataProvider
         $resourceType->addProperty($resourceProperty);
         return $resourceProperty;
     }
-    
+
     /**
      * To add a Key/NonKey-primitive property to a resource (complex/entity)
-     * 
-     * @param ResourceType $resourceType   Resource type
-     * @param string       $name           name of the property
-     * @param int          $typeCode       type of property
-     * @param boolean      $isKey          property is key or not
-     * @param boolean      $isBag          property is bag or not
-     * @param boolean      $isETagProperty property is etag or not
-     * 
+     *
+     * @param ResourceType $resourceType Resource type
+     * @param string $name name of the property
+     * @param int $typeCode type of property
+     * @param boolean $isKey property is key or not
+     * @param boolean $isBag property is bag or not
+     * @param boolean $isETagProperty property is etag or not
+     *
      * @return void
+     * @throws InvalidOperationException
      */
     private function _addPrimitivePropertyInternal($resourceType, $name, $typeCode, $isKey = false, $isBag = false, $isETagProperty = false)
     {
-        try 
-        {
-            $resourceType->getInstanceType()->getProperty($name);
-        } catch (\ReflectionException $ex)
-        {
-            throw new InvalidOperationException(
-                'Can\'t add a property which does not exist on the instance type.'
-            );
-        }
-        
+        $this->checkInstanceProperty($name, $resourceType);
+
         $primitiveResourceType = ResourceType::getPrimitiveResourceType($typeCode);
 
 
@@ -419,25 +412,61 @@ class SimpleMetadataProvider implements IMetadataProvider
         $resourceProperty = new ResourceProperty($name, null, $kind, $primitiveResourceType);
         $resourceType->addProperty($resourceProperty);
     }
-    
+
+    /**
+     * @param string       $name
+     * @param ResourceType $resourceType
+     *
+     * @throws InvalidOperationException
+     */
+    private function checkInstanceProperty($name, ResourceType $resourceType)
+    {
+        $instance = $resourceType->getInstanceType();
+        if ($instance instanceof IDynamic) {
+            if (!$instance->hasProperty($name)) {
+                throw new InvalidOperationException(
+                    'Can\'t add a property which does not exist on the instance type. Property name: ' . $name
+                );
+            }
+            return;
+        }
+        $hasMagicGetter = $instance instanceof IType || $instance->hasMethod('__get');
+        if ($instance instanceof \ReflectionClass) {
+            $hasMagicGetter |= $instance->isInstance(new \stdClass);
+        }
+
+        if (!$hasMagicGetter) {
+            try {
+                if ($instance instanceof \ReflectionClass) {
+                    $instance->getProperty($name);
+                }
+            } catch (\ReflectionException $exception) {
+                throw new InvalidOperationException(
+                    'Can\'t add a property which does not exist on the instance type.'
+                );
+            }
+        }
+    }
+
     /**
      * To add a navigation property (resource set or resource reference)
      * to a resource type
-     * 
-     * @param ResourceType         $resourceType         The resource type to add 
-     *                                                   the resource reference 
-     *                                                   or resource 
+     *
+     * @param ResourceType $resourceType The resource type to add
+     *                                                   the resource reference
+     *                                                   or resource
      *                                                   reference set property to
-     * @param string               $name                 The name of the 
+     * @param string $name The name of the
      *                                                   property to add
-     * @param ResourceSet          $targetResourceSet    The resource set the 
+     * @param ResourceSet $targetResourceSet The resource set the
      *                                                   resource reference
-     *                                                   or reference 
-     *                                                   set property 
+     *                                                   or reference
+     *                                                   set property
      *                                                   ponits to
      * @param ResourcePropertyKind $resourcePropertyKind The property kind
-     * 
+     *
      * @return void
+     * @throws InvalidOperationException
      */
     private function _addReferencePropertyInternal(
         ResourceType $resourceType,
@@ -445,15 +474,8 @@ class SimpleMetadataProvider implements IMetadataProvider
         ResourceSet $targetResourceSet,
         $resourcePropertyKind
     ) {
-        try {
-            $resourceType->getInstanceType()->getProperty($name);
-                  
-        } catch (\ReflectionException $exception) {
-            throw new InvalidOperationException(
-                'Can\'t add a property which does not exist on the instance type.'
-            );
-        }
-          
+        $this->checkInstanceProperty($name, $resourceType);
+
         if (!($resourcePropertyKind == ResourcePropertyKind::RESOURCESET_REFERENCE 
             || $resourcePropertyKind == ResourcePropertyKind::RESOURCE_REFERENCE)
         ) {
@@ -482,5 +504,5 @@ class SimpleMetadataProvider implements IMetadataProvider
         );
         $this->associationSets[$setKey] = $set;
     }
-    
+
 }

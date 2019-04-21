@@ -615,8 +615,8 @@ class UriProcessor
         //Apply (implicit and explicit) $orderby option
         $internalOrderByInfo = $this->request->getInternalOrderByInfo();
         if (!is_null($internalOrderByInfo)) {
-            $orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
-            usort($result, $orderByFunction);
+//            $orderByFunction = $internalOrderByInfo->getSorterFunction()->getReference();
+//            usort($result, $orderByFunction);
         }
 
         //Apply $skiptoken option

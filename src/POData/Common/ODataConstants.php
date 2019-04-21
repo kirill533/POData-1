@@ -442,7 +442,7 @@ class ODataConstants
     const CSDL_VERSION_1_0 = 'http://schemas.microsoft.com/ado/2006/04/edm';
 
     //CSDL (Conceptual Schema Definition Language) version 1.1
-    const CSDL_VERSION_1_1 = 'http://schemas.microsoft.com/ado/2007/05/edm';
+    const CSDL_VERSION_1_1 = 'http://schemas.microsoft.com/ado/2009/11/edm';
 
     //CSDL (Conceptual Schema Definition Language) version 1.2
     const CSDL_VERSION_1_2 = 'http://schemas.microsoft.com/ado/2008/01/edm';
