@@ -187,7 +187,7 @@ class ObjectModelSerializerBase
     protected function isRootResourceSet()
     {
         return empty($this->_segmentResourceSetWrappers)
-                || count($this->_segmentResourceSetWrappers) == 1;
+            || count($this->_segmentResourceSetWrappers) == 1;
     }
 
     /**
@@ -327,14 +327,14 @@ class ObjectModelSerializerBase
                 for ($i = 1; $i < $depth; $i++) {
                     $expandedProjectionNode
                         = $expandedProjectionNode->findNode($this->_segmentNames[$i]);
-                        $this->assert(
-                            !is_null($expandedProjectionNode),
-                            '!is_null($expandedProjectionNode)'
-                        );
-                        $this->assert(
-                            $expandedProjectionNode instanceof ExpandedProjectionNode,
-                            '$expandedProjectionNode instanceof ExpandedProjectionNode'
-                        );
+                    $this->assert(
+                        !is_null($expandedProjectionNode),
+                        '!is_null($expandedProjectionNode)'
+                    );
+                    $this->assert(
+                        $expandedProjectionNode instanceof ExpandedProjectionNode,
+                        '$expandedProjectionNode instanceof ExpandedProjectionNode'
+                    );
                 }
             }
         }
@@ -445,10 +445,10 @@ class ObjectModelSerializerBase
     {
         $queryParameterString = null;
         foreach (array(ODataConstants::HTTPQUERY_STRING_FILTER,
-            ODataConstants::HTTPQUERY_STRING_EXPAND,
-            ODataConstants::HTTPQUERY_STRING_ORDERBY,
-            ODataConstants::HTTPQUERY_STRING_INLINECOUNT,
-            ODataConstants::HTTPQUERY_STRING_SELECT) as $queryOption
+                     ODataConstants::HTTPQUERY_STRING_EXPAND,
+                     ODataConstants::HTTPQUERY_STRING_ORDERBY,
+                     ODataConstants::HTTPQUERY_STRING_INLINECOUNT,
+                     ODataConstants::HTTPQUERY_STRING_SELECT) as $queryOption
         ) {
             $value = $this->service->getHost()->getQueryStringItem($queryOption);
             if (!is_null($value)) {
@@ -522,7 +522,7 @@ class ObjectModelSerializerBase
             }
 
             if (!is_null($queryParameterString)) {
-                    $queryParameterString .= '&';
+                $queryParameterString .= '&';
             }
         }
 
@@ -549,7 +549,7 @@ class ObjectModelSerializerBase
             //presence of $top option affect next link for root container
             $topValueCount = $this->request->getTopOptionCount();
             if (!is_null($topValueCount) && ($topValueCount <= $pageSize)) {
-                    return false;
+                return false;
             }
         }
 
@@ -629,9 +629,9 @@ class ObjectModelSerializerBase
      * @return void
      */
     private function _buildSelectionAndExpansionPathsForNode(&$parentPathSegments,
-        &$selectionPaths, &$expansionPaths,
-        ExpandedProjectionNode &$expandedProjectionNode,
-        &$foundSelections, &$foundExpansions
+                                                             &$selectionPaths, &$expansionPaths,
+                                                             ExpandedProjectionNode &$expandedProjectionNode,
+                                                             &$foundSelections, &$foundExpansions
     ) {
         $foundSelections = false;
         $foundExpansions = false;

@@ -1,19 +1,20 @@
 <?php
+
 namespace POData\OperationContext;
 
-use POData\Common\ODataConstants;
-use POData\OperationContext\HTTPRequestMethod;
-use POData\OperationContext\IHTTPRequest;
 use POData\OperationContext\Web\IncomingRequest;
-class RequestAdapter extends IncomingRequest implements IHTTPRequest
+
+class SimpleRequestAdapter extends IncomingRequest implements IHTTPRequest
 {
     protected $request;
+
     public function __construct($request)
     {
         $this->request = $request;
     }
+
     /**
-     * get the raw incoming url
+     * get the raw incoming url.
      *
      * @return string RequestURI called by User with the value of QueryString
      */
@@ -21,9 +22,10 @@ class RequestAdapter extends IncomingRequest implements IHTTPRequest
     {
         return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/' . $_SERVER['REQUEST_URI'];
     }
+
     /**
      * Returns the Query String Parameters (QSPs) as an array of KEY-VALUE pairs.  If a QSP appears twice
-     * it will have two entries in this array
+     * it will have two entries in this array.
      *
      * @return array[]
      */
@@ -35,10 +37,12 @@ class RequestAdapter extends IncomingRequest implements IHTTPRequest
                 $data[] = [$key => $value];
             }
         }
+
         return $data;
     }
+
     /**
-     * Get the HTTP method/verb of the HTTP Request
+     * Get the HTTP method/verb of the HTTP Request.
      *
      * @return string
      */

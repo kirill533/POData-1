@@ -1,6 +1,5 @@
 <?php
 
-
 namespace UnitTests\POData\Providers\Metadata\Type;
 
 use POData\Providers\Metadata\Type\Binary;
@@ -15,128 +14,248 @@ use POData\Providers\Metadata\Type\Int16;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\IType;
-use POData\Providers\Metadata\Type\Navigation;
 use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\Type\SByte;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\TypeCode;
 use POData\Providers\Metadata\Type\VoidType;
-use PHPUnit\Framework\TestCase;
+use UnitTests\POData\TestCase;
 
-class DateTimeTest extends TestCase {
+class DateTimeTest extends TestCase
+{
+    /**
+     * @return IType
+     */
+    public function getAsIType()
+    {
+        return new DateTime();
+    }
 
-	/**
-	 * @return IType
-	 */
-	public function getAsIType()
-	{
-		return new DateTime();
-	}
+    public function testConstructorAndDefaultValues()
+    {
+        $type = $this->getAsIType();
 
-	public function testConstructorAndDefaultValues()
-	{
-		$type = $this->getAsIType();
+        $actual = get_object_vars($type);
 
-		$actual = get_object_vars($type);
+        $expected = [
 
-		$expected = array(
+        ];
 
-		);
+        $this->assertEquals($expected, $actual);
+    }
 
-		$this->assertEquals($expected, $actual);
+    public function testGetFullTypeName()
+    {
+        $type = $this->getAsIType();
 
-	}
+        $actual = $type->getFullTypeName();
 
+        $this->assertEquals('Edm.DateTime', $actual);
+    }
 
-	public function testGetFullTypeName()
-	{
-		$type = $this->getAsIType();
+    public function testGetTypeCode()
+    {
+        $type = $this->getAsIType();
 
-		$actual = $type->getFullTypeName();
+        $actual = $type->getTypeCode();
 
-		$this->assertEquals("Edm.DateTime", $actual);
+        $this->assertEquals(TypeCode::DATETIME, $actual);
+    }
 
-	}
+    public function testCompatibleWith()
+    {
+        $type = $this->getAsIType();
 
-	public function testGetTypeCode()
-	{
-		$type = $this->getAsIType();
+        $this->assertFalse($type->isCompatibleWith(new Binary()));
+        $this->assertFalse($type->isCompatibleWith(new Boolean()));
+        $this->assertFalse($type->isCompatibleWith(new Byte()));
+        $this->assertFalse($type->isCompatibleWith(new Char()));
+        $this->assertTrue($type->isCompatibleWith(new DateTime()));
+        $this->assertFalse($type->isCompatibleWith(new Decimal()));
+        $this->assertFalse($type->isCompatibleWith(new Double()));
+        $this->assertFalse($type->isCompatibleWith(new Guid()));
+        $this->assertFalse($type->isCompatibleWith(new Int16()));
+        $this->assertFalse($type->isCompatibleWith(new Int32()));
+        $this->assertFalse($type->isCompatibleWith(new Int64()));
+        $this->assertFalse($type->isCompatibleWith(new NullType()));
+        $this->assertFalse($type->isCompatibleWith(new SByte()));
+        $this->assertFalse($type->isCompatibleWith(new Single()));
+        $this->assertFalse($type->isCompatibleWith(new StringType()));
+        $this->assertFalse($type->isCompatibleWith(new VoidType()) );
+    }
 
-		$actual = $type->getTypeCode();
+    public function testValidateSuccess()
+    {
+        $date = 'datetime\'2399-12-31T24:51:51\'';
+        $type = $this->getAsIType();
 
-		$this->assertEquals(TypeCode::DATETIME, $actual);
+        $expected = '\'2399-12-31T24:51:51\'';
+        $out = '';
+        $this->assertTrue($type->validate($date, $out));
+        $this->assertEquals($expected, $out);
+    }
 
-	}
+    public function testValidateSuccessWithPositiveOffset()
+    {
+        $date = 'datetime\'2017-10-22T00:00:00+10:00\'';
+        $type = $this->getAsIType();
 
-	public function testCompatibleWith()
-	{
-		$type = $this->getAsIType();
+        $expected = '\'2017-10-22T00:00:00\'';
+        $out = '';
+        $this->assertTrue($type->validate($date, $out));
+        $this->assertEquals($expected, $out);
+    }
 
-		$this->assertFalse( $type->isCompatibleWith(new Binary()) );
-		$this->assertFalse( $type->isCompatibleWith(new Boolean()) );
-		$this->assertFalse( $type->isCompatibleWith(new Byte()) );
-		$this->assertFalse( $type->isCompatibleWith(new Char()) );
-		$this->assertTrue( $type->isCompatibleWith(new DateTime()) );
-		$this->assertFalse( $type->isCompatibleWith(new Decimal()) );
-		$this->assertFalse( $type->isCompatibleWith(new Double()) );
-		$this->assertFalse( $type->isCompatibleWith(new Guid()) );
-		$this->assertFalse( $type->isCompatibleWith(new Int16()) );
-		$this->assertFalse( $type->isCompatibleWith(new Int32()) );
-		$this->assertFalse( $type->isCompatibleWith(new Int64()) );
-		$this->assertFalse( $type->isCompatibleWith(new NullType()) );
-		$this->assertFalse( $type->isCompatibleWith(new SByte()) );
-		$this->assertFalse( $type->isCompatibleWith(new Single()) );
-		$this->assertFalse( $type->isCompatibleWith(new StringType()) );
-		$this->assertFalse( $type->isCompatibleWith(new VoidType()) );
+    public function testValidateSuccessWithNegativeOffset()
+    {
+        $date = 'datetime\'2017-10-22T00:00:00-10:00\'';
+        $type = $this->getAsIType();
 
+        $expected = '\'2017-10-22T00:00:00\'';
+        $out = '';
+        $this->assertTrue($type->validate($date, $out));
+        $this->assertEquals($expected, $out);
+    }
 
+    public function testConvert()
+    {
+        $type = $this->getAsIType();
 
-	}
+        $value = 'afaefasevaswee';
+        $actual = $type->convert($value);
 
-	public function testValidateSuccess()
-	{
-		$this->markTestSkipped("Too lazy see #67");
-	}
+        $expected = 'afaefasevaswee';
+        $this->assertEquals($expected, $actual);
+    }
 
+    public function testConvertToOData()
+    {
+        $type = $this->getAsIType();
 
-	public function testValidateFailure()
-	{
+        $value = 'afaefasevaswee';
+        $actual = $type->convertToOData($value);
 
-		$this->markTestSkipped("Too lazy see #67");
+        $expected = "datetime'afaefasevaswee'";
+        $this->assertEquals($expected, $actual);
+    }
 
-	}
+    public function testGetName()
+    {
+        $type = $this->getAsIType();
 
+        $actual = $type->getName();
 
-	public function testConvert()
-	{
+        $this->assertEquals('Edm.DateTime', $actual);
+    }
 
-		$type = $this->getAsIType();
+    /**************
+     *
+     *  Begin Type Specific Tests
+     *
+     */
 
-		$value = "afaefasevaswee";
-		$actual = $type->convert($value);
+    public function testYear()
+    {
+        $date = '2399-12-31T24:51:51';
+        $result = DateTime::year($date);
+        $this->assertEquals('2400', $result);
+    }
 
-		$expected = "afaefasevaswee";
-		$this->assertEquals($expected, $actual);
-	}
+    public function testMonth()
+    {
+        $date = '2399-12-31T24:51:51';
+        $result = DateTime::month($date);
+        $this->assertEquals('01', $result);
+    }
 
-	public function testConvertToOData()
-	{
+    public function testDay()
+    {
+        $date = '2399-12-31T24:51:51';
+        $result = DateTime::day($date);
+        $this->assertEquals('01', $result);
+    }
 
-		$type = $this->getAsIType();
+    public function testHour()
+    {
+        $date = '2399-12-31T24:51:51';
+        $result = DateTime::hour($date);
+        $this->assertEquals('00', $result);
+    }
 
-		$value = "afaefasevaswee";
-		$actual = $type->convertToOData($value);
+    public function testMinute()
+    {
+        $date = '2399-12-31T24:51:51';
+        $result = DateTime::minute($date);
+        $this->assertEquals('51', $result);
+    }
 
-		$expected = "datetime'afaefasevaswee'";
-		$this->assertEquals($expected, $actual);
-	}
+    public function testSecond()
+    {
+        $date = '2399-12-31T24:51:51';
+        $result = DateTime::second($date);
+        $this->assertEquals('51', $result);
+    }
 
+    public function testCompareTwoDateTimeObjects()
+    {
+        $firstDate = new \DateTime();
+        $lastDate = $firstDate;
 
+        $expected = 0;
+        $actual = DateTime::dateTimeCmp($firstDate, $lastDate);
+        $this->assertEquals($expected, $actual);
+    }
 
-	/**************
-	 *
-	 *  Begin Type Specific Tests
-	 *
-	 */
+    public function testCompareDateTimeToString()
+    {
+        $firstDate = '2000-01-01 00:00:00';
+        $lastDate = new \DateTime();
+
+        $expected = -1;
+        $actual = DateTime::dateTimeCmp($firstDate, $lastDate);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testCompareStringToDateTime()
+    {
+        $firstDate = new \DateTime();
+        $lastDate = '2000-01-01 00:00:00';
+
+        $expected = 1;
+        $actual = DateTime::dateTimeCmp($firstDate, $lastDate);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testCompareStringToInvalidObject()
+    {
+        $firstDate = '2000-01-01 00:00:00';
+        $lastDate = null;
+
+        $expected = 'Invalid input - datetime2 must be DateTime or string';
+        $actual = null;
+
+        try {
+            DateTime::dateTimeCmp($firstDate, $lastDate);
+        } catch (\Exception $e) {
+            $actual = $e->getMessage();
+        }
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testCompareInvalidObjectToString()
+    {
+        $firstDate = null;
+        $lastDate = '2000-01-01 00:00:00';
+
+        $expected = 'Invalid input - datetime1 must be DateTime or string';
+        $actual = null;
+
+        try {
+            DateTime::dateTimeCmp($firstDate, $lastDate);
+        } catch (\Exception $e) {
+            $actual = $e->getMessage();
+        }
+        $this->assertEquals($expected, $actual);
+    }
 }

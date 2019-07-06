@@ -3,46 +3,54 @@
 namespace UnitTests\POData\Common;
 
 use POData\Common\Version;
-use PHPUnit\Framework\TestCase;
+use UnitTests\POData\TestCase;
 
 class VersionTest extends TestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        Version::reset();
+    }
 
     public function testCompareSame()
     {
-
         $version1 = new Version(1, 0);
         $version2 = new Version(1, 0);
         $this->assertEquals(0, $version1->compare($version2));
     }
 
-    public function testCompareMajorSameMinorLess(){
+    public function testCompareMajorSameMinorLess()
+    {
         $version1 = new Version(1, 0);
         $version2 = new Version(1, 1);
         $this->assertEquals(-1, $version1->compare($version2));
     }
 
-    public function testCompareMajorSameMinorMore(){
+    public function testCompareMajorSameMinorMore()
+    {
         $version1 = new Version(1, 1);
         $version2 = new Version(1, 0);
         $this->assertEquals(1, $version1->compare($version2));
     }
 
-    public function testCompareMajorLessMinorSame(){
-
+    public function testCompareMajorLessMinorSame()
+    {
         $version1 = new Version(1, 0);
         $version2 = new Version(2, 0);
         $this->assertEquals(-1, $version1->compare($version2));
+        $this->assertEquals(+1, $version2->compare($version1));
     }
 
-    public function testCompareMajorMoreMinorLess(){
-
+    public function testCompareMajorMoreMinorLess()
+    {
         $version1 = new Version(2, 0);
         $version2 = new Version(1, 1);
         $this->assertEquals(1, $version1->compare($version2));
     }
 
-    public function testRaiseVersion(){
+    public function testRaiseVersion()
+    {
         $version = new Version(2, 0);
 
         $version->raiseVersion(1, 5);
@@ -56,8 +64,12 @@ class VersionTest extends TestCase
         $version->raiseVersion(3, 1);
         $this->assertEquals(3, $version->getMajor());
         $this->assertEquals(1, $version->getMinor());
-
     }
 
-
+    public function testStaticFunctionV1()
+    {
+        $version = Version::v1();
+        $this->assertEquals(1, $version->getMajor());
+        $this->assertEquals(0, $version->getMinor());
+    }
 }

@@ -288,10 +288,10 @@ class MetadataWriter
             } else if ($resourceProperty->isKindOf(ResourcePropertyKind::RESOURCE_REFERENCE)
                 || $resourceProperty->isKindOf(ResourcePropertyKind::RESOURCESET_REFERENCE)
             ) {
-                    $this->_writeNavigationProperty($resourceType, $associationTypesInResourceTypeNamespace, $resourceProperty);
+                $this->_writeNavigationProperty($resourceType, $associationTypesInResourceTypeNamespace, $resourceProperty);
             } else {
-                    //Unexpected ResourceProperty, expected
-                    //Bag/Primitive/Complex/Navigation Property
+                //Unexpected ResourceProperty, expected
+                //Bag/Primitive/Complex/Navigation Property
             }
         }
     }

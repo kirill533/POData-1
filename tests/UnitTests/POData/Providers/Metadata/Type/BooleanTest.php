@@ -1,6 +1,5 @@
 <?php
 
-
 namespace UnitTests\POData\Providers\Metadata\Type;
 
 use POData\Providers\Metadata\Type\Binary;
@@ -15,13 +14,12 @@ use POData\Providers\Metadata\Type\Int16;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\IType;
-use POData\Providers\Metadata\Type\Navigation;
 use POData\Providers\Metadata\Type\NullType;
 use POData\Providers\Metadata\Type\SByte;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\TypeCode;
-use POData\Providers\Metadata\Type\VoidType;
+use POData\Providers\Metadata\Type\Void;
 use PHPUnit\Framework\TestCase;
 
 class BooleanTest extends TestCase {
@@ -34,159 +32,149 @@ class BooleanTest extends TestCase {
 		return new Boolean();
 	}
 
-	public function testConstructorAndDefaultValues()
-	{
-		$type = $this->getAsIType();
+    public function testConstructorAndDefaultValues()
+    {
+        $type = $this->getAsIType();
 
-		$actual = get_object_vars($type);
+        $actual = get_object_vars($type);
 
-		$expected = array(
+        $expected = [
 
-		);
+        ];
 
-		$this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $actual);
+    }
 
-	}
+    public function testGetFullTypeName()
+    {
+        $type = $this->getAsIType();
 
+        $actual = $type->getFullTypeName();
 
-	public function testGetFullTypeName()
-	{
-		$type = $this->getAsIType();
+        $this->assertEquals('Edm.Boolean', $actual);
+    }
 
-		$actual = $type->getFullTypeName();
+    public function testGetTypeCode()
+    {
+        $type = $this->getAsIType();
 
-		$this->assertEquals("Edm.Boolean", $actual);
+        $actual = $type->getTypeCode();
 
-	}
+        $this->assertEquals(TypeCode::BOOLEAN, $actual);
+    }
 
-	public function testGetTypeCode()
-	{
-		$type = $this->getAsIType();
+    public function testCompatibleWith()
+    {
+        $type = $this->getAsIType();
 
-		$actual = $type->getTypeCode();
+        $this->assertFalse($type->isCompatibleWith(new Binary()));
+        $this->assertTrue($type->isCompatibleWith(new Boolean()));
+        $this->assertFalse($type->isCompatibleWith(new Byte()));
+        $this->assertFalse($type->isCompatibleWith(new Char()));
+        $this->assertFalse($type->isCompatibleWith(new DateTime()));
+        $this->assertFalse($type->isCompatibleWith(new Decimal()));
+        $this->assertFalse($type->isCompatibleWith(new Double()));
+        $this->assertFalse($type->isCompatibleWith(new Guid()));
+        $this->assertFalse($type->isCompatibleWith(new Int16()));
+        $this->assertFalse($type->isCompatibleWith(new Int32()));
+        $this->assertFalse($type->isCompatibleWith(new Int64()));
+        $this->assertFalse($type->isCompatibleWith(new NullType()));
+        $this->assertFalse($type->isCompatibleWith(new SByte()));
+        $this->assertFalse($type->isCompatibleWith(new Single()));
+        $this->assertFalse($type->isCompatibleWith(new StringType()));
+        $this->assertFalse($type->isCompatibleWith(new VoidType()) );
+    }
 
-		$this->assertEquals(TypeCode::BOOLEAN, $actual);
+    public function testValidateSuccess()
+    {
+        $type = $this->getAsIType();
 
-	}
+        $in = 'true';
+        $out = null;
+        $this->assertTrue($type->validate($in, $out));
 
-	public function testCompatibleWith()
-	{
-		$type = $this->getAsIType();
+        $this->assertSame('true', $out);
 
-		$this->assertFalse( $type->isCompatibleWith(new Binary()) );
-		$this->assertTrue( $type->isCompatibleWith(new Boolean()) );
-		$this->assertFalse( $type->isCompatibleWith(new Byte()) );
-		$this->assertFalse( $type->isCompatibleWith(new Char()) );
-		$this->assertFalse( $type->isCompatibleWith(new DateTime()) );
-		$this->assertFalse( $type->isCompatibleWith(new Decimal()) );
-		$this->assertFalse( $type->isCompatibleWith(new Double()) );
-		$this->assertFalse( $type->isCompatibleWith(new Guid()) );
-		$this->assertFalse( $type->isCompatibleWith(new Int16()) );
-		$this->assertFalse( $type->isCompatibleWith(new Int32()) );
-		$this->assertFalse( $type->isCompatibleWith(new Int64()) );
-		$this->assertFalse( $type->isCompatibleWith(new NullType()) );
-		$this->assertFalse( $type->isCompatibleWith(new SByte()) );
-		$this->assertFalse( $type->isCompatibleWith(new Single()) );
-		$this->assertFalse( $type->isCompatibleWith(new StringType()) );
-		$this->assertFalse( $type->isCompatibleWith(new VoidType()) );
+        $in = 'false';
+        $out = null;
+        $this->assertTrue($type->validate($in, $out));
 
+        $this->assertSame('false', $out);
+    }
 
+    public function testValidateFailure()
+    {
+        $type = $this->getAsIType();
 
-	}
+        $in = 'True';
+        $out = null;
+        $this->assertFalse($type->validate($in, $out));
 
-	public function testValidateSuccess()
-	{
-		$type = $this->getAsIType();
+        $in = 'falsE';
+        $out = null;
+        $this->assertFalse($type->validate($in, $out));
 
-		$in = "true";
-		$out = null;
-		$this->assertTrue($type->validate($in, $out));
+        $in = '';
+        $out = null;
+        $this->assertFalse($type->validate($in, $out));
 
-		$this->assertSame("true", $out);
+        $in = 'afeaf';
+        $out = null;
+        $this->assertFalse($type->validate($in, $out));
+    }
 
+    public function testConvert()
+    {
+        $type = $this->getAsIType();
 
-		$in = "false";
-		$out = null;
-		$this->assertTrue($type->validate($in, $out));
+        $value = 'afaefasevaswee';
+        $actual = $type->convert($value);
 
-		$this->assertSame("false", $out);
-	}
+        $expected = false;
+        $this->assertSame($expected, $actual);
 
+        $value = 'True';
+        $actual = $type->convert($value);
 
-	public function testValidateFailure()
-	{
+        $expected = false;
+        $this->assertSame($expected, $actual);
 
-		$type = $this->getAsIType();
+        $value = 'true';
+        $actual = $type->convert($value);
 
-		$in = "True";
-		$out = null;
-		$this->assertFalse($type->validate($in, $out));
+        $expected = true;
+        $this->assertSame($expected, $actual);
+    }
 
+    public function testConvertToOData()
+    {
+        $type = $this->getAsIType();
 
-		$in = "falsE";
-		$out = null;
-		$this->assertFalse($type->validate($in, $out));
+        $value = true;
+        $actual = $type->convertToOData($value);
 
-		$in = "";
-		$out = null;
-		$this->assertFalse($type->validate($in, $out));
+        $expected = 'true';
+        $this->assertSame($expected, $actual);
 
+        $value = false;
+        $actual = $type->convertToOData($value);
 
-		$in = "afeaf";
-		$out = null;
-		$this->assertFalse($type->validate($in, $out));
-	}
+        $expected = 'false';
+        $this->assertSame($expected, $actual);
+    }
 
+    public function testGetName()
+    {
+        $type = $this->getAsIType();
 
-	public function testConvert()
-	{
+        $actual = $type->getName();
 
-		$type = $this->getAsIType();
+        $this->assertEquals('Edm.Boolean', $actual);
+    }
 
-		$value = "afaefasevaswee";
-		$actual = $type->convert($value);
-
-		$expected = false;
-		$this->assertSame($expected, $actual);
-
-
-		$value = "True";
-		$actual = $type->convert($value);
-
-		$expected = false;
-		$this->assertSame($expected, $actual);
-
-		$value = "true";
-		$actual = $type->convert($value);
-
-		$expected = true;
-		$this->assertSame($expected, $actual);
-	}
-
-	public function testConvertToOData()
-	{
-
-		$type = $this->getAsIType();
-
-		$value = true;
-		$actual = $type->convertToOData($value);
-
-		$expected = "true";
-		$this->assertSame($expected, $actual);
-
-
-		$value = false;
-		$actual = $type->convertToOData($value);
-
-		$expected = "false";
-		$this->assertSame($expected, $actual);
-	}
-
-
-
-	/**************
-	 *
-	 *  Begin Type Specific Tests
-	 *
-	 */
+    /**************
+     *
+     *  Begin Type Specific Tests
+     *
+     */
 }

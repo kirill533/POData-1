@@ -12,8 +12,8 @@ class VoidType implements IType
 {
     /**
      * Gets the type code
-     * Note: implementation of IType::getTypeCode
-     *   
+     * Note: implementation of IType::getTypeCode.
+     *
      * @return TypeCode
      */
     public function getTypeCode()
@@ -23,26 +23,27 @@ class VoidType implements IType
 
     /**
      * Checks this type (VoidType) is compatible with another type
-     * Note: implementation of IType::isCompatibleWith
-     * 
+     * Note: implementation of IType::isCompatibleWith.
+     *
      * @param IType $type Type to check compatibility
-     * 
-     * @return boolean 
+     *
+     * @return bool
      */
     public function isCompatibleWith(IType $type)
     {
-        return ($type->getTypeCode() == TypeCode::VOID);
+        return TypeCode::VOID == $type->getTypeCode();
     }
 
     /**
      * Validate a value in Astoria uri is in a format for this type
-     * Note: implementation of IType::validate
-     * 
-     * @param string $value     The value to validate 
-     * @param string &$outValue The stripped form of $value that can 
+     * Note: implementation of IType::validate.
+     *
+     * @param string $value     The value to validate
+     * @param string &$outValue The stripped form of $value that can
      *                          be used in PHP expressions
-     * 
-     * @return boolean
+     *
+     * @throws NotImplementedException
+     * @return NoType
      */
     public function validate($value, &$outValue)
     {
@@ -52,8 +53,8 @@ class VoidType implements IType
 
     /**
      * Gets full name of this type in EDM namespace
-     * Note: implementation of IType::getFullTypeName
-     * 
+     * Note: implementation of IType::getFullTypeName.
+     *
      * @return string
      */
     public function getFullTypeName()
@@ -63,12 +64,11 @@ class VoidType implements IType
 
     /**
      * Converts the given string value to void type.
-     * 
+     *
      * @param string $stringValue value to convert
-     * 
-     * @return void
-     * 
+     *
      * @throws NotImplementedException
+     * @return NoType
      */
     public function convert($stringValue)
     {
@@ -77,15 +77,25 @@ class VoidType implements IType
 
     /**
      * Convert the given value to a form that can be used in OData uri.
-     * 
+     *
      * @param string $value value to convert to OData
-     * 
-     * @return void
-     * 
+     *
      * @throws NotImplementedException
+     * @return NoType
      */
     public function convertToOData($value)
     {
         throw new NotImplementedException();
+    }
+
+    /**
+     * Gets full name of the type implementing this interface in EDM namespace
+     * Note: implementation of IType::getFullTypeName.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getFullTypeName();
     }
 }

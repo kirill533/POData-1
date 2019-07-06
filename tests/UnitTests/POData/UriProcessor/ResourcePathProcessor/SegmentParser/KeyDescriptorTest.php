@@ -2,27 +2,24 @@
 
 namespace UnitTests\POData\UriProcessor\ResourcePathProcessor\SegmentParser;
 
-use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
+use Mockery as m;
 use POData\Common\InvalidOperationException;
 use POData\Common\ODataException;
-use PHPUnit\Framework\TestCase;
-
+use POData\ObjectModel\ODataProperty;
+use POData\Providers\Metadata\Type\Int32;
+use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
-
+use UnitTests\POData\TestCase;
 
 class KeyDescriptorTest extends TestCase
 {
-    protected function setUp()
-    {        
-    }
-
     public function testKeyPredicateParsing()
     {
         $keyDescriptor = null;
         $keyPredicate = '  ';
         $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
         $this->assertTrue($validPredicateSyntax);
-        $this->assertFalse(is_null($keyDescriptor));
+        $this->assertFalse(null === $keyDescriptor);
         $this->assertTrue($keyDescriptor->isEmpty());
         $this->assertEquals($keyDescriptor->valueCount(), 0);
 
@@ -30,7 +27,7 @@ class KeyDescriptorTest extends TestCase
         $keyPredicate = 'ProductID=11, OrderID=2546';
         $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
         $this->assertTrue($validPredicateSyntax);
-        $this->assertFalse(is_null($keyDescriptor));
+        $this->assertFalse(null === $keyDescriptor);
         $this->assertFalse($keyDescriptor->isEmpty());
         $this->assertTrue($keyDescriptor->areNamedValues());
         $this->assertEquals($keyDescriptor->valueCount(), 2);
@@ -44,7 +41,7 @@ class KeyDescriptorTest extends TestCase
         $this->assertEquals($orderVal[0], 2546);
 
         try {
-           $keyDescriptor->getValidatedNamedValues();
+            $keyDescriptor->getValidatedNamedValues();
             $this->fail('An expected InvalidOperationException has not been raised');
         } catch (InvalidOperationException $exception) {
             $exceptionThrown = true;
@@ -54,7 +51,7 @@ class KeyDescriptorTest extends TestCase
         $keyPredicate = '11, 2546';
         $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
         $this->assertTrue($validPredicateSyntax);
-        $this->assertFalse(is_null($keyDescriptor));
+        $this->assertFalse(null === $keyDescriptor);
         $this->assertFalse($keyDescriptor->isEmpty());
         $this->assertFalse($keyDescriptor->areNamedValues());
         $this->assertEquals($keyDescriptor->valueCount(), 2);
@@ -66,7 +63,7 @@ class KeyDescriptorTest extends TestCase
         $this->assertEquals($orderVal[0], 2546);
 
         try {
-           $keyDescriptor->getValidatedNamedValues();
+            $keyDescriptor->getValidatedNamedValues();
             $this->fail('An expected InvalidOperationException has not been raised');
         } catch (InvalidOperationException $exception) {
             $exceptionThrown = true;
@@ -136,21 +133,20 @@ class KeyDescriptorTest extends TestCase
         $keyPredicate = 'Id=guid\'05b242e7---52eb-46bd-8f0e-6568b72cd9a5\', PlaceName=\'Ktym\'';
         $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
         $this->assertFalse($validPredicateSyntax);
-
     }
 
     public function testKeyDescriptorValidation()
     {
         $northWindMetadata = NorthWindMetadata::Create();
         $orderDetailsResourceType = $northWindMetadata->resolveResourceType('Order_Details');
-        $this->assertFalse(is_null($orderDetailsResourceType));
+        $this->assertFalse(null === $orderDetailsResourceType);
 
         $keyDescriptor = null;
         //Test with a valid named value key predicate
         $keyPredicate = 'ProductID=11, OrderID=2546';
         $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
         $this->assertTrue($validPredicateSyntax);
-        $this->assertFalse(is_null($keyDescriptor));
+        $this->assertFalse(null === $keyDescriptor);
         $keyDescriptor->validate('Order_Details(ProductID=11, OrderID=2546)', $orderDetailsResourceType);
         $validatedNamedValues = $keyDescriptor->getValidatedNamedValues();
         $this->assertTrue(array_key_exists('ProductID', $validatedNamedValues));
@@ -165,7 +161,7 @@ class KeyDescriptorTest extends TestCase
         $keyPredicate = '11, 2546';
         $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
         $this->assertTrue($validPredicateSyntax);
-        $this->assertFalse(is_null($keyDescriptor));
+        $this->assertFalse(null === $keyDescriptor);
         $keyDescriptor->validate('Order_Details(11, 2546)', $orderDetailsResourceType);
         $validatedNamedValues = $keyDescriptor->getValidatedNamedValues();
         $this->assertEquals(count($validatedNamedValues), 2);
@@ -197,9 +193,8 @@ class KeyDescriptorTest extends TestCase
             $keyDescriptor->validate('Order_Details(ProductID=11, OrderID1=2546)', $orderDetailsResourceType);
             $this->fail('An expected ODataException for missing of keys in the predicate has not been thrown');
         } catch (ODataException $exception) {
-            $this->assertStringEndsWith('The key predicate expect the keys \'ProductID, OrderID\'', $exception->getMessage());
+            $this->assertStringEndsWith('The key predicate expects the keys \'ProductID, OrderID\'', $exception->getMessage());
         }
-
 
         //test for key type
         $keyDescriptor = null;
@@ -213,7 +208,6 @@ class KeyDescriptorTest extends TestCase
             $this->assertStringEndsWith('The value of key property \'ProductID\' should be of type Edm.Int32, given Edm.Double', $exception->getMessage());
         }
 
-
         //test for key type
         $keyDescriptor = null;
         $keyPredicate = '11, \'ABCD\'';
@@ -225,10 +219,132 @@ class KeyDescriptorTest extends TestCase
         } catch (ODataException $exception) {
             $this->assertStringEndsWith('The value of key property \'OrderID\' at position 1 should be of type Edm.Int32, given Edm.String', $exception->getMessage());
         }
-
     }
 
-    protected function tearDown()
+    public function testSingleNamedValuePredicate()
     {
+        $keyDescriptor = null;
+        $keyPredicate = 'GroupNo=11';
+        $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
+        $this->assertTrue($validPredicateSyntax);
+        $this->assertFalse(null === $keyDescriptor);
+        $this->assertTrue($keyDescriptor instanceof KeyDescriptor, get_class($keyDescriptor));
+        $this->assertFalse($keyDescriptor->isEmpty());
+        $this->assertTrue($keyDescriptor->areNamedValues());
+        $this->assertEquals($keyDescriptor->valueCount(), 1);
+        $namedValues = $keyDescriptor->getNamedValues();
+        $this->assertFalse(empty($namedValues));
+        $this->assertTrue(array_key_exists('GroupNo', $namedValues));
+        $groupVal = $namedValues['GroupNo'];
+        $this->assertEquals($groupVal[0], 11);
+    }
+
+    public function testSingleValuePredicateRelativeUrlGeneration()
+    {
+        $northWindMetadata = NorthWindMetadata::Create();
+        $orderResourceType = $northWindMetadata->resolveResourceType('Order');
+        $this->assertFalse(null === $orderResourceType);
+        $orderResourceSet = $northWindMetadata->resolveResourceSet('Orders');
+        $this->assertFalse(null === $orderResourceSet);
+
+        $expected = 'Orders(OrderID=42)';
+
+        $keyDescriptor = null;
+        $keyPredicate = 'OrderID=42';
+        $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
+        $this->assertTrue($validPredicateSyntax);
+        $keyDescriptor->validate($keyPredicate, $orderResourceType);
+
+        $actual = $keyDescriptor->generateRelativeUri($orderResourceSet);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testMultipleValuePredicateRelativeUrlGeneration()
+    {
+        $northWindMetadata = NorthWindMetadata::Create();
+        $orderResourceType = $northWindMetadata->resolveResourceType('Order_Details');
+        $this->assertFalse(null === $orderResourceType);
+        $orderResourceSet = $northWindMetadata->resolveResourceSet('Order_Details');
+        $this->assertFalse(null === $orderResourceSet);
+
+        $expected = 'Order_Details(ProductID=11,OrderID=42)';
+
+        $keyDescriptor = null;
+        $keyPredicate = 'ProductID=11,OrderID=42';
+        $validPredicateSyntax = KeyDescriptor::tryParseKeysFromKeyPredicate($keyPredicate, $keyDescriptor);
+        $this->assertTrue($validPredicateSyntax);
+        $keyDescriptor->validate($keyPredicate, $orderResourceType);
+
+        $actual = $keyDescriptor->generateRelativeUri($orderResourceSet);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testMismatchNumberOfKeyValues()
+    {
+        $northWindMetadata = NorthWindMetadata::Create();
+        $orderResourceType = $northWindMetadata->resolveResourceType('Order');
+        $this->assertFalse(null === $orderResourceType);
+        $orderResourceSet = $northWindMetadata->resolveResourceSet('Orders');
+        $this->assertFalse(null === $orderResourceSet);
+
+        $expected = 'Mismatch between supplied key predicates and number of keys defined on resource set';
+        $actual = null;
+
+        $keyDescriptor = m::mock(KeyDescriptor::class)->makePartial();
+        $keyDescriptor->shouldReceive('getNamedValues')->andReturn([]);
+
+        try {
+            $keyDescriptor->generateRelativeUri($orderResourceSet);
+        } catch (\InvalidArgumentException $e) {
+            $actual = $e->getMessage();
+        }
+        $this->assertNotNull($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testMismatchMissingKeyPredicate()
+    {
+        $northWindMetadata = NorthWindMetadata::Create();
+        $orderResourceType = $northWindMetadata->resolveResourceType('Order');
+        $this->assertFalse(null === $orderResourceType);
+        $orderResourceSet = $northWindMetadata->resolveResourceSet('Orders');
+        $this->assertFalse(null === $orderResourceSet);
+
+        $expected = 'Key predicate OrderID not present in named values';
+        $actual = null;
+
+        $keyDescriptor = m::mock(KeyDescriptor::class)->makePartial();
+        $keyDescriptor->shouldReceive('getNamedValues')->andReturn(['foo' => 11]);
+
+        try {
+            $keyDescriptor->generateRelativeUri($orderResourceSet);
+        } catch (\InvalidArgumentException $e) {
+            $actual = $e->getMessage();
+        }
+        $this->assertNotNull($actual);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetPropertiesFromValidatedValues()
+    {
+        $validated = [ 'id' => [ '2', new Int32()]];
+
+        $payload = new ODataProperty();
+        $payload->name = 'id';
+        $payload->typeName = 'Edm.Int32';
+        $payload->value = 2;
+        $expected = ['id' => $payload];
+
+        $keyDescriptor = m::mock(KeyDescriptor::class)->makePartial();
+        $keyDescriptor->shouldReceive('getValidatedNamedValues')->andReturn($validated)->once();
+
+        $actual = $keyDescriptor->getODataProperties();
+        $this->assertEquals($expected, $actual);
+        $this->assertTrue(2 === $actual['id']->value);
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
     }
 }

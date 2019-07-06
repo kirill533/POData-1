@@ -2,25 +2,34 @@
 
 namespace POData\Writers\Json;
 
-use POData\ObjectModel\ODataFeed;
+use POData\Common\MimeTypes;
+use POData\Common\ODataConstants;
+use POData\Common\Version;
 use POData\ObjectModel\ODataEntry;
-use POData\ObjectModel\ODataURLCollection;
-use POData\ObjectModel\ODataURL;
+use POData\ObjectModel\ODataFeed;
 use POData\ObjectModel\ODataLink;
 use POData\ObjectModel\ODataPropertyContent;
+use POData\ObjectModel\ODataURL;
+use POData\ObjectModel\ODataURLCollection;
+use POData\ObjectModel\ODataBagContent;
+use POData\ObjectModel\ODataProperty;
+use POData\ObjectModel\ODataMediaLink;
+
 use POData\Common\MimeTypes;
 use POData\Common\Version;
 use POData\Common\ODataConstants;
+use POData\Common\Messages;
+use POData\Common\ODataException;
+use POData\Common\InvalidOperationException;
 
 /**
- * Class JsonODataV2Writer is a writer for the json format in OData V2 AKA JSON Verbose
- * @package POData\Writers\Json
+ * Class JsonODataV2Writer is a writer for the json format in OData V2 AKA JSON Verbose.
  */
 class JsonODataV2Writer extends JsonODataV1Writer
 {
     //The key difference between 1 and 2 is that in 2 collection results
     //are wrapped in a "result" array.  this is to allow a place for collection metadata to be placed
-    //
+
     //IE {d : [ item1, item2, item3] }
     //is now { d : { results :[item1, item2, item3], meta1 : x, meta2 : y }
     //So we override the collection methods to shove this stuff in there
@@ -33,14 +42,14 @@ class JsonODataV2Writer extends JsonODataV1Writer
 
 
     /**
-     * Determines if the given writer is capable of writing the response or not
-     * @param Version $responseVersion the OData version of the response
+     * Determines if the given writer is capable of writing the response or not.
+     ** @param Version $responseVersion the OData version of the response
      * @param string $contentType the Content Type of the response
-     * @return boolean true if the writer can handle the response, false otherwise
+     ** @return bool true if the writer can handle the response, false otherwise
      */
     public function canHandle(Version $responseVersion, $contentType)
     {
-        $parts = explode(";", $contentType);
+        $parts = explode(';', $contentType);
 
         //special case, in v3 verbose is the v2 writer
         if ($responseVersion == Version::v3()) {
@@ -52,25 +61,25 @@ class JsonODataV2Writer extends JsonODataV1Writer
 
 
     /**
-     * Write the given OData model in a specific response format
+     * Write the given OData model in a specific response format.
      *
-     * @param  ODataURL|ODataURLCollection|ODataPropertyContent|ODataFeed|ODataEntry $model Object of requested content.
+     * @param  ODataURL|ODataURLCollection|ODataPropertyContent|ODataFeed|ODataEntry $model Object of requested content
      *
-     * @return JsonODataV1Writer
+     * @return JsonODataV2Writer
      */
-    public function write($model) {
-        // { "d" :
-        $this->_writer
+    public function write($model)
+        {// { "d" :
+        $this->writer
             ->startObjectScope()
-            ->writeName("d")
+            ->writeName('d')
             ->startObjectScope();
 
 
         if ($model instanceof ODataURL) {
 
-            $this->writeURL($model);
+            $this->writeUrl($model);
         } elseif ($model instanceof ODataURLCollection) {
-            $this->writeURLCollection($model);
+            $this->writeUrlCollection($model);
         } elseif ($model instanceof ODataPropertyContent) {
             $this->writeProperties($model);
         } elseif ($model instanceof ODataFeed) {
@@ -78,26 +87,25 @@ class JsonODataV2Writer extends JsonODataV1Writer
             // "results":
             $this->writeRowCount($model->rowCount);
             $this->writeNextPageLink($model->nextPageLink);
-            $this->_writer
+            $this->writer
                 ->writeName($this->dataArrayName)
                 ->startArrayScope();
             $this->writeFeed($model);
-            $this->_writer->endScope();
+            $this->writer->endScope();
 
         } elseif ($model instanceof ODataEntry) {
             $this->writeEntry($model);
         }
 
 
-        $this->_writer->endScope();
-        $this->_writer->endScope();
+        $this->writer->endScope();
+        $this->writer->endScope();
 
         return $this;
     }
 
-
     /**
-     * begin write OData links
+     * begin write OData links.
      *
      * @param ODataURLCollection $urls url collection to write
      *
@@ -105,19 +113,18 @@ class JsonODataV2Writer extends JsonODataV1Writer
      */
     public function writeUrlCollection(ODataURLCollection $urls)
     {
-
         $this->writeRowCount($urls->count);
         $this->writeNextPageLink($urls->nextPageLink);
 
         // Json Format V2:
         // "results":
-        $this->_writer
+        $this->writer
             ->writeName($this->dataArrayName)
             ->startArrayScope();
 
             parent::writeUrlCollection($urls);
 
-        $this->_writer->endScope();
+        $this->writer->endScope();
 
         return $this;
     }
@@ -126,15 +133,15 @@ class JsonODataV2Writer extends JsonODataV1Writer
     /**
      * Writes the row count.
      *
-     * @param int $count Row count value.
+     * @param int $count Row count value
      *
      * @return JsonODataV2Writer
      */
     protected function writeRowCount($count)
     {
         if ($count != null) {
-            $this->_writer->writeName($this->rowCountName);
-            $this->_writer->writeValue($count);
+            $this->writer->writeName($this->rowCountName);
+            $this->writer->writeValue($count);
         }
 
         return $this;
@@ -144,15 +151,15 @@ class JsonODataV2Writer extends JsonODataV1Writer
     /**
      * Writes the next page link.
      *
-     * @param ODataLink $nextPageLinkUri Uri for next page link.
+     * @param ODataLink|null $nextPageLinkUri Uri for next page link
      *
      * @return JsonODataV2Writer
      */
     protected function writeNextPageLink(ODataLink $nextPageLinkUri = null)
     {
         // "__next" : uri
-        if ($nextPageLinkUri != null) {
-            $this->_writer
+        if (null !== $nextPageLinkUri) {
+            $this->writer
                 ->writeName($this->nextLinkName)
                 ->writeValue($nextPageLinkUri->url);
         }
@@ -163,20 +170,20 @@ class JsonODataV2Writer extends JsonODataV1Writer
     protected function writeExpandedLink(ODataLink $link)
     {
         //Difference from v1 is that expanded collection have a result: wrapper to allow for metadata to exist
-        $this->_writer->startObjectScope();
+        $this->writer->startObjectScope();
 
         if ($link->isCollection) {
-            $this->_writer
+            $this->writer
                 ->writeName($this->dataArrayName)
                 ->startArrayScope();
             $this->writeFeed($link->expandedResult);
-            $this->_writer->endScope();
+            $this->writer->endScope();
         } else {
             $this->writeEntry($link->expandedResult);
         }
 
 
-        $this->_writer->endScope();
-    }
+        $this->writer->endScope();
+    }}
 
 }

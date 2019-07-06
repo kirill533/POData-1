@@ -2,35 +2,37 @@
 
 namespace UnitTests\POData\UriProcessor\QueryProcessor\SkipTokenParser;
 
-use POData\Providers\Metadata\ResourceProperty;
-use POData\Configuration\EntitySetRights;
-use POData\Providers\ProvidersWrapper;
-use POData\Configuration\ServiceConfiguration;
+use Mockery as m;
 use POData\Common\ODataException;
+use POData\Configuration\EntitySetRights;
+use POData\Configuration\ServiceConfiguration;
+use POData\Providers\ProvidersWrapper;
+use POData\Providers\Query\IQueryProvider;
 use POData\UriProcessor\QueryProcessor\OrderByParser\OrderByParser;
 use POData\UriProcessor\QueryProcessor\SkipTokenParser\SkipTokenParser;
-use POData\Providers\Query\IQueryProvider;
-
-
 use UnitTests\POData\Facets\NorthWind2\NorthWindMetadata;
+use UnitTests\POData\TestCase;
 
-
-use UnitTests\BaseUnitTestCase;
+use PhockitoUnit\PhockitoUnitTestCase;
 use Phockito;
 
-class SkipTokenParser2Test extends BaseUnitTestCase
-{
+use UnitTests\POData\TestCase;
 
-    /** @var  IQueryProvider */
+class SkipTokenParser2Test extends TestCase
+{
+    /** @var IQueryProvider */
     protected $mockQueryProvider;
 
+    public function setUp()
+    {
+        $this->mockQueryProvider = m::mock(IQueryProvider::class)->makePartial();
+    }
 
     /**
-     * Test will null as resultSet and empty array as resultSet     
+     * Test will null as resultSet and empty array as resultSet.
      */
     public function testGetIndexOfFirstEntryInNextPage1()
     {
-
         $northWindMetadata = NorthWindMetadata::Create();
         $configuration = new ServiceConfiguration($northWindMetadata);
         $configuration->setEntitySetAccessRule('*', EntitySetRights::ALL);
@@ -43,21 +45,28 @@ class SkipTokenParser2Test extends BaseUnitTestCase
         $resourceSetWrapper = $providersWrapper->resolveResourceSet('Orders');
         $resourceType = $resourceSetWrapper->getResourceType();
         $orderBy = 'OrderID';
-        $internalOrderByInfo = OrderByParser::parseOrderByClause($resourceSetWrapper, $resourceType, $orderBy, $providersWrapper);
-        $skipToken = "10365";
+        $internalOrderByInfo = OrderByParser::parseOrderByClause(
+            $resourceSetWrapper,
+            $resourceType,
+            $orderBy,
+            $providersWrapper
+        );
+        $skipToken = '10365';
         $internalSkipTokenInfo = SkipTokenParser::parseSkipTokenClause($resourceType, $internalOrderByInfo, $skipToken);
 
         try {
             $internalSkipTokenInfo->getIndexOfFirstEntryInTheNextPage($m);
             $this->fail('An expected ODataException for non-array param type has not been thrown');
         } catch (\InvalidArgumentException $exception) {
-            $this->assertStringStartsWith("The argument 'searchArray' should be an array to perfrom binary search", $exception->getMessage());
+            $this->assertStringStartsWith(
+                "The argument 'searchArray' should be an array to perfrom binary search",
+                $exception->getMessage()
+            );
         }
-
     }
 
     /**
-     * Test search InternalSkipTokenInfo::GetIndexOfFirstEntryInNextPage function
+     * Test search InternalSkipTokenInfo::GetIndexOfFirstEntryInNextPage function.
      */
     public function testGetIndexOfFirstEntryInNextPage2()
     {
@@ -79,7 +88,12 @@ class SkipTokenParser2Test extends BaseUnitTestCase
         $orderBy .= ', OrderID';
         $qp = new NorthWindQueryProvider1();
         $orders = $qp->getResourceSet($resourceSetWrapper->getResourceSet());
-        $internalOrderByInfo = OrderByParser::parseOrderByClause($resourceSetWrapper, $resourceType, $orderBy, $providersWrapper);
+        $internalOrderByInfo = OrderByParser::parseOrderByClause(
+            $resourceSetWrapper,
+            $resourceType,
+            $orderBy,
+            $providersWrapper
+        );
         $compFun = $internalOrderByInfo->getSorterFunction();
         $fun = $compFun->getReference();
         usort($orders, $fun);
@@ -115,7 +129,7 @@ class SkipTokenParser2Test extends BaseUnitTestCase
         //Make sure this is the most matching record by comparing with next record
         $nextOrder = $orders[$nextIndex + 1];
         $r = strcmp($nextOrder->ShipName, $orders[$nextIndex]->ShipName);
-         $this->assertTrue($r >= 0);
+        $this->assertTrue($r >= 0);
         //-----------------------------------------------------------------
         //Search with a key that does not exists
         $skipToken = "'XXX',11,10365";
@@ -123,8 +137,5 @@ class SkipTokenParser2Test extends BaseUnitTestCase
         $nextIndex = $internalSkipTokenInfo->getIndexOfFirstEntryInTheNextPage($orders);
         $this->assertTrue($nextIndex == -1);
         //-----------------------------------------------------------------
-
-
     }
-
 }

@@ -2,19 +2,21 @@
 
 namespace POData\UriProcessor\QueryProcessor\OrderByParser;
 
-use POData\UriProcessor\QueryProcessor\AnonymousFunction;
-use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
-use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;
-use POData\Providers\ProvidersWrapper;
-use POData\Providers\Metadata\Type\Binary;
+use POData\Common\InvalidOperationException;
+use POData\Common\Messages;
+use POData\Common\ODataException;
+use POData\Common\ReflectionHandler;
+use POData\Providers\Metadata\ResourcePropertyKind;
 use POData\Providers\Metadata\ResourceSetWrapper;
 use POData\Providers\Metadata\ResourceType;
-use POData\Providers\Metadata\ResourcePropertyKind;
-use POData\Common\ODataException;
-use POData\Common\Messages;
+use POData\Providers\Metadata\Type\Binary;
+use POData\Providers\ProvidersWrapper;
+use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
+use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;
+use ReflectionClass;
 
 /**
- * Class OrderByParser
+ * Class OrderByParser.
  *
  * Class to parse $orderby query option and perform syntax validation
  * and build 'OrderBy Tree' along with next level of validation, the
@@ -25,78 +27,90 @@ use POData\Common\Messages;
  * OrderByClause         : OrderByPathSegment [, OrderByPathSegment]*
  * OrderByPathSegment    : OrderBySubPathSegment[/OrderBySubPathSegment]*[asc|desc]?
  * OrderBySubPathSegment : identifier
- *
- * @package POData\UriProcessor\QueryProcessor\OrderByParser
  */
 class OrderByParser
 {
+    /**
+     * Collection of anonymous sorter function corresponding to each orderby path segment.
+     *
+     * @var callable[]
+     */
+    private $comparisonFunctions = [];
 
     /**
      * The top level sorter function generated from orderby path
-     * segments.
+      segments.
      *
-     * @var AnonymousFunction
+     * @var callable
      */
-    private $_topLevelComparisonFunction;
+    private $topLevelComparisonFunction;
 
     /**
      * The structure holds information about the navigation properties
-     * used in the orderby clause (if any) and orderby path if IDSQP
+     * used in the orderby clause (if any), and orderby path if IDSQP
      * implementor want to perform sorting.
      *
      * @var OrderByInfo
      */
-    private $_orderByInfo;
+    private $orderByInfo;
 
     /**
-     * Reference to metadata and query provider wrapper
+     * Reference to metadata and query provider wrapper.
      *
      * @var ProvidersWrapper
      */
-    private $_providerWrapper;
+    private $providerWrapper;
 
     /**
      * This object will be of type of the resource set identified by the
-     * request uri.
+      request uri.
      *
      * @var mixed
      */
-    private $_dummyObject;
+    private $dummyObject;
+
+    /*
+     * Root node for tree ordering
+     *
+     * @var mixed
+     */
+    private $rootOrderByNode;
 
     /**
-     * Creates new instance of OrderByParser
+     * Creates new instance of OrderByParser.
      *
      * @param ProvidersWrapper $providerWrapper Reference to metadata
-     *                                                      and query provider
-     *                                                      wrapper
+     *                                          and query provider
+     *                                          wrapper
      */
     private function __construct(ProvidersWrapper $providerWrapper)
     {
-        $this->_providerWrapper = $providerWrapper;
+        $this->providerWrapper = $providerWrapper;
     }
 
     /**
      * This function perform the following tasks with the help of internal helper
      * functions
-     * (1) Read the orderby clause and perform basic syntax errors
+     * (1) Read the orderby clause and perform basic syntax checks
      * (2) Build 'Order By Tree', creates anonymous sorter function for each leaf
-     *     node and check for error
+          node and check for error
      * (3) Build 'OrderInfo' structure, holds information about the navigation
      *     properties used in the orderby clause (if any) and orderby path if
      *     IDSQP implementor want to perform sorting
      * (4) Build top level anonymous sorter function
      * (4) Release resources hold by the 'Order By Tree'
      * (5) Create 'InternalOrderInfo' structure, which wraps 'OrderInfo' and top
-     *     level sorter function
+     *     level sorter function.
      *
-     * @param ResourceSetWrapper           $resourceSetWrapper ResourceSetWrapper for the resource targeted by resource path.
-     * @param ResourceType                 $resourceType       ResourceType for the resource targeted by resource path.
-     * @param string                       $orderBy            The orderby clause.
-     * @param ProvidersWrapper $providerWrapper    Reference to the wrapper for IDSQP and IDSMP impl.
+     * @param ResourceSetWrapper           $resourceSetWrapper ResourceSetWrapper for the resource targeted by resource path
+     * @param ResourceType       $resourceType       ResourceType for the resource targeted by resource path
+     * @param string             $orderBy            The orderby clause
+     * @param ProvidersWrapper   $providerWrapper    Reference to the wrapper for IDSQP and IDSMP impl
+     *
+
+     * @throws ODataException If any error occur while parsing orderby clause
      *
      * @return InternalOrderByInfo
-     *
-     * @throws ODataException If any error occur while parsing orderby clause
      */
     public static function parseOrderByClause(
         ResourceSetWrapper $resourceSetWrapper,
@@ -104,25 +118,38 @@ class OrderByParser
         $orderBy,
         ProvidersWrapper $providerWrapper
     ) {
-        $orderByParser = new OrderByParser($providerWrapper);
+        assert(is_string($orderBy), 'OrderBy clause must be a string');
+        $orderBy = trim($orderBy);
+        if (0 == strlen($orderBy)) {
+            throw new InvalidOperationException('OrderBy clause must not be trimmable to an empty string');
+        }
+        $orderByParser = new self($providerWrapper);
         try {
-            $orderByParser->_dummyObject = $resourceType->getInstanceType()->newInstanceWithoutConstructor();
+            $instance = $resourceType->getInstanceType();
+            assert($instance instanceof ReflectionClass, get_class($instance));
+            $orderByParser->dummyObject = $instance->newInstanceArgs([]);
         } catch (\ReflectionException $reflectionException) {
             throw ODataException::createInternalServerError(Messages::orderByParserFailedToCreateDummyObject());
         }
-        $orderByParser->_rootOrderByNode = new OrderByRootNode($resourceSetWrapper, $resourceType);
-        $orderByPathSegments = $orderByParser->_readOrderBy($orderBy);
-        $orderByParser->_buildOrderByTree($orderByPathSegments);
-        $orderByParser->_createOrderInfo($orderByPathSegments);
+        $orderByParser->rootOrderByNode = new OrderByRootNode($resourceSetWrapper, $resourceType);
+        $orderByPathSegments = $orderByParser->readOrderBy($orderBy);
+
+        $orderByParser->buildOrderByTree($orderByPathSegments);
+        $orderByParser->createOrderInfo($orderByPathSegments);
+        $orderByParser->generateTopLevelComparisonFunction();
         //Recursively release the resources
-        $orderByParser->_rootOrderByNode->free();
+        $orderByParser->rootOrderByNode->free();
         //creates internal order info wrapper
         $internalOrderInfo = new InternalOrderByInfo(
-            $orderByParser->_orderByInfo,
-            $orderByParser->_dummyObject
+            $orderByParser->orderByInfo,
+            $orderByParser->comparisonFunctions,
+            $orderByParser->topLevelComparisonFunction,
+            $orderByParser->dummyObject,
+            $resourceType
         );
-        unset($orderByParser->_orderByInfo);
-        unset($orderByParser->_topLevelComparisonFunction);
+        unset($orderByParser->orderByInfo);
+        unset($orderByParser->topLevelComparisonFunction);
+
         return $internalOrderInfo;
     }
 
@@ -140,41 +167,40 @@ class OrderByParser
      *                                           2. remove duplicate orderby path
      *                                              segment
      *
-     * @return void
-     *
-     * @throws ODataException If any error occurs while processing the orderby path
-     *                        segments
+     * @throws ODataException If any error occurs while processing the orderby pathsegments
+     * @return mixed
      */
-    private function _buildOrderByTree(&$orderByPathSegments)
+    private function buildOrderByTree(&$orderByPathSegments)
     {
         foreach ($orderByPathSegments as $index1 => &$orderBySubPathSegments) {
-            $currentNode = $this->_rootOrderByNode;
-            $currentObject = $this->_dummyObject;
+            $currentNode = $this->rootOrderByNode;
+            $currentObject = $this->dummyObject;
             $ascending = true;
             $subPathCount = count($orderBySubPathSegments);
             // Check sort order is specified in the path, if so set a
             // flag and remove that segment
             if ($subPathCount > 1) {
-                if ($orderBySubPathSegments[$subPathCount - 1] === '*desc') {
+                if ('*desc' === $orderBySubPathSegments[$subPathCount - 1]) {
                     $ascending = false;
                     unset($orderBySubPathSegments[$subPathCount - 1]);
-                    $subPathCount--;
-                } else if ($orderBySubPathSegments[$subPathCount - 1] === '*asc') {
+                    --$subPathCount;
+                } elseif ('*asc' === $orderBySubPathSegments[$subPathCount - 1]) {
                     unset($orderBySubPathSegments[$subPathCount - 1]);
-                    $subPathCount--;
+                    --$subPathCount;
                 }
             }
 
-            $ancestors = array($this->_rootOrderByNode->getResourceSetWrapper()->getName());
+            $ancestors = [$this->rootOrderByNode->getResourceSetWrapper()->getName()];
             foreach ($orderBySubPathSegments as $index2 => $orderBySubPathSegment) {
                 $isLastSegment = ($index2 == $subPathCount - 1);
                 $resourceSetWrapper = null;
                 $resourceType = $currentNode->getResourceType();
                 $resourceProperty = $resourceType->resolveProperty($orderBySubPathSegment);
-                if (is_null($resourceProperty)) {
+                if (null === $resourceProperty) {
                     throw ODataException::createSyntaxError(
                         Messages::orderByParserPropertyNotFound(
-                            $resourceType->getFullName(), $orderBySubPathSegment
+                            $resourceType->getFullName(),
+                            $orderBySubPathSegment
                         )
                     );
                 }
@@ -185,7 +211,7 @@ class OrderByParser
                             $resourceProperty->getName()
                         )
                     );
-                } else if ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE)) {
+                } elseif ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE)) {
                     if (!$isLastSegment) {
                         throw ODataException::createBadRequestError(
                             Messages::orderByParserPrimitiveAsIntermediateSegment(
@@ -196,23 +222,28 @@ class OrderByParser
 
                     $type = $resourceProperty->getInstanceType();
                     if ($type instanceof Binary) {
-                        throw ODataException::createBadRequestError(Messages::orderByParserSortByBinaryPropertyNotAllowed($resourceProperty->getName()));
+                        throw ODataException::createBadRequestError(
+                            Messages::orderByParserSortByBinaryPropertyNotAllowed($resourceProperty->getName())
+                        );
                     }
-                } else if ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCESET_REFERENCE
+                } elseif ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCESET_REFERENCE
                     || $resourceProperty->getKind() == ResourcePropertyKind::RESOURCE_REFERENCE
                     || $resourceProperty->getKind() == ResourcePropertyKind::KEY_RESOURCE_REFERENCE
                 ) {
-                    $this->_assertion($currentNode instanceof OrderByRootNode || $currentNode instanceof OrderByNode);
+                    $this->assertion($currentNode instanceof OrderByRootNode || $currentNode instanceof OrderByNode);
                     $resourceSetWrapper = $currentNode->getResourceSetWrapper();
-                    $this->_assertion(!is_null($resourceSetWrapper));
+                    $this->assertion(null !== $resourceSetWrapper);
                     $resourceSetWrapper
-                        = $this->_providerWrapper->getResourceSetWrapperForNavigationProperty(
-                            $resourceSetWrapper, $resourceType, $resourceProperty
+                        = $this->providerWrapper->getResourceSetWrapperForNavigationProperty(
+                            $resourceSetWrapper,
+                            $resourceType,
+                            $resourceProperty
                         );
-                    if (is_null($resourceSetWrapper)) {
+                    if (null === $resourceSetWrapper) {
                         throw ODataException::createBadRequestError(
                             Messages::badRequestInvalidPropertyNameSpecified(
-                                $resourceType->getFullName(), $orderBySubPathSegment
+                                $resourceType->getFullName(),
+                                $orderBySubPathSegment
                             )
                         );
                     }
@@ -220,7 +251,8 @@ class OrderByParser
                     if ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCESET_REFERENCE) {
                         throw ODataException::createBadRequestError(
                             Messages::orderByParserResourceSetReferenceNotAllowed(
-                                $resourceProperty->getName(), $resourceType->getFullName()
+                                $resourceProperty->getName(),
+                                $resourceType->getFullName()
                             )
                         );
                     }
@@ -228,7 +260,7 @@ class OrderByParser
                     $resourceSetWrapper->checkResourceSetRightsForRead(true);
                     /*
                     if ($isLastSegment) {
-						throw ODataException::createBadRequestError(
+                        throw ODataException::createBadRequestError(
                             Messages::orderByParserSortByNavigationPropertyIsNotAllowed(
                                 $resourceProperty->getName()
                             )
@@ -237,7 +269,7 @@ class OrderByParser
                     */
 
                     $ancestors[] = $orderBySubPathSegment;
-                } else if ($resourceProperty->isKindOf(ResourcePropertyKind::COMPLEX_TYPE)) {
+                } elseif ($resourceProperty->isKindOf(ResourcePropertyKind::COMPLEX_TYPE)) {
                     if ($isLastSegment) {
                         throw ODataException::createBadRequestError(
                             Messages::orderByParserSortByComplexPropertyIsNotAllowed(
@@ -254,51 +286,51 @@ class OrderByParser
                 }
 
                 $node = $currentNode->findNode($orderBySubPathSegment);
-                if (is_null($node)) {
+                if (null === $node) {
                     if ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE) || $resourceProperty->isKindOf(ResourcePropertyKind::KEY_RESOURCE_REFERENCE)) {
                         $node = new OrderByLeafNode(
-                            $orderBySubPathSegment, $resourceProperty,
+                            $orderBySubPathSegment,
+                            $resourceProperty,
                             $ascending
                         );
-                    } else if ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCE_REFERENCE || $resourceProperty->getKind() == ResourcePropertyKind::KEY_RESOURCE_REFERENCE) {
+                        $this->comparisonFunctions[] = $node->buildComparisonFunction($ancestors);
+                    } elseif ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCE_REFERENCE) {
                         $node = new OrderByNode(
-                            $orderBySubPathSegment, $resourceProperty,
+                            $orderBySubPathSegment,
+                            $resourceProperty,
                             $resourceSetWrapper
                         );
                         // Initialize this member variable (identified by
                         // $resourceProperty) of parent object.
                         try {
-                            $dummyProperty
-                                = new \ReflectionProperty(
-                                    $currentObject, $resourceProperty->getName()
-                                );
-                            $object = $resourceProperty->getInstanceType()->newInstanceWithoutConstructor();
-                            $dummyProperty->setAccessible(true);
-                            $dummyProperty->setValue($currentObject, $object);
+                            $instance = $resourceProperty->getInstanceType();
+                            assert($instance instanceof ReflectionClass, get_class($instance));
+                            $object = $instance->newInstanceArgs();
+                            $resourceType->setPropertyValue($currentObject, $resourceProperty->getName(), $object);
                             $currentObject = $object;
                         } catch (\ReflectionException $reflectionException) {
                             throw ODataException::createInternalServerError(
                                 Messages::orderByParserFailedToAccessOrInitializeProperty(
-                                    $resourceProperty->getName(), $resourceType->getName()
+                                    $resourceProperty->getName(),
+                                    $resourceType->getName()
                                 )
                             );
                         }
-                    } else if ($resourceProperty->getKind() == ResourcePropertyKind::COMPLEX_TYPE) {
+                    } elseif ($resourceProperty->getKind() == ResourcePropertyKind::COMPLEX_TYPE) {
                         $node = new OrderByNode($orderBySubPathSegment, $resourceProperty, null);
                         // Initialize this member variable
                         // (identified by $resourceProperty)of parent object.
                         try {
-                            $dummyProperty
-                                = new \ReflectionProperty(
-                                    $currentObject, $resourceProperty->getName()
-                                );
-                            $object = $resourceProperty->getInstanceType()->newInstanceWithoutConstructor();
-                            $dummyProperty->setValue($currentObject, $object);
+                            $instance = $resourceProperty->getInstanceType();
+                            assert($instance instanceof ReflectionClass, get_class($instance));
+                            $object = $instance->newInstanceArgs();
+                            $resourceType->setPropertyValue($currentObject, $resourceProperty->getName(), $object);
                             $currentObject = $object;
                         } catch (\ReflectionException $reflectionException) {
                             throw ODataException::createInternalServerError(
                                 Messages::orderByParserFailedToAccessOrInitializeProperty(
-                                    $resourceProperty->getName(), $resourceType->getName()
+                                    $resourceProperty->getName(),
+                                    $resourceType->getName()
                                 )
                             );
                         }
@@ -307,22 +339,14 @@ class OrderByParser
                     $currentNode->addNode($node);
                 } else {
                     try {
-                        $reflectionClass = new \ReflectionClass(get_class($currentObject));
-                        $reflectionProperty = $reflectionClass->getProperty($resourceProperty->getName());
-                        $reflectionProperty->setAccessible(true);
-                        $currentObject = $reflectionProperty->getValue($currentObject);
-
-                        //$dummyProperty = new \ReflectionProperty(
-                        //    $currentObject, $resourceProperty->getName()
-                        //);
-                        //$currentObject = $dummyProperty->getValue($currentObject);
+                        $currentObject = ReflectionHandler::getProperty($currentObject, $resourceProperty->getName());
                     } catch (\ReflectionException $reflectionException) {
-                            throw ODataException::createInternalServerError(
-                                Messages::orderByParserFailedToAccessOrInitializeProperty(
-                                    $resourceProperty->getName(),
-                                    $resourceType->getName()
-                                )
-                            );
+                        throw ODataException::createInternalServerError(
+                            Messages::orderByParserFailedToAccessOrInitializeProperty(
+                                $resourceProperty->getName(),
+                                $resourceType->getName()
+                            )
+                        );
                     }
 
                     if ($node instanceof OrderByLeafNode) {
@@ -334,32 +358,31 @@ class OrderByParser
                 $currentNode = $node;
             }
         }
+        return null;
     }
 
     /**
-     * Traverse 'Order By Tree' and create 'OrderInfo' structure
+     * Traverse 'Order By Tree' and create 'OrderInfo' structure.
      *
-     * @param array(array) $orderByPaths The orderby paths.
+     * @param array<array> $orderByPaths The orderby paths
      *
-     * @return OrderByInfo
-     *
-     * @throws ODataException In case parser found any tree inconsisitent
-     *                        state, throws unexpected state error
+     * @throws ODataException If parser finds an inconsistent-tree                         state, throws unexpected state error*
+     * @return OrderByInfo|null
      */
-    private function _createOrderInfo($orderByPaths)
+    private function createOrderInfo($orderByPaths)
     {
-        $orderByPathSegments = array();
-        $navigationPropertiesInThePath = array();
+        $orderByPathSegments = [];
+        $navigationPropertiesInThePath = [];
         foreach ($orderByPaths as $index => $orderBySubPaths) {
-            $currentNode = $this->_rootOrderByNode;
-            $orderBySubPathSegments = array();
+            $currentNode = $this->rootOrderByNode;
+            $orderBySubPathSegments = [];
             foreach ($orderBySubPaths as $orderBySubPath) {
                 $node = $currentNode->findNode($orderBySubPath);
-                $this->_assertion(!is_null($node));
+                $this->assertion(null !== $node);
                 $resourceProperty = $node->getResourceProperty();
-                if ($node instanceof OrderByNode && !is_null($node->getResourceSetWrapper())) {
+                if ($node instanceof OrderByNode && null !== $node->getResourceSetWrapper()) {
                     if (!array_key_exists($index, $navigationPropertiesInThePath)) {
-                        $navigationPropertiesInThePath[$index] = array();
+                        $navigationPropertiesInThePath[$index] = [];
                     }
 
                     $navigationPropertiesInThePath[$index][] = $resourceProperty;
@@ -369,33 +392,60 @@ class OrderByParser
                 $currentNode = $node;
             }
 
-            $this->_assertion($currentNode instanceof OrderByLeafNode);
+            $this->assertion($currentNode instanceof OrderByLeafNode);
             $orderByPathSegments[] = new OrderByPathSegment($orderBySubPathSegments, $currentNode->isAscending());
             unset($orderBySubPathSegments);
         }
 
-        $this->_orderByInfo = new OrderByInfo($orderByPathSegments, empty($navigationPropertiesInThePath) ? null : $navigationPropertiesInThePath);
+        $this->orderByInfo = new OrderByInfo(
+            $orderByPathSegments,
+            empty($navigationPropertiesInThePath) ? null : $navigationPropertiesInThePath
+        );
+    }
+
+    /**
+     * Generates top level comparison function from sub comparison functions.
+     */
+    private function generateTopLevelComparisonFunction()
+    {
+        $comparisonFunctionCount = count($this->comparisonFunctions);
+        $this->assertion(0 < $comparisonFunctionCount);
+        if (1 == $comparisonFunctionCount) {
+            $this->topLevelComparisonFunction = $this->comparisonFunctions[0];
+        } else {
+            $funcList = $this->comparisonFunctions;
+            $this->topLevelComparisonFunction = function ($object1, $object2) use ($funcList) {
+                $ret = 0;
+                foreach ($funcList as $f) {
+                    $ret = $f($object1, $object2);
+                    if (0 != $ret) {
+                        return $ret;
+                    }
+                }
+                return $ret;
+            };
+        }
     }
 
     /**
      * Read orderby clause.
      *
-     * @param string $value orderby clause to read.
-     *
-     * @return array(array) An array of 'OrderByPathSegment's, each of which
-     *                      is array of 'OrderBySubPathSegment's
+     * @param string $value orderby clause to read
      *
      * @throws ODataException If any syntax error found while reading the clause
+     *
+     * @return array<array> An array of 'OrderByPathSegment's, each of which
+     *                      is array of 'OrderBySubPathSegment's
      */
-    private function _readOrderBy($value)
+    private function readOrderBy($value)
     {
-        $orderByPathSegments = array();
+        $orderByPathSegments = [];
         $lexer = new ExpressionLexer($value);
         $i = 0;
         while ($lexer->getCurrentToken()->Id != ExpressionTokenId::END) {
             $orderBySubPathSegment = $lexer->readDottedIdentifier();
             if (!array_key_exists($i, $orderByPathSegments)) {
-                $orderByPathSegments[$i] = array();
+                $orderByPathSegments[$i] = [];
             }
 
             $orderByPathSegments[$i][] = $orderBySubPathSegment;
@@ -416,10 +466,10 @@ class OrderByParser
                         $tokenId = $lexer->getCurrentToken()->Id;
                         if ($tokenId != ExpressionTokenId::END) {
                             $lexer->validateToken(ExpressionTokenId::COMMA);
-                            $i++;
+                            ++$i;
                         }
                     } else {
-                        $i++;
+                        ++$i;
                     }
                 }
 
@@ -432,15 +482,14 @@ class OrderByParser
 
     /**
      * Assert that the given condition is true, if false throw
-     * ODataException for unexpected state
+      ODataException for unexpected state.
      *
-     * @param boolean $condition The condition to assert
+     * @param bool $condition The condition to assert
      *
-     * @return void
-     *
+
      * @throws ODataException
      */
-    private function _assertion($condition)
+    private function assertion($condition)
     {
         if (!$condition) {
             throw ODataException::createInternalServerError(Messages::orderByParserUnExpectedState());

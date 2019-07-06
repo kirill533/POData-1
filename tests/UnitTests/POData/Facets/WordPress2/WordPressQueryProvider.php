@@ -2,196 +2,362 @@
 
 namespace UnitTests\POData\Facets\WordPress2;
 
-
-/** 
+/*
  * Implementation of IDataServiceQueryProvider.
- * 
+ *
  */
 
+use POData\Providers\Expression\IExpressionProvider;
+use POData\Providers\Metadata\ResourceProperty;
+use POData\Providers\Metadata\ResourceSet;
+use POData\Providers\Query\IQueryProvider;
 use POData\Providers\Query\QueryResult;
 use POData\Providers\Query\QueryType;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\FilterInfo;
+use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
+use POData\UriProcessor\QueryProcessor\SkipTokenParser\SkipTokenInfo;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
-use POData\Providers\Metadata\ResourceSet;
-use POData\Providers\Metadata\ResourceProperty;
-use POData\Providers\Query\IQueryProvider;
-use POData\Common\ODataException;
-use POData\Providers\Expression\IExpressionProvider;
 
-/** The name of the database for WordPress */
+/* The name of the database for WordPress */
 define('DB_NAME', 'wordpress');
 
-/** MySQL database username */
+/* MySQL database username */
 define('DB_USER', 'root');
 
-/** MySQL database password */
+/* MySQL database password */
 define('DB_PASSWORD', 'root');
 
-/** MySQL hostname */
+/* MySQL hostname */
 define('DB_HOST', 'localhost');
-
 
 class WordPressQueryProvider implements IQueryProvider
 {
-	/**
-	 * The not implemented error message
-	 * @var string
-	 */
-	private $_message = 'This functionality is not implemented as the class is only for testing IExpressionProvider for MySQL';
+    /**
+     * The not implemented error message.
+     *
+     * @var string
+     */
+    private $_message = 'This functionality is not implemented as the class is only for testing IExpressionProvider for MySQL';
 
     /**
-     * Reference to the custom expression provider
+     * Reference to the custom expression provider.
      *
      * @var IExpressionProvider
      */
     private $_wordPressMySQLExpressionProvider;
-    
-
 
     /**
-     * (non-PHPdoc)
+     * (non-PHPdoc).
+     *
      * @see POData\Providers\Query.IQueryProvider::getExpressionProvider()
      */
     public function getExpressionProvider()
     {
-    	if (is_null($this->_wordPressMySQLExpressionProvider)) {
-    		$this->_wordPressMySQLExpressionProvider = new WordPressDSExpressionProvider();
-    	}
-    	
-    	return $this->_wordPressMySQLExpressionProvider;
+        if (null === $this->_wordPressMySQLExpressionProvider) {
+            $this->_wordPressMySQLExpressionProvider = new WordPressDSExpressionProvider();
+        }
+
+        return $this->_wordPressMySQLExpressionProvider;
     }
 
-	/**
-	 * Indicates if the QueryProvider can handle ordered paging, this means respecting order, skip, and top parameters
-	 * If the query provider can not handle ordered paging, it must return the entire result set and POData will
-	 * perform the ordering and paging
-	 *
-	 * @return Boolean True if the query provider can handle ordered paging, false if POData should perform the paging
-	 */
-	public function handlesOrderedPaging()
-	{
-		// TODO: Implement handlesOrderedPaging() method.
-	}
+    /**
+     * Indicates if the QueryProvider can handle ordered paging, this means respecting order, skip, and top parameters
+     * If the query provider can not handle ordered paging, it must return the entire result set and POData will
+     * perform the ordering and paging.
+     *
+     * @return bool True if the query provider can handle ordered paging, false if POData should perform the paging
+     */
+    public function handlesOrderedPaging()
+    {
+        // TODO: Implement handlesOrderedPaging() method.
+    }
 
-	/**
-	 * Gets collection of entities belongs to an entity set
-	 * IE: http://host/EntitySet
-	 *  http://host/EntitySet?$skip=10&$top=5&filter=Prop gt Value
-	 *
-	 * @param ResourceSet $resourceSet The entity set containing the entities to fetch
-	 * @param String $filter filter condition if any need to be apply in the query
-	 * @param mixed $orderBy sorted order if we want to get the data in some specific order
-	 * @param int $top number of records which  need to be skip
-	 * @param String $skipToken value indicating what records to skip
-	 * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
-	 *
-	 * @return QueryResult
-	 */
-	public function getResourceSet(
-		$queryType,
-		ResourceSet $resourceSet,
-		$filter = null,
-		$orderBy = null,
-		$top = null,
-		$skipToken = null
-	)
-	{
-		// TODO: Implement getResourceSet() method.
-	}
+    /**
+     * Gets collection of entities belongs to an entity set
+     * IE: http://host/EntitySet
+     *  http://host/EntitySet?$skip=10&$top=5&filter=Prop gt Value.
+     *
+     * @param QueryType                $queryType   Is this is a query for a count, entities, or entities-with-count
+     * @param ResourceSet              $resourceSet The entity set containing the entities to fetch
+     * @param FilterInfo|null          $filterInfo  The $filter parameter of the OData query.  NULL if none specified
+     * @param null|InternalOrderByInfo $orderBy     sorted order if we want to get the data in some specific order
+     * @param int|null                 $top         number of records which need to be retrieved
+     * @param int|null                 $skip        number of records which need to be skipped
+     * @param SkipTokenInfo|null       $skipToken   value indicating what records to skip
+     * @param string[]|null            $eagerLoad   array of relations to eager load
+     *
+     * @return QueryResult
+     */
+    public function getResourceSet(
+        QueryType $queryType,
+        ResourceSet $resourceSet,
+        $filterInfo = null,
+        $orderBy = null,
+        $top = null,
+        $skip = null,
+        $skipToken = null,
+        array $eagerLoad = null
+    ) {
+        // TODO: Implement getResourceSet() method.
+    }
 
-	/**
-	 * Gets an entity instance from an entity set identified by a key
-	 * IE: http://host/EntitySet(1L)
-	 * http://host/EntitySet(KeyA=2L,KeyB='someValue')
-	 *
-	 * @param ResourceSet $resourceSet The entity set containing the entity to fetch
-	 * @param KeyDescriptor $keyDescriptor The key identifying the entity to fetch
-	 *
-	 * @return object|null Returns entity instance if found else null
-	 */
-	public function getResourceFromResourceSet(
-		ResourceSet $resourceSet,
-		KeyDescriptor $keyDescriptor
-	)
-	{
-		// TODO: Implement getResourceFromResourceSet() method.
-	}
+    /**
+     * Gets an entity instance from an entity set identified by a key
+     * IE: http://host/EntitySet(1L)
+     * http://host/EntitySet(KeyA=2L,KeyB='someValue').
+     *
+     * @param ResourceSet   $resourceSet   The entity set containing the entity to fetch
+     * @param KeyDescriptor $keyDescriptor The key identifying the entity to fetch
+     * @param string[]|null $eagerLoad     array of relations to eager load
+     *
+     * @return object|null Returns entity instance if found, else null
+     */
+    public function getResourceFromResourceSet(
+        ResourceSet $resourceSet,
+        KeyDescriptor $keyDescriptor,
+        array $eagerLoad = null
+    ) {
+        // TODO: Implement getResourceFromResourceSet() method.
+    }
 
-	/**
-	 * Get related resource set for a resource
-	 * IE: http://host/EntitySet(1L)/NavigationPropertyToCollection
-	 * http://host/EntitySet?$expand=NavigationPropertyToCollection
-	 *
-	 * @param string $queryType indicates if this is a query for a count, entities, or entities with a count
-	 * @param ResourceSet $sourceResourceSet The entity set containing the source entity
-	 * @param object $sourceEntityInstance The source entity instance.
-	 * @param ResourceSet $targetResourceSet    The resource set of containing the target of the navigation property
-	 * @param ResourceProperty $targetProperty       The navigation property to retrieve
-	 * @param FilterInfo $filter represents the $filter parameter of the OData query.  NULL if no $filter specified
-	 * @param mixed $orderBy sorted order if we want to get the data in some specific order
-	 * @param int $top number of records which  need to be skip
-	 * @param String $skip value indicating what records to skip
-	 *
-	 * @return QueryResult
-	 *
-	 */
-	public function getRelatedResourceSet(
-		$queryType,
+    /**
+     * Get related resource set for a resource
+     * IE: http://host/EntitySet(1L)/NavigationPropertyToCollection
+     * http://host/EntitySet?$expand=NavigationPropertyToCollection.
+     *
+     * @param string          $queryType            indicates if this is a query for a count, entities, or entities with a count
+     * @param ResourceSet        $sourceResourceSet    The entity set containing the source entity
+     * @param object             $sourceEntityInstance The source entity instance
+     * @param ResourceSet        $targetResourceSet    The resource set of containing the target of the navigation property
+     * @param ResourceProperty   $targetProperty       The navigation property to retrieve
+     * @param FilterInfo|null    $filter               represents the $filter parameter of the OData query.  NULL if no $filter specified
+     * @param mixed              $orderBy              sorted order if we want to get the data in some specific order
+     * @param int                $top                  number of records which need to be retrieved
+     * @param int                $skip                 number of records which need to be skipped
+     * @param SkipTokenInfo|null $skipToken            value indicating what records to skip
+     *
+     * @return QueryResult
+     */
+    public function getRelatedResourceSet(
+        $queryType,
 		ResourceSet $sourceResourceSet,
 		$sourceEntityInstance,
 		ResourceSet $targetResourceSet,
 		ResourceProperty $targetProperty,
-		$filter = null,
-		$orderBy = null,
-		$top = null,
-		$skip = null
-	)
-	{
-		// TODO: Implement getRelatedResourceSet() method.
-	}
+		FilterInfo $filter = null,
+        $orderBy = null,
+        $top = null,
+        $skip = null,
+        $skipToken = null
+    ) {
+        // TODO: Implement getRelatedResourceSet() method.
+    }
 
-	/**
-	 * Gets a related entity instance from an entity set identified by a key
-	 * IE: http://host/EntitySet(1L)/NavigationPropertyToCollection(33)
-	 *
-	 * @param ResourceSet $sourceResourceSet The entity set containing the source entity
-	 * @param object $sourceEntityInstance The source entity instance.
-	 * @param ResourceSet $targetResourceSet The entity set containing the entity to fetch
-	 * @param ResourceProperty $targetProperty The metadata of the target property.
-	 * @param KeyDescriptor $keyDescriptor The key identifying the entity to fetch
-	 *
-	 * @return object|null Returns entity instance if found else null
-	 */
-	public function getResourceFromRelatedResourceSet(
-		ResourceSet $sourceResourceSet,
-		$sourceEntityInstance,
-		ResourceSet $targetResourceSet,
-		ResourceProperty $targetProperty,
-		KeyDescriptor $keyDescriptor
-	)
-	{
-		// TODO: Implement getResourceFromRelatedResourceSet() method.
-	}
+    /**
+     * Gets a related entity instance from an entity set identified by a key
+     * IE: http://host/EntitySet(1L)/NavigationPropertyToCollection(33).
+     *
+     * @param ResourceSet      $sourceResourceSet    The entity set containing the source entity
+     * @param object           $sourceEntityInstance The source entity instance
+     * @param ResourceSet      $targetResourceSet    The entity set containing the entity to fetch
+     * @param ResourceProperty $targetProperty       The metadata of the target property
+     * @param KeyDescriptor    $keyDescriptor        The key identifying the entity to fetch
+     *
+     * @return object|null Returns entity instance if found else null
+     */
+    public function getResourceFromRelatedResourceSet(
+        ResourceSet $sourceResourceSet,
+        $sourceEntityInstance,
+        ResourceSet $targetResourceSet,
+        ResourceProperty $targetProperty,
+        KeyDescriptor $keyDescriptor
+    ) {
+        // TODO: Implement getResourceFromRelatedResourceSet() method.
+    }
 
-	/**
-	 * Get related resource for a resource
-	 * IE: http://host/EntitySet(1L)/NavigationPropertyToSingleEntity
-	 * http://host/EntitySet?$expand=NavigationPropertyToSingleEntity
-	 *
-	 * @param ResourceSet $sourceResourceSet The entity set containing the source entity
-	 * @param object $sourceEntityInstance The source entity instance.
-	 * @param ResourceSet $targetResourceSet The entity set containing the entity pointed to by the navigation property
-	 * @param ResourceProperty $targetProperty The navigation property to fetch
-	 *
-	 * @return object|null The related resource if found else null
-	 */
-	public function getRelatedResourceReference(
-		ResourceSet $sourceResourceSet,
-		$sourceEntityInstance,
-		ResourceSet $targetResourceSet,
-		ResourceProperty $targetProperty
-	)
-	{
-		// TODO: Implement getRelatedResourceReference() method.
-	}
+    /**
+     * Get related resource for a resource
+     * IE: http://host/EntitySet(1L)/NavigationPropertyToSingleEntity
+     * http://host/EntitySet?$expand=NavigationPropertyToSingleEntity.
+     *
+     * @param ResourceSet      $sourceResourceSet    The entity set containing the source entity
+     * @param object           $sourceEntityInstance The source entity instance
+     * @param ResourceSet      $targetResourceSet    The entity set containing the entity pointed to by the navigation property
+     * @param ResourceProperty $targetProperty       The navigation property to fetch
+     *
+     * @return object|null The related resource if found else null
+     */
+    public function getRelatedResourceReference(
+        ResourceSet $sourceResourceSet,
+        $sourceEntityInstance,
+        ResourceSet $targetResourceSet,
+        ResourceProperty $targetProperty
+    ) {
+        // TODO: Implement getRelatedResourceReference() method.
+    }
+
+    /**
+     * Updates a resource.
+     *
+     * @param ResourceSet   $sourceResourceSet    The entity set containing the source entity
+     * @param object        $sourceEntityInstance The source entity instance
+     * @param KeyDescriptor $keyDescriptor        The key identifying the entity to fetch
+     * @param object        $data                 the New data for the entity instance
+     * @param bool          $shouldUpdate         Should undefined values be updated or reset to default
+     *
+     * @return object|null the new resource value if it is assignable or throw exception for null
+     */
+    public function updateResource(
+        ResourceSet $sourceResourceSet,
+        $sourceEntityInstance,
+        KeyDescriptor $keyDescriptor,
+        $data,
+        $shouldUpdate = false
+    ) {
+    }
+
+    /*
+     * Delete resource from a resource set.
+     * @param ResourceSet|null $resourceSet
+     * @param object           $sourceEntityInstance
+     *
+     * return bool true if resources sucessfully deteled, otherwise false.
+     */
+    public function deleteResource(
+        ResourceSet $sourceResourceSet,
+        $sourceEntityInstance
+    ) {
+    }
+
+    /*
+     * @param ResourceSet      $resourceSet   The entity set containing the entity to fetch
+     * @param object           $sourceEntityInstance The source entity instance
+     * @param object           $data                 The New data for the entity instance.
+     *
+     * returns object|null returns the newly created model if sucessful or null if model creation failed.
+     */
+    public function createResourceforResourceSet(
+        ResourceSet $resourceSet,
+        $sourceEntityInstance,
+        $data
+    ) {
+    }
+
+    /**
+     * Puts an entity instance to entity set identified by a key.
+     *
+     * @param ResourceSet   $resourceSet   The entity set containing the entity to update
+     * @param KeyDescriptor $keyDescriptor The key identifying the entity to update
+     * @param $data
+     *
+     * @return bool|null Returns result of executiong query
+     */
+    public function putResource(
+        ResourceSet $resourceSet,
+        KeyDescriptor $keyDescriptor,
+        $data
+    ) {
+        // TODO: Implement putResource() method.
+    }
+
+    /**
+     * Create multiple new resources in a resource set.
+     * @param ResourceSet $sourceResourceSet The entity set containing the entity to fetch
+     * @param object[]    $data              The new data for the entity instance
+     *
+     * @return object|null returns the newly created model if successful, or null if model creation failed
+     */
+    public function createBulkResourceforResourceSet(
+        ResourceSet $sourceResourceSet,
+        array $data
+    ) {
+        // TODO: Implement createBulkResourceforResourceSet() method.
+    }
+
+    /**
+     * Updates a group of resources in a resource set.
+     *
+     * @param ResourceSet     $sourceResourceSet    The entity set containing the source entity
+     * @param object          $sourceEntityInstance The source entity instance
+     * @param KeyDescriptor[] $keyDescriptor        The key identifying the entity to fetch
+     * @param object[]        $data                 The new data for the entity instances
+     * @param bool            $shouldUpdate         Should undefined values be updated or reset to default
+     *
+     * @return object[]|null the new resource value if it is assignable, or throw exception for null
+     */
+    public function updateBulkResource(
+        ResourceSet $sourceResourceSet,
+        $sourceEntityInstance,
+        array $keyDescriptor,
+        array $data,
+        $shouldUpdate = false
+    ) {
+        // TODO: Implement updateBulkResource() method.
+    }
+
+    /**
+     * Attaches child model to parent model.
+     *
+     * @param ResourceSet $sourceResourceSet
+     * @param object      $sourceEntityInstance
+     * @param ResourceSet $targetResourceSet
+     * @param object      $targetEntityInstance
+     * @param $navPropName
+     *
+     * @return bool
+     */
+    public function hookSingleModel(
+        ResourceSet $sourceResourceSet,
+        $sourceEntityInstance,
+        ResourceSet $targetResourceSet,
+        $targetEntityInstance,
+        $navPropName
+    ) {
+        // TODO: Implement hookSingleModel() method.
+    }
+
+    /**
+     * Removes child model from parent model.
+     *
+     * @param ResourceSet $sourceResourceSet
+     * @param object      $sourceEntityInstance
+     * @param ResourceSet $targetResourceSet
+     * @param object      $targetEntityInstance
+     * @param $navPropName
+     *
+     * @return bool
+     */
+    public function unhookSingleModel(
+        ResourceSet $sourceResourceSet,
+        $sourceEntityInstance,
+        ResourceSet $targetResourceSet,
+        $targetEntityInstance,
+        $navPropName
+    ) {
+        // TODO: Implement unhookSingleModel() method.
+    }
+
+    /**
+     * Start database transaction.
+     */
+    public function startTransaction($isBulk = false)
+    {
+        // TODO: Implement startTransaction() method.
+    }
+
+    /**
+     * Commit database transaction.
+     */
+    public function commitTransaction()
+    {
+        // TODO: Implement commitTransaction() method.
+    }
+
+    /**
+     * Abort database transaction.
+     */
+    public function rollBackTransaction()
+    {
+        // TODO: Implement rollBackTransaction() method.
+    }
 }

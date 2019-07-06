@@ -2,19 +2,11 @@
 
 namespace UnitTests\POData\Facets\NorthWind4;
 
-use POData\Providers\Metadata\ResourceStreamInfo;
-use POData\Providers\Metadata\ResourceAssociationSetEnd;
-use POData\Providers\Metadata\ResourceAssociationSet;
-use POData\Common\NotImplementedException;
-use POData\Providers\Metadata\Type\EdmPrimitiveType;
-use POData\Providers\Metadata\ResourceSet;
-use POData\Providers\Metadata\ResourcePropertyKind;
-use POData\Providers\Metadata\ResourceProperty;
-use POData\Providers\Metadata\ResourceTypeKind;
-use POData\Providers\Metadata\ResourceType;
 use POData\Common\InvalidOperationException;
-use POData\Providers\Metadata\SimpleMetadataProvider;
 use POData\Providers\Metadata\IMetadataProvider;
+use POData\Providers\Metadata\ResourceStreamInfo;
+use POData\Providers\Metadata\SimpleMetadataProvider;
+use POData\Providers\Metadata\Type\EdmPrimitiveType;
 
 //Begin Resource Classes
 
@@ -108,88 +100,89 @@ class Order_Details5
     public $UnitPrice;
     //Navigation Property Order (ResourceReference)
     public $Order;
-
 }
 
 class Employee5
 {
     //Key Edm.Int32
-     public $EmployeeID;
-     //Edm.String
-     public $FirstName;
-     //Edm.String
-     public $LastName;
-     //Edm.String
-     public $Title;
-     //Edm.String
-     public $TitleOfCourtesy;
-     //Edm.DateTime
-     public $BirthDate;
-     //Edm.DateTime
-     public $HireDate;
-     //Edm.String
-     public $Address;
-     //Edm.String
-     public $City;
-     //Edm.String
-     public $Region;
-     //Edm.String
-     public $PostalCode;
-     //Edm.String
-     public $Country;
-     //Edm.String
-     public $HomePhone;
-     //Edm.String
-     public $Extension;
-     //Edm.String
-     public $Notes;
-     //Bag of strings
-     public $Emails;
-     //Edm.Int32
-     public $ReportsTo;
-     //Edm.Binary
-     public $Photo;
-     //Edm.String
-     public $PhotoPath;
-     //Navigation Property to associated instance of Employee instance 
+    public $EmployeeID;
+    //Edm.String
+    public $FirstName;
+    //Edm.String
+    public $LastName;
+    //Edm.String
+    public $Title;
+    //Edm.String
+    public $TitleOfCourtesy;
+    //Edm.DateTime
+    public $BirthDate;
+    //Edm.DateTime
+    public $HireDate;
+    //Edm.String
+    public $Address;
+    //Edm.String
+    public $City;
+    //Edm.String
+    public $Region;
+    //Edm.String
+    public $PostalCode;
+    //Edm.String
+    public $Country;
+    //Edm.String
+    public $HomePhone;
+    //Edm.String
+    public $Extension;
+    //Edm.String
+    public $Notes;
+    //Bag of strings
+    public $Emails;
+    //Edm.Int32
+    public $ReportsTo;
+    //Edm.Binary
+    public $Photo;
+    //Edm.String
+    public $PhotoPath;
+    //Navigation Property to associated instance of Employee instance
      //representing manager (ResourceReference)
-     //public $Manager; 
-     //Navigation Property to associated instance of Employee instances 
+     //public $Manager;
+     //Navigation Property to associated instance of Employee instances
      //representing subordinates (ResourceSetReference)
      //public $Subordinates;
 }
 //End Resource Classes
 
-
 /**
  * Create NorthWind metadata.
- * 
  */
 class NorthWindMetadata
 {
     /**
-     * create metadata
-     * 
+     * create metadata.
+     *
      * @throws InvalidOperationException
-     * 
+     *
      * @return IMetadataProvider
      */
     public static function create()
     {
         $metadata = new SimpleMetadataProvider('NorthWindEntities', 'NorthWind');
-        
+
         //Register the complex type 'Address' having a property of same type.
-        $addressComplexType = $metadata->addComplexType(new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Address5'), 'Address', 'NorthWind', null);
+        $addressComplexType = $metadata->addComplexType(
+            new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Address5'), 'Address'
+        );
         $metadata->addPrimitiveProperty($addressComplexType, 'StreetName', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($addressComplexType, 'City', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($addressComplexType, 'Region', EdmPrimitiveType::STRING);
-        $metadata->addPrimitiveProperty($addressComplexType, 'PostalCode', EdmPrimitiveType::STRING);		
+        $metadata->addPrimitiveProperty($addressComplexType, 'PostalCode', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($addressComplexType, 'Country', EdmPrimitiveType::STRING);
         //A complex sub property to hold alternate address
         $metadata->addComplexProperty($addressComplexType, 'AltAddress', $addressComplexType);
-        
+
         //Register the entity (resource) type 'Customer'
-        $customersEntityType = $metadata->addEntityType(new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Customer5'), 'Customer', 'NorthWind');
+        $customersEntityType = $metadata->addEntityType(
+            new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Customer5'), 'Customer'
+        );
         $metadata->addKeyProperty($customersEntityType, 'CustomerID', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($customersEntityType, 'CompanyName', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($customersEntityType, 'ContactName', EdmPrimitiveType::STRING);
@@ -203,7 +196,9 @@ class NorthWindMetadata
         $metadata->addPrimitiveProperty($customersEntityType, 'EmailAddresses', EdmPrimitiveType::STRING, true);
 
         //Register the entity (resource) type 'Order'
-        $orderEntityType = $metadata->addEntityType(new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Order5'), 'Order', 'NorthWind');
+        $orderEntityType = $metadata->addEntityType(
+            new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Order5'), 'Order'
+        );
         $metadata->addKeyProperty($orderEntityType, 'OrderID', EdmPrimitiveType::INT32);
         $metadata->addPrimitiveProperty($orderEntityType, 'CustomerID', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($orderEntityType, 'EmployeeID', EdmPrimitiveType::INT32);
@@ -219,17 +214,21 @@ class NorthWindMetadata
         $metadata->addPrimitiveProperty($orderEntityType, 'ShipRegion', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($orderEntityType, 'ShipPostalCode', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($orderEntityType, 'ShipCountry', EdmPrimitiveType::STRING);
-      
+
         //Register the entity (resource) type 'Order_Details'
-        $orderDetailsEntityType = $metadata->addEntityType(new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Order_Details5'), 'Order_Details', 'NorthWind');
+        $orderDetailsEntityType = $metadata->addEntityType(
+            new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Order_Details5'), 'Order_Details'
+        );
         $metadata->addKeyProperty($orderDetailsEntityType, 'ProductID', EdmPrimitiveType::INT32);
         $metadata->addKeyProperty($orderDetailsEntityType, 'OrderID', EdmPrimitiveType::INT32);
         $metadata->addPrimitiveProperty($orderDetailsEntityType, 'UnitPrice', EdmPrimitiveType::DECIMAL);
         $metadata->addPrimitiveProperty($orderDetailsEntityType, 'Quantity', EdmPrimitiveType::INT16);
         $metadata->addPrimitiveProperty($orderDetailsEntityType, 'Discount', EdmPrimitiveType::SINGLE);
-     
+
         //Register the entity (resource) type 'Employee'
-        $employeeEntityType = $metadata->addEntityType(new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Employee5'), 'Employee', 'NorthWind');
+        $employeeEntityType = $metadata->addEntityType(
+            new \ReflectionClass('UnitTests\POData\Facets\NorthWind4\Employee5'), 'Employee'
+        );
         $metadata->addKeyProperty($employeeEntityType, 'EmployeeID', EdmPrimitiveType::INT32);
         $metadata->addPrimitiveProperty($employeeEntityType, 'FirstName', EdmPrimitiveType::STRING);
         $metadata->addPrimitiveProperty($employeeEntityType, 'LastName', EdmPrimitiveType::STRING);
@@ -255,7 +254,7 @@ class NorthWindMetadata
         //so the url http://host/NorthWind.svc/Employee(9831)/TumbNail_48X48 will give stream associated with employee's thumbnail (of size 48 x 48) image
         //$streamInfo = new ResourceStreamInfo('TumbNail_48X48');
         //$employeeEntityType->addNamedStream($streamInfo);
-        
+
         $customersResourceSet = $metadata->addResourceSet('Customers', $customersEntityType);
         $ordersResourceSet = $metadata->addResourceSet('Orders', $orderEntityType);
         $orderDetialsResourceSet = $metadata->addResourceSet('Order_Details', $orderDetailsEntityType);
@@ -274,5 +273,3 @@ class NorthWindMetadata
         return $metadata;
     }
 }
-
-

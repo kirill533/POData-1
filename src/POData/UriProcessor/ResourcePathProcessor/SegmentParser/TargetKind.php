@@ -2,64 +2,67 @@
 
 namespace POData\UriProcessor\ResourcePathProcessor\SegmentParser;
 
+use MyCLabs\Enum\Enum;
+
 /**
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind NOTHING
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind SERVICE_DIRECTORY
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind RESOURCE
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind COMPLEX_OBJECT
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind PRIMITIVE
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind PRIMITIVE_VALUE
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind METADATA
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind VOID_SERVICE_OPERATION
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind BATCH
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind LINK
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind MEDIA_RESOURCE
- * @method static \POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind BAG
+ * @method static TargetKind NOTHING()
+ * @method static TargetKind SERVICE_DIRECTORY()
+ * @method static TargetKind RESOURCE()
+ * @method static TargetKind COMPLEX_OBJECT()
+ * @method static TargetKind PRIMITIVE()
+ * @method static TargetKind PRIMITIVE_VALUE()
+ * @method static TargetKind METADATA()
+ * @method static TargetKind VOID_SERVICE_OPERATION()
+ * @method static TargetKind BATCH()
+ * @method static TargetKind LINK()
+ * @method static TargetKind MEDIA_RESOURCE()
+ * @method static TargetKind BAG()
+ * @method static TargetKind SINGLETON()
  */
-class TargetKind
+class TargetKind extends Enum
 {
     /**
      * Nothing specific is being requested.
-     * e.g. http://localhost
+     * e.g. http://localhost.
      */
     const NOTHING = 1;
 
     /**
      * A top-level directory of service capabilities.
-     * e.g. http://localhost/myservice.svc
+     * e.g. http://localhost/myservice.svc.
      */
     const SERVICE_DIRECTORY = 2;
 
     /**
      * Entity Resource is requested - it can be a collection or a single value.
      * e.g. http://localhost/myservice.svc/Customers
-     *      http://localhost/myservice.svc/Customers('ALFKI')/Orders(123)
+     *      http://localhost/myservice.svc/Customers('ALFKI')/Orders(123).
      */
     const RESOURCE = 3;
 
     /**
      * A single complex value is requested (eg: an Address).
-     * e.g. http://localhost/myservice.svc/Address
+     * e.g. http://localhost/myservice.svc/Address.
      */
     const COMPLEX_OBJECT = 4;
 
     /**
      * A single value is requested (eg: a Picture property).
      * e.g. http://localhost/myservice.svc/Customers('ALFKI')/CustomerName
-     *      http://localhost/myservice.svc/Address/LineNumber
+     *      http://localhost/myservice.svc/Address/LineNumber.
      */
     const PRIMITIVE = 5;
 
     /**
      * A single value is requested (eg: the raw stream of a Picture).
      * e.g. http://localhost/myservice.svc/Customers('ALFKI')/CustomerName/$value
-     *      http://localhost/myservice.svc/Customers/$count
+     *      http://localhost/myservice.svc/Customers/$count.
      */
     const PRIMITIVE_VALUE = 6;
 
     /**
      * System metadata.
-     * e.g. http://localhost/myservice.svc/$metadata
+     * e.g. http://localhost/myservice.svc/$metadata.
      */
     const METADATA = 7;
 
@@ -70,26 +73,31 @@ class TargetKind
 
     /**
      * The request is a batch request.
-     * e.g. http://localhost/myservice.svc/$batch
+     * e.g. http://localhost/myservice.svc/$batch.
      */
     const BATCH = 9;
 
     /**
      * The request is a link operation - bind or unbind or simple get
-     * e.g. http://localhost/myservice.svc/Customers('ALFKI')/$links/Orders
+     * e.g. http://localhost/myservice.svc/Customers('ALFKI')/$links/Orders.
      */
     const LINK = 10;
 
     /**
      * A stream property value is requested.
      * e.g. http://localhost/myservice.svc/Albums('trip')/Photos('123')/$value
-     * e.g. http://localhost/myservice.svc/Albums('trip')/Photos('123')/ThumNail64x64/$value
+     * e.g. http://localhost/myservice.svc/Albums('trip')/Photos('123')/ThumNail64x64/$value.
      */
     const MEDIA_RESOURCE = 11;
 
     /**
      * A single bag of primitive or complex values is requested
-     * e.g. http://localhost/myservice.svc/Customers('ALFKI')/EMails
+     * e.g. http://localhost/myservice.svc/Customers('ALFKI')/EMails.
      */
     const BAG = 12;
+
+    /**
+     * A singleton (parameterless function wrapper).
+     */
+    const SINGLETON = 13;
 }

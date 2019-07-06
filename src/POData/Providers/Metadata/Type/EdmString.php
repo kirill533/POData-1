@@ -3,15 +3,14 @@
 namespace POData\Providers\Metadata\Type;
 
 /**
- * Class EdmString
- * @package POData\Providers\Metadata\Type
+ * Class EdmString.
  */
 class EdmString implements IType
 {
     /**
      * Gets the type code
-     * Note: implementation of IType::getTypeCode
-     *   
+     * Note: implementation of IType::getTypeCode.
+     *
      * @return TypeCode
      */
     public function getTypeCode()
@@ -21,41 +20,47 @@ class EdmString implements IType
 
     /**
      * Checks this type (EdmString) is compatible with another type
-     * Note: implementation of IType::isCompatibleWith
-     * 
+     * Note: implementation of IType::isCompatibleWith.
+     *
      * @param IType $type Type to check compatibility
-     * 
-     * @return boolean 
+     *
+     * @return bool
      */
     public function isCompatibleWith(IType $type)
     {
-        return ($type->getTypeCode() == TypeCode::STRING);
+        $code = $type->getTypeCode();
+
+        return TypeCode::STRING == $code
+            || TypeCode::INT32 == $code
+            || TypeCode::INT64 == $code
+            || TypeCode::INT16 == $code;
     }
 
     /**
      * Validate a value in Astoria uri is in a format for this type
-     * Note: implementation of IType::validate
-     * 
-     * @param string $value     The value to validate 
-     * @param string &$outValue The stripped form of $value that can 
+     * Note: implementation of IType::validate.
+     *
+     * @param string $value     The value to validate
+     * @param string &$outValue The stripped form of $value that can
      *                          be used in PHP expressions
-     * 
-     * @return boolean
+     *
+     * @return bool
      */
     public function validate($value, &$outValue)
     {
         if (!is_string($value)) {
             return false;
         }
-        
+
         $outValue = $value;
+
         return true;
     }
 
     /**
      * Gets full name of this type in EDM namespace
-     * Note: implementation of IType::getFullTypeName
-     * 
+     * Note: implementation of IType::getFullTypeName.
+     *
      * @return string
      */
     public function getFullTypeName()
@@ -65,41 +70,54 @@ class EdmString implements IType
 
     /**
      * Converts the given string value to string type.
-     * 
-     * @param string $stringValue value to convert.
-     * 
+     *
+     * @param string $stringValue value to convert
+     *
      * @return string
      */
     public function convert($stringValue)
     {
-        //Consider the odata url option 
+        $value = str_replace('%C3%82%C2%BB', '/', $stringValue);
+        //Consider the odata url option
         //$filter=ShipName eq 'Antonio%20Moreno%20Taquer%C3%ADa'
         //WebOperationContext will do urldecode, so the clause become
         //$filter=ShipName eq 'Antonio Moreno Taquería', the lexer will
         //give the token as
-        //Token {Text string(25):'Antonio Moreno Taquería', Id: EdmString}, 
-        //this function is used to remove the pre-post quotes from Token::Text 
+        //Token {Text string(25):'Antonio Moreno Taquería', Id: EdmString},
+        //this function is used to remove the pre-post quotes from Token::Text
         //i.e. 'Antonio Moreno Taquería'
         //to Antonio Moreno Taquería
-        $len = strlen($stringValue);
-        if ($len < 2) {
-            return $stringValue;
+        $len = strlen($value);
+        if (2 > $len) {
+            return $value;
         }
 
-        return substr($stringValue, 1, $len - 2);
+        return substr($value, 1, $len - 2);
     }
 
     /**
-     * Convert the given value to a form that can be used in OData uri. 
-     * Note: The calling function should not pass null value, as this 
-     * function will not perform any check for nullability 
-     * 
-     * @param mixed $value value to convert.
-     * 
+     * Convert the given value to a form that can be used in OData uri.
+     * Note: The calling function should not pass null value, as this
+     * function will not perform any check for nullability.
+     *
+     * @param mixed $value value to convert
+     *
      * @return string
      */
     public function convertToOData($value)
     {
-        return '\'' . str_replace('%27', "''", urlencode(utf8_encode($value))) . '\'';
+        $rawValue = str_replace('/', '»', $value);
+        return '\'' . str_replace('%27', "''", urlencode(utf8_encode($rawValue))) . '\'';
+    }
+
+    /**
+     * Gets full name of the type implementing this interface in EDM namespace
+     * Note: implementation of IType::getFullTypeName.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getFullTypeName();
     }
 }

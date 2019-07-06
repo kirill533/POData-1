@@ -1,14 +1,19 @@
 <?php
+
 namespace POData;
 
-use POData\BaseService;
-use POData\Configuration\IServiceConfiguration;
-use POData\Configuration\ServiceConfiguration;
+use \POData\Providers\Stream\IStreamProvider2;
+use POData\Common\ODataException;
 use POData\Configuration\EntitySetRights;
-use POData\IService;
+use POData\Configuration\IServiceConfiguration;
+use POData\ObjectModel\IObjectSerialiser;
+use POData\OperationContext\ServiceHost;
 use POData\Providers\Metadata\IMetadataProvider;
-use POData\Providers\Query\IQueryProvider;
 use POData\Providers\Metadata\SimpleMetadataProvider;
+use POData\Providers\Query\IQueryProvider;
+use POData\Providers\Query\SimpleQueryProvider;
+use POData\Providers\Stream\SimpleStreamProvider;
+
 /**
  * DataService that implements IServiceProvider.
  **/
@@ -22,24 +27,43 @@ class SimpleDataService extends BaseService implements IService
      * @var IQueryProvider
      */
     protected $queryProvider;
-    public $maxPageSize = 200;
-  
-    public function __construct($db, SimpleMetadataProvider $metaProvider) {
+
+    /**
+     * @var IStreamProvider2;
+     */
+    protected $streamProvider;
+    public $maxPageSize = 400;
+
+    public function __construct(
+        $db,
+        SimpleMetadataProvider $metaProvider,
+        ServiceHost $host,
+        IObjectSerialiser $serialiser = null,
+        IStreamProvider2 $streamProvider = null
+    ) {
         $this->metaProvider = $metaProvider;
-        if (!empty($db->queryProviderClassName)) {
+        if ($db instanceof IQueryProvider) {
+            $this->queryProvider = $db;
+        } elseif (!empty($db->queryProviderClassName)) {
             $queryProviderClassName = $db->queryProviderClassName;
             $this->queryProvider = new $queryProviderClassName($db);
         } else {
-            $this->queryProvider = new QueryProvider($db);
+            throw new ODataException('Invalid query provider supplied', 500);
         }
+        $this->setStreamProvider($streamProvider);
+
+        $this->setHost($host);
+        parent::__construct($serialiser);
     }
-    public function initialize(ServiceConfiguration $config)
+
+    public function initialize(IServiceConfiguration $config)
     {
         $config->setEntitySetPageSize('*', $this->maxPageSize);
         $config->setEntitySetAccessRule('*', EntitySetRights::ALL);
         $config->setAcceptCountRequests(true);
         $config->setAcceptProjectionRequests(true);
     }
+
     /**
      * @return IQueryProvider
      */
@@ -47,26 +71,35 @@ class SimpleDataService extends BaseService implements IService
     {
         return $this->queryProvider;
     }
+
     /**
      * @return IMetadataProvider
      */
     public function getMetadataProvider()
-    { 
+    {
         return $this->metaProvider;
     }
+
     /**
-     * @return PODataProvidersStreamIStreamProvider
+     * @param  IStreamProvider2|null $streamProvider
+     * @return void
      */
-    public function getStreamProviderX()
-    { 
-        // TODO: Implement getStreamProviderX() method. 
+    public function setStreamProvider(IStreamProvider2 $streamProvider = null)
+    {
+        $this->streamProvider = (null == $streamProvider) ? new SimpleStreamProvider() : $streamProvider;
     }
     /**
+     * @return IStreamProvider2
+     */
+    public function getStreamProviderX()
+    {
+        return $this->streamProvider;
+    }
+
+    /**
      * This method is called only once to initialize service-wide policies.
-     *    
-     * @param IServiceConfiguration $config data service configuration
      *
-     * @return void
+     * @param IServiceConfiguration $config data service configuration
      */
     public function initializeService(IServiceConfiguration $config)
     {

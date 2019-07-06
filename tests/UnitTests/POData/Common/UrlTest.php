@@ -4,14 +4,12 @@ namespace UnitTests\POData\Common;
 
 use POData\Common\Url;
 use POData\Common\UrlFormatException;
-use PHPUnit\Framework\TestCase;
+use UnitTests\POData\TestCase;
 
 class UrlTest extends TestCase
 {
-
     public function testAbsoluteUrl()
     {
-
         $urlStr = "http://localhost/NorthwindService.svc/Customers('ALFKI')/Orders?\$filter=OrderID eq 123";
         $url = new Url($urlStr);
         $this->assertEquals('http', $url->getScheme());
@@ -23,120 +21,135 @@ class UrlTest extends TestCase
         $this->assertFalse($url->isRelative());
     }
 
-	public function testGetSegmentsAbsoluteUrlWithRedundantSlashing()
-	{
+    public function testRelativeUrl()
+    {
+        $urlStr = "/NorthwindService.svc/Customers('ALFKI')/Orders?\$filter=OrderID eq 123";
+        $url = new Url($urlStr, false);
+        $this->assertEquals(null, $url->getScheme());
+        $this->assertEquals(null, $url->getPort());
+        $this->assertEquals(null, $url->getHost());
+        $this->assertEquals("/NorthwindService.svc/Customers('ALFKI')/Orders", $url->getPath());
+        $this->assertEquals('$filter=OrderID eq 123', $url->getQuery());
+        $this->assertFalse($url->isAbsolute());
+        $this->assertTrue($url->isRelative());
+    }
+
+    public function testGetSegmentsAbsoluteUrlWithRedundantSlashing()
+    {
         //This is valid
         $urlStr = "http://localhost///NorthwindService.svc/Customers('ALFKI')/Orders//?\$filter=OrderID eq 123";
         $url = new Url($urlStr);
 
-		$actual = $url->getSegments();
+        $actual = $url->getSegments();
 
-		$expected = array(
-		    'NorthwindService.svc',
-		    "Customers('ALFKI')",
-		    "Orders",
-		);
+        $expected = [
+            'NorthwindService.svc',
+            "Customers('ALFKI')",
+            'Orders',
+        ];
 
-		$this->assertEquals($expected, $actual);
-	}
+        $this->assertEquals($expected, $actual);
+    }
 
-	public function testAbsoluteUrlWithSpecialCharacters()
-	{
-		//TODO: i thought the @ made it so everything before is a username...
+    public function testAbsoluteUrlWithSpecialCharacters()
+    {
+        //TODO: i thought the @ made it so everything before is a username...
 
         //This is valid
         $urlStr = "http://localhost/NorthwindService.svc/@/./!/Customers('ALFKI')/Orders?\$filter=OrderID eq 123";
-		$url = new Url($urlStr);
-		$actual = $url->getSegments();
+        $url = new Url($urlStr);
+        $actual = $url->getSegments();
 
-		$expected = array(
-			'NorthwindService.svc',
-			'@',
-			'.',
-			'!',
-			"Customers('ALFKI')",
-			"Orders",
-		);
-		$this->assertEquals($expected, $actual);
-	}
+        $expected = [
+            'NorthwindService.svc',
+            '@',
+            '.',
+            '!',
+            "Customers('ALFKI')",
+            'Orders',
+        ];
+        $this->assertEquals($expected, $actual);
+    }
 
-
-	public function testAbsoluteURLWithDoubleSlashesAfterService()
-	{
-	    $urlStr = "http://localhost/NorthwindService.svc//Customers('ALFKI')/Orders?\$filter=OrderID eq 123";
+    public function testAbsoluteURLWithDoubleSlashesAfterService()
+    {
+        $urlStr = "http://localhost/NorthwindService.svc//Customers('ALFKI')/Orders?\$filter=OrderID eq 123";
         try {
             new Url($urlStr);
-	        $this->fail('An expected UrlFormatException has not been raised');
+            $this->fail('An expected UrlFormatException has not been raised');
         } catch (UrlFormatException $exception) {
-	         $this->assertEquals("Bad Request - The url '$urlStr' is malformed", $exception->getMessage());
+            $this->assertEquals("Bad Request - The url '$urlStr' is malformed.", $exception->getMessage());
         }
-	}
+    }
 
+    public function testRelativeURLWithDoubleSlashesAfterService()
+    {
+        $urlStr = "/NorthwindService.svc//Customers('ALFKI')/Orders?\$filter=OrderID eq 123";
+        try {
+            new Url($urlStr, false);
+            $this->fail('An expected UrlFormatException has not been raised');
+        } catch (UrlFormatException $exception) {
+            $this->assertEquals("Bad Request - The url '$urlStr' is malformed.", $exception->getMessage());
+        }
+    }
 
-	public function testNotAURL()
-	{
-		$urlStr = "doubt i'm a url";
-		try {
-			new Url($urlStr);
-			$this->fail('An expected UrlFormatException has not been raised');
-		} catch (UrlFormatException $exception) {
-			$this->assertEquals("Bad Request - The url '$urlStr' is malformed", $exception->getMessage());
-		}
-	}
+    public function testNotAURL()
+    {
+        $urlStr = "doubt i'm a url";
+        try {
+            new Url($urlStr);
+            $this->fail('An expected UrlFormatException has not been raised');
+        } catch (UrlFormatException $exception) {
+            $this->assertEquals("Bad Request - The url '$urlStr' is malformed.", $exception->getMessage());
+        }
+    }
 
+    public function testABadlyFormedURL()
+    {
+        $urlStr = 'http:///example.com';     //this one gets passed the relative regex check, but not parse_url
+        try {
+            new Url($urlStr, false);
+            $this->fail('An expected UrlFormatException has not been raised');
+        } catch (UrlFormatException $exception) {
+            $this->assertEquals("Bad Request - The url '$urlStr' is malformed.", $exception->getMessage());
+        }
+    }
 
-	public function testABadlyFormedURL()
-	{
-		$urlStr = "http:///example.com";     //this one gets passed the relative regex check, but not parse_url
-		try {
-			new Url($urlStr, false);
-			$this->fail('An expected UrlFormatException has not been raised');
-		} catch (UrlFormatException $exception) {
-			$this->assertEquals("Bad Request - The url '$urlStr' is malformed", $exception->getMessage());
-		}
-	}
-
-
-	public function testIsBaseOf()
-	{
-
-        $urlStr1 = "http://localhost/NorthwindService.svc";
+    public function testIsBaseOf()
+    {
+        $urlStr1 = 'http://localhost/NorthwindService.svc';
         $urlStr2 = "http://localhost/NorthwindService.svc/Customers('ALFKI')/Orders";
         $url1 = new Url($urlStr1);
         $this->assertTrue($url1->isBaseOf(new Url($urlStr2)));
-
 
         $urlStr1 = "http://localhost/NorthwindService.svc/Customers('ALFKI')/Orders/Order_Details";
         $urlStr2 = "http://localhost/NorthwindService.svc/Customers('ALFKI')/Orders";
         $url1 = new Url($urlStr1);
         $this->assertFalse($url1->isBaseOf(new Url($urlStr2)));
 
-        $urlStr1 = "http://localhost/NorthwindService";
+        $urlStr1 = 'http://localhost/NorthwindService';
         $urlStr2 = "http://localhost/NorthwindService.svc/Customers('ALFKI')/Orders";
         $url1 = new Url($urlStr1);
         $this->assertFalse($url1->isBaseOf(new Url($urlStr2)));
 
-        $urlStr1 = "http://localhost/NorthwindService.svc";
+        $urlStr1 = 'http://localhost/NorthwindService.svc';
         $urlStr2 = "https://localhost/NorthwindService.svc/Customers('ALFKI')/Orders";
         $url1 = new Url($urlStr1);
         $this->assertFalse($url1->isBaseOf(new Url($urlStr2)));
 
-        $urlStr1 = "http://localhost:80/NorthwindService.svc";
+        $urlStr1 = 'http://localhost:80/NorthwindService.svc';
         $urlStr2 = "http://localhost/NorthwindService.svc/Customers('ALFKI')/Orders";
         $url1 = new Url($urlStr1);
         $this->assertTrue($url1->isBaseOf(new Url($urlStr2)));
 
-        $urlStr1 = "https://localhost:443/NorthwindService.svc";
+        $urlStr1 = 'https://localhost:443/NorthwindService.svc';
         $urlStr2 = "https://localhost/NorthwindService.svc/Customers('ALFKI')/Orders";
         $url1 = new Url($urlStr1);
         $this->assertTrue($url1->isBaseOf(new Url($urlStr2)));
 
-        $urlStr1 = "http://msn.com/NorthwindService.svc";
+        $urlStr1 = 'http://msn.com/NorthwindService.svc';
         $urlStr2 = "http://localhost/NorthwindService.svc/Customers('ALFKI')/Orders";
         $url1 = new Url($urlStr1);
         $this->assertFalse($url1->isBaseOf(new Url($urlStr2)));
-            
-
     }
-
 }

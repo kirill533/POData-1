@@ -2,13 +2,11 @@
 
 namespace POData\UriProcessor\QueryProcessor\ExpressionParser;
 
-use POData\Common\ODataException;
 use POData\Common\ODataConstants;
-
+use POData\Common\ODataException;
 
 /**
- * Class ExpressionToken
- * @package POData\UriProcessor\QueryProcessor\ExpressionParser
+ * Class ExpressionToken.
  */
 class ExpressionToken
 {
@@ -26,17 +24,18 @@ class ExpressionToken
      * @var int
      */
     public $Position;
-    
+
     /**
      * Checks whether this token is a comparison operator.
-     * 
-     * @return boolean True if this token represent a comparison operator
-     *                 False otherwise.
+     *
+     * @return bool True if this token represent a comparison operator
+     *              False otherwise
      */
     public function isComparisonOperator()
     {
         return
             $this->Id == ExpressionTokenId::IDENTIFIER &&
+            is_string($this->Text) &&
             (strcmp($this->Text, ODataConstants::KEYWORD_EQUAL) == 0 ||
                 strcmp($this->Text, ODataConstants::KEYWORD_NOT_EQUAL) == 0 ||
                 strcmp($this->Text, ODataConstants::KEYWORD_LESSTHAN) == 0 ||
@@ -47,23 +46,24 @@ class ExpressionToken
 
     /**
      * Checks whether this token is an equality operator.
-     * 
-     * @return boolean True if this token represent a equality operator
-     *                 False otherwise.
+     *
+     * @return bool True if this token represent a equality operator
+     *              False otherwise
      */
     public function isEqualityOperator()
     {
         return
             $this->Id == ExpressionTokenId::IDENTIFIER &&
-                (strcmp($this->Text, ODataConstants::KEYWORD_EQUAL) == 0 ||
-                    strcmp($this->Text, ODataConstants::KEYWORD_NOT_EQUAL) == 0);
+                is_string($this->Text) &&
+                    (strcmp($this->Text, ODataConstants::KEYWORD_EQUAL) === 0 ||
+                        strcmp($this->Text, ODataConstants::KEYWORD_NOT_EQUAL) === 0);
     }
 
     /**
      * Checks whether this token is a valid token for a key value.
-     * 
-     * @return boolean True if this token represent valid key value
-     *                 False otherwise.
+     *
+     * @return bool True if this token represent valid key value
+     *              False otherwise
      */
     public function isKeyValueToken()
     {
@@ -77,8 +77,9 @@ class ExpressionToken
     }
 
     /**
-     * Gets the current identifier text
-     * 
+     * Gets the current identifier text.
+     *
+     * @throws ODataException
      * @return string
      */
     public function getIdentifier()
@@ -94,14 +95,14 @@ class ExpressionToken
 
     /**
      * Checks that this token has the specified identifier.
-     * 
+     *
      * @param ExpressionTokenId $id Identifier to check
-     * 
+     *
      * @return bool true if this is an identifier with the specified text
      */
     public function identifierIs($id)
     {
-        return $this->Id == ExpressionTokenId::IDENTIFIER 
+        return $this->Id == ExpressionTokenId::IDENTIFIER
             && strcmp($this->Text, (string)$id) == 0;
     }
 }

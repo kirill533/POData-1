@@ -5,8 +5,7 @@ namespace POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions;
 use POData\UriProcessor\QueryProcessor\FunctionDescription;
 
 /**
- * Class FunctionCallExpression
- * @package POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions
+ * Class FunctionCallExpression.
  */
 class FunctionCallExpression extends AbstractExpression
 {
@@ -14,14 +13,14 @@ class FunctionCallExpression extends AbstractExpression
      * @var FunctionDescription
      */
     protected $functionDescription;
-    
+
     /**
-     * @var array<AbstractExpression>
+     * @var AbstractExpression[]
      */
     protected $paramExpressions;
 
     /**
-     * Creates new instance of FunctionCallExpression
+     * Creates new instance of FunctionCallExpression.
      *
      * @param FunctionDescription       $functionDescription The signature of function-call
      * @param array<AbstractExpression> $paramExpressions    The parameters to the function
@@ -30,14 +29,14 @@ class FunctionCallExpression extends AbstractExpression
     {
         $this->functionDescription = $functionDescription;
         $this->paramExpressions = $paramExpressions;
-        $this->nodeType = ExpressionType::CALL;
+        $this->nodeType = ExpressionType::CALL();
         $this->type = $functionDescription->returnType;
     }
 
     /**
-     * To get the array of expressions represents arguments of function
-     * 
-     * @return array<ParamExpression>
+     * To get the array of expressions represents arguments of function.
+     *
+     * @return AbstractExpression[]
      */
     public function getParamExpressions()
     {
@@ -45,8 +44,8 @@ class FunctionCallExpression extends AbstractExpression
     }
 
     /**
-     * To get description of the function this expression represents
-     * 
+     * To get description of the function this expression represents.
+     *
      * @return FunctionDescription
      */
     public function getFunctionDescription()
@@ -55,17 +54,16 @@ class FunctionCallExpression extends AbstractExpression
     }
 
     /**
-     * (non-PHPdoc)
-     * 
+     * (non-PHPdoc).
+     *
      * @see library/POData/QueryProcessor/ExpressionParser/Expressions.AbstractExpression::free()
-     * 
-     * @return void
      */
     public function free()
     {
-        foreach ($this->paramExpressions as $paramExpression) {
-            $paramExpression->free();
-            unset($paramExpression);
+        $numExpr = count($this->paramExpressions);
+        for ($i = $numExpr - 1; $i >= 0; $i--) {
+            $this->paramExpressions[$i]->free();
+            unset($this->paramExpressions[$i]);
         }
     }
 }

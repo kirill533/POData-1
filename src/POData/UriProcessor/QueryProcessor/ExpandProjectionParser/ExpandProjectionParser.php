@@ -2,20 +2,26 @@
 
 namespace POData\UriProcessor\QueryProcessor\ExpandProjectionParser;
 
-use POData\Common\ODataException;
 use POData\Common\Messages;
+use POData\Common\ODataException;
+use POData\Providers\Metadata\ResourceEntityType;
+use POData\Providers\Metadata\ResourceProperty;
+use POData\Providers\Metadata\ResourcePropertyKind;
 use POData\Providers\Metadata\ResourceTypeKind;
+use POData\Providers\Metadata\ResourceSet;
+use POData\Configuration\ServiceConfiguration;
 use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\ResourceSetWrapper;
+use POData\Providers\Metadata\ResourceType;
+use POData\Providers\Metadata\ResourceTypeKind;
 use POData\Providers\ProvidersWrapper;
-use POData\Providers\Metadata\ResourcePropertyKind;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;
-use POData\UriProcessor\QueryProcessor\OrderByParser\OrderByParser;
 use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
+use POData\UriProcessor\QueryProcessor\OrderByParser\OrderByParser;
 
 /**
- * Class ExpandProjectionParser
+ * Class ExpandProjectionParser.
  *
  * Class used to parse and validate $expand and $select query options and
  * create a 'Projection Tree' from these options, Syntax of the clause is:
@@ -29,74 +35,68 @@ use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
  * Identifier         : NavigationProperty
  * Identifier         : NonNavigationProperty (Only if if the SubPathSegment
  *                      is last segment and belongs to select path)
- *
- * @package POData\UriProcessor\QueryProcessor\ExpandProjectionParser
  */
 class ExpandProjectionParser
 {
     /**
      * The wrapper of IMetadataProvider and IQueryProvider
      * .
-     * 
+     *
      * @var ProvidersWrapper
      */
-    private $_providerWrapper;
+    private $providerWrapper;
 
     /**
-     * Holds reference to the root of 'Projection Tree'
-     * 
+     * Holds reference to the root of 'Projection Tree'.
+     *
      * @var RootProjectionNode
      */
-    private $_rootProjectionNode;
+    private $rootProjectionNode;
 
     /**
-     * Creates new instance of ExpandProjectionParser
-     * 
+     * Creates new instance of ExpandProjectionParser.
+     *
      * @param ProvidersWrapper $providerWrapper Reference to metadata and query provider wrapper
-     * .
      */
     private function __construct(ProvidersWrapper $providerWrapper)
     {
-        $this->_providerWrapper = $providerWrapper;
+        $this->providerWrapper = $providerWrapper;
     }
 
     /**
-     * Parse the given expand and select clause, validate them 
-     * and build 'Projection Tree'
-     * 
-     * @param ResourceSetWrapper $resourceSetWrapper The resource set identified by the resource path uri.
-     * @param ResourceType $resourceType The resource type of entities identified by the resource path uri.
-     * @param InternalOrderByInfo $internalOrderInfo The top level sort information, this will be set if the $skip, $top is
-     *                                                         specified in the 
-     *                                                         request uri or Server 
-     *                                                         side paging is
-     *                                                         enabled for top level 
-     *                                                         resource
-     * @param int $skipCount The value of $skip option applied to the top level resource
-     *                                                         set identified by the 
-     *                                                         resource path uri 
-     *                                                         null means $skip 
-     *                                                         option is not present.
-     * @param int $takeCount The minimum among the value of $top option applied to and
-     *                                                         page size configured
-     *                                                         for the top level
-     *                                                         resource 
-     *                                                         set identified
-     *                                                         by the resource 
-     *                                                         path uri.
-     *                                                         null means $top option
-     *                                                         is not present and/or
-     *                                                         page size is not 
-     *                                                         configured for top
-     *                                                         level resource set.
-     * @param string $expand The value of $expand clause
-     * @param string $select The value of $select clause
-     * @param ProvidersWrapper $providerWrapper Reference to metadata and query provider wrapper
-     * 
-     * @return RootProjectionNode Returns root of the 'Projection Tree'
-     * 
+     * Parse the given expand and select clause, validate them
+     * and build 'Projection Tree'.
+     *
+     * @param ResourceSetWrapper  $resourceSetWrapper The resource set identified by the resource path uri
+     * @param ResourceType        $resourceType       The resource type of entities identified by the resource path uri
+     * @param InternalOrderByInfo $internalOrderInfo  The top level sort information, this will be set if the $skip,
+     *                                                $top is specified in the
+     *                                                request uri or Server side paging is
+     *                                                enabled for top level resource
+     * @param int                 $skipCount          The value of $skip option applied to the top level resource
+     *                                                set identified by the
+     *                                                resource path uri
+     *                                                null means $skip
+     *                                                option is not present
+     * @param int                 $takeCount          The minimum among the value of $top option applied to and
+     *                                                page size configured
+     *                                                for the top level
+     *                                                resource
+     *                                                set identified
+     *                                                by the resource
+     *                                                path uri.
+     *                                                null means $top option
+     *                                                is not present and/or
+     *                                                page size is not
+     *                                                configured for top
+     *                                                level resource set
+     * @param string              $expand             The value of $expand clause
+     * @param string              $select             The value of $select clause
+     * @param ProvidersWrapper    $providerWrapper    Reference to metadata and query provider wrapper
+     *
      * @throws ODataException If any error occur while parsing expand and/or select clause
      *
+     * @return RootProjectionNode Returns root of the 'Projection Tree'
      */
     public static function parseExpandAndSelectClause(
         ResourceSetWrapper $resourceSetWrapper,
@@ -108,8 +108,8 @@ class ExpandProjectionParser
         $select,
         ProvidersWrapper $providerWrapper
     ) {
-        $parser = new ExpandProjectionParser($providerWrapper);
-        $parser->_rootProjectionNode = new RootProjectionNode(
+        $parser = new self($providerWrapper);
+        $parser->rootProjectionNode = new RootProjectionNode(
             $resourceSetWrapper,
             $internalOrderInfo,
             $skipCount,
@@ -117,115 +117,113 @@ class ExpandProjectionParser
             null,
             $resourceType
         );
-        $parser->_parseExpand($expand);
-        $parser->_parseSelect($select);
-        return $parser->_rootProjectionNode;
+        $parser->parseExpand($expand);
+        $parser->parseSelect($select);
+
+        return $parser->rootProjectionNode;
     }
 
     /**
-     * Read the given expand clause and build 'Projection Tree', 
-     * do nothing if the clause is null
-     * 
-     * @param string $expand Value of $expand clause.
-     * 
-     * @return void
-     * 
+     * Read the given expand clause and build 'Projection Tree',
+     * do nothing if the clause is null.
+     *
+     * @param string $expand Value of $expand clause
+     *
      * @throws ODataException If any error occurs while reading expand clause
      *                        or building the projection tree
      */
-    private function _parseExpand($expand)
+    private function parseExpand($expand)
     {
-        if (!is_null($expand)) {
-            $pathSegments = $this->_readExpandOrSelect($expand, false);
-            $this->_buildProjectionTree($pathSegments);
-            $this->_rootProjectionNode->setExpansionSpecified();
+        if (null !== $expand) {
+            $pathSegments = $this->readExpandOrSelect($expand, false);
+            $this->buildProjectionTree($pathSegments);
+            $this->rootProjectionNode->setExpansionSpecified();
         }
     }
 
     /**
-     * Read the given select clause and apply selection to the 
+     * Read the given select clause and apply selection to the
      * 'Projection Tree', mark the entire tree as selected if this
      * clause is null
-     * Note: _parseExpand should to be called before the invocation 
-     * of this function so that basic 'Projection Tree' with expand 
+     * Note: _parseExpand should to be called before the invocation
+     * of this function so that basic 'Projection Tree' with expand
      * information will be ready.
-     * 
-     * @param string $select Value of $select clause.
      *
-     * 
+     * @param string $select Value of $select clause
+     *
      * @throws ODataException If any error occurs while reading expand clause
      *                        or applying selection to projection tree
      */
-    private function _parseSelect($select)
+    private function parseSelect($select)
     {
-        if (is_null($select)) {
-            $this->_rootProjectionNode->markSubtreeAsSelected();
+        if (null === $select) {
+            $this->rootProjectionNode->markSubtreeAsSelected();
         } else {
-            $pathSegments = $this->_readExpandOrSelect($select, true);
-            $this->_applySelectionToProjectionTree($pathSegments);
-            $this->_rootProjectionNode->setSelectionSpecified();
-            $this->_rootProjectionNode->removeNonSelectedNodes();
-            $this->_rootProjectionNode->removeNodesAlreadyIncludedImplicitly();
+            $pathSegments = $this->readExpandOrSelect($select, true);
+            $this->applySelectionToProjectionTree($pathSegments);
+            $this->rootProjectionNode->setSelectionSpecified();
+            $this->rootProjectionNode->removeNonSelectedNodes();
+            $this->rootProjectionNode->removeNodesAlreadyIncludedImplicitly();
             //TODO: Move sort to parseExpandAndSelectClause function
-            $this->_rootProjectionNode->sortNodes();
+            $this->rootProjectionNode->sortNodes();
         }
     }
 
     /**
-     * Build 'Projection Tree' from the given expand path segments
-     * 
-     * @param array(array(string)) $expandPathSegments Collection of expand paths.
+     * Build 'Projection Tree' from the given expand path segments.
      *
-     * 
-     * @return void
-     * 
+     * @param array<array> $expandPathSegments Collection of expand paths
+     *
      * @throws ODataException If any error occurs while processing the expand path segments
-     *                        .
      */
-    private function _buildProjectionTree($expandPathSegments)
+    private function buildProjectionTree($expandPathSegments)
     {
         foreach ($expandPathSegments as $expandSubPathSegments) {
-            $currentNode = $this->_rootProjectionNode;
+            $currentNode = $this->rootProjectionNode;
             foreach ($expandSubPathSegments as $expandSubPathSegment) {
                 $resourceSetWrapper = $currentNode->getResourceSetWrapper();
                 $resourceType = $currentNode->getResourceType();
-                $resourceProperty 
-                    = $resourceType->resolveProperty(
-                        $expandSubPathSegment
-                    );
-                if (is_null($resourceProperty)) {
+                assert($resourceType instanceof ResourceEntityType);
+                $resourceProperty = $resourceType->resolveProperty($expandSubPathSegment);
+                assert($resourceProperty instanceof ResourceProperty);
+                $keyType = ResourceAssociationSet::keyNameFromTypeAndProperty($resourceType, $resourceProperty);
+                $assoc = $this->getProviderWrapper()->getMetaProvider()->resolveAssociationSet($keyType);
+                $concreteType = isset($assoc) ? $assoc->getEnd2()->getConcreteType() : $resourceType;
+                if (null === $resourceProperty) {
                     throw ODataException::createSyntaxError(
                         Messages::expandProjectionParserPropertyNotFound(
-                            $resourceType->getFullName(), 
-                            $expandSubPathSegment, 
+                            $resourceType->getFullName(),
+                            $expandSubPathSegment,
                             false
                         )
                     );
-                } else if ($resourceProperty->getTypeKind() != ResourceTypeKind::ENTITY) {
+                } elseif ($resourceProperty->getTypeKind() != ResourceTypeKind::ENTITY()) {
                     throw ODataException::createBadRequestError(
                         Messages::expandProjectionParserExpandCanOnlyAppliedToEntity(
-                            $resourceType->getFullName(), 
+                            $resourceType->getFullName(),
                             $expandSubPathSegment
                         )
                     );
                 }
+                assert($resourceType instanceof ResourceEntityType);
 
-                $resourceSetWrapper = $this->_providerWrapper
+                $resourceSetWrapper = $this->providerWrapper
                     ->getResourceSetWrapperForNavigationProperty(
-                        $resourceSetWrapper, 
-                        $resourceType, 
+                        $resourceSetWrapper,
+                        $resourceType,
                         $resourceProperty
                     );
-                if (is_null($resourceSetWrapper)) {
+
+                if (null === $resourceSetWrapper) {
                     throw ODataException::createBadRequestError(
                         Messages::badRequestInvalidPropertyNameSpecified(
-                            $resourceType->getFullName(), 
+                            $resourceType->getFullName(),
                             $expandSubPathSegment
                         )
                     );
                 }
 
-                $singleResult 
+                $singleResult
                     = $resourceProperty->isKindOf(
                         ResourcePropertyKind::RESOURCE_REFERENCE
                     );
@@ -233,11 +231,11 @@ class ExpandProjectionParser
                 $pageSize = $resourceSetWrapper->getResourceSetPageSize();
                 $internalOrderByInfo = null;
                 if ($pageSize != 0 && !$singleResult) {
-                    $this->_rootProjectionNode->setPagedExpandedResult(true);
+                    $this->rootProjectionNode->setPagedExpandedResult(true);
                     $rt = $resourceSetWrapper->getResourceType();
-                    //assert($rt != null)
+                    $payloadType = $rt->isAbstract() ? $concreteType : $rt;
+
                     $keys = array_keys($rt->getKeyProperties());
-                    //assert(!empty($keys))
                     $orderBy = null;
                     foreach ($keys as $key) {
                         $orderBy = $orderBy . $key . ', ';
@@ -246,59 +244,56 @@ class ExpandProjectionParser
                     $orderBy = rtrim($orderBy, ', ');
                     $internalOrderByInfo = OrderByParser::parseOrderByClause(
                         $resourceSetWrapper,
-                        $rt,
+                        $payloadType,
                         $orderBy,
-                        $this->_providerWrapper
+                        $this->providerWrapper
                     );
-
                 }
 
                 $node = $currentNode->findNode($expandSubPathSegment);
-                if (is_null($node)) {
-                    $maxResultCount = $this->_providerWrapper
+                if (null === $node) {
+                    $maxResultCount = $this->providerWrapper
                         ->getConfiguration()->getMaxResultsPerCollection();
                     $node = new ExpandedProjectionNode(
-                        $expandSubPathSegment, 
-                        $resourceProperty, 
+                        $expandSubPathSegment,
                         $resourceSetWrapper,
                         $internalOrderByInfo,
-                        null, 
-                        $pageSize == 0 ? null : $pageSize, 
-                        $maxResultCount == PHP_INT_MAX ? null : $maxResultCount
+                        null,
+                        $pageSize == 0 ? null : $pageSize,
+                        $maxResultCount == PHP_INT_MAX ? null : $maxResultCount,
+                        $resourceProperty
                     );
                     $currentNode->addNode($node);
                 }
 
                 $currentNode = $node;
             }
-        } 
+        }
     }
 
     /**
-     * Modify the 'Projection Tree' to include selection details
-     * 
-     * @param array(array(string)) $selectPathSegments Collection of select 
-     *                                                 paths.
-     * 
-     * @return void
-     * 
+     * Modify the 'Projection Tree' to include selection details.
+     *
+     * @param array<array<string>> $selectPathSegments Collection of select
+     *                                                 paths
+     *
      * @throws ODataException If any error occurs while processing select
      *                        path segments
      */
-    private function _applySelectionToProjectionTree($selectPathSegments)
+    private function applySelectionToProjectionTree($selectPathSegments)
     {
         foreach ($selectPathSegments as $selectSubPathSegments) {
-            $currentNode = $this->_rootProjectionNode;
+            $currentNode = $this->rootProjectionNode;
             $subPathCount = count($selectSubPathSegments);
             foreach ($selectSubPathSegments as $index => $selectSubPathSegment) {
-                if (!($currentNode instanceof RootProjectionNode) 
+                if (!($currentNode instanceof RootProjectionNode)
                     && !($currentNode instanceof ExpandedProjectionNode)
                 ) {
                     throw ODataException::createBadRequestError(
                         Messages::expandProjectionParserPropertyWithoutMatchingExpand(
                             $currentNode->getPropertyName()
                         )
-                    );   
+                    );
                 }
 
                 $currentNode->setSelectionFound();
@@ -309,15 +304,15 @@ class ExpandProjectionParser
                 }
 
                 $currentResourceType = $currentNode->getResourceType();
-                $resourceProperty 
+                $resourceProperty
                     = $currentResourceType->resolveProperty(
                         $selectSubPathSegment
                     );
-                if (is_null($resourceProperty)) {
+                if (null === $resourceProperty) {
                     throw ODataException::createSyntaxError(
                         Messages::expandProjectionParserPropertyNotFound(
-                            $currentResourceType->getFullName(), 
-                            $selectSubPathSegment, 
+                            $currentResourceType->getFullName(),
+                            $selectSubPathSegment,
                             true
                         )
                     );
@@ -327,25 +322,26 @@ class ExpandProjectionParser
                     if ($resourceProperty->isKindOf(ResourcePropertyKind::BAG)) {
                         throw ODataException::createBadRequestError(
                             Messages::expandProjectionParserBagPropertyAsInnerSelectSegment(
-                                $currentResourceType->getFullName(), 
+                                $currentResourceType->getFullName(),
                                 $selectSubPathSegment
                             )
                         );
-                    } else if ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE)) {
+                    } elseif ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE)) {
                         throw ODataException::createBadRequestError(
                             Messages::expandProjectionParserPrimitivePropertyUsedAsNavigationProperty(
-                                $currentResourceType->getFullName(), 
+                                $currentResourceType->getFullName(),
                                 $selectSubPathSegment
                             )
                         );
-                    } else if ($resourceProperty->isKindOf(ResourcePropertyKind::COMPLEX_TYPE)) {
+                    } elseif ($resourceProperty->isKindOf(ResourcePropertyKind::COMPLEX_TYPE)) {
                         throw ODataException::createBadRequestError(
                             Messages::expandProjectionParserComplexPropertyAsInnerSelectSegment(
-                                $currentResourceType->getFullName(), 
+                                $currentResourceType->getFullName(),
                                 $selectSubPathSegment
                             )
                         );
-                    } else if ($resourceProperty->getKind() != ResourcePropertyKind::RESOURCE_REFERENCE && $resourceProperty->getKind() != ResourcePropertyKind::RESOURCESET_REFERENCE) {
+                    } elseif ($resourceProperty->getKind() != ResourcePropertyKind::RESOURCE_REFERENCE
+                              && $resourceProperty->getKind() != ResourcePropertyKind::RESOURCESET_REFERENCE) {
                         throw ODataException::createInternalServerError(
                             Messages::expandProjectionParserUnexpectedPropertyType()
                         );
@@ -353,7 +349,7 @@ class ExpandProjectionParser
                 }
 
                 $node = $currentNode->findNode($selectSubPathSegment);
-                if (is_null($node)) {
+                if (null === $node) {
                     if (!$isLastSegment) {
                         throw ODataException::createBadRequestError(
                             Messages::expandProjectionParserPropertyWithoutMatchingExpand(
@@ -367,7 +363,7 @@ class ExpandProjectionParser
                 }
 
                 $currentNode = $node;
-                if ($currentNode instanceof ExpandedProjectionNode 
+                if ($currentNode instanceof ExpandedProjectionNode
                     && $isLastSegment
                 ) {
                     $currentNode->setSelectionFound();
@@ -379,22 +375,21 @@ class ExpandProjectionParser
 
     /**
      * Read expand or select clause.
-     * 
-     * @param string  $value    expand or select clause to read.
-     * @param boolean $isSelect true means $value is value of select clause
-     *                          else value of expand clause.
-     * 
-     * @return array(array) An array of 'PathSegment's, each of which is array
-     *                      of 'SubPathSegment's
+     *
+     * @param string $value    expand or select clause to read
+     * @param bool   $isSelect true means $value is value of select clause
+     *                         else value of expand clause
+     *
+     * @return array<array> An array of 'PathSegment's, each of which is array of 'SubPathSegment's
      */
-    private function _readExpandOrSelect($value, $isSelect)
+    private function readExpandOrSelect($value, $isSelect)
     {
-        $pathSegments = array();
+        $pathSegments = [];
         $lexer = new ExpressionLexer($value);
         $i = 0;
         while ($lexer->getCurrentToken()->Id != ExpressionTokenId::END) {
             $lastSegment = false;
-            if ($isSelect 
+            if ($isSelect
                 && $lexer->getCurrentToken()->Id == ExpressionTokenId::STAR
             ) {
                 $lastSegment = true;
@@ -405,7 +400,7 @@ class ExpandProjectionParser
             }
 
             if (!array_key_exists($i, $pathSegments)) {
-                $pathSegments[$i] = array();
+                $pathSegments[$i] = [];
             }
 
             $pathSegments[$i][] = $subPathSegment;
@@ -413,7 +408,7 @@ class ExpandProjectionParser
             if ($tokenId != ExpressionTokenId::END) {
                 if ($lastSegment || $tokenId != ExpressionTokenId::SLASH) {
                     $lexer->validateToken(ExpressionTokenId::COMMA);
-                    $i++;
+                    ++$i;
                 }
 
                 $lexer->nextToken();
@@ -421,5 +416,13 @@ class ExpandProjectionParser
         }
 
         return $pathSegments;
+    }
+
+    /**
+     * @return ProvidersWrapper
+     */
+    public function getProviderWrapper()
+    {
+        return $this->providerWrapper;
     }
 }

@@ -10,58 +10,55 @@ use POData\OperationContext\IHTTPRequest;
 /**
  * Class IncomingRequest
  * Class represents HTTP methods,headers and stream associated with a HTTP request
- * Note: This class will not throw any error
- * @package POData\OperationContext\Web
+ * Note: This class will not throw any error.
  */
 class IncomingRequest implements IHTTPRequest
 {
     /**
-     * The request headers
-     * 
+     * The request headers.
+     *
      * @var array
      */
-    private $_headers;
-    
+    private $headers;
+
     /**
-     * The incoming url in raw format
-     * 
+     * The incoming url in raw format.
+     *
      * @var string
      */
-    private $_rawUrl = null;
+    private $rawUrl = null;
     
 
     /**
-     * The request method (GET, POST, PUT, DELETE or MERGE)
-     * 
+     * The request method (GET, POST, PUT, DELETE or MERGE).
+     *
      * @var string HttpVerb
      */
-    private $_method;
+    private $method;
 
     /**
      * The query options as key value.
-     * 
+     *
      * @var array(string, string);
      */
-    private $_queryOptions;
+    private $queryOptions;
 
     /**
-     * A collection that represents mapping between query 
-     * option and its count.
-     * 
+     * A collection that represents mapping between query option and its count.
+     *
      * @var array(string, int)
      */
-    private $_queryOptionsCount;
+    private $queryOptionsCount;
 
     /**
-     * Initialize a new instance of IncomingWebRequestContext
+     * Initialize a new instance of IncomingWebRequestContext.
      */
     public function __construct()
     {
-        $this->_method = $_SERVER['REQUEST_METHOD'];
-        $this->_queryOptions = null;
-        $this->_queryOptionsCount = null;
-        $this->_headers = null;
-        $this->getHeaders();
+        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->queryOptions = [];
+        $this->queryOptionsCount = [];
+        $this->headers = [];
     }
 
     /**
@@ -95,78 +92,76 @@ class IncomingRequest implements IHTTPRequest
      * CONTENT_TYPE
      * CONTENT_LENGTH
      * We may get user defined customized headers also like
-     * HTTP_DATASERVICEVERSION, HTTP_MAXDATASERVICEVERSION
-     * 
+     * HTTP_DATASERVICEVERSION, HTTP_MAXDATASERVICEVERSION.
+     *
      * @return string[]
      */
     private function getHeaders()
     {
-        if (is_null($this->_headers)) {
-            $this->_headers = array();
+        if (0 == count($this->headers)) {
+            $this->headers = [];
 
             foreach ($_SERVER as $key => $value) {
-                if ((strpos($key, 'HTTP_') === 0) 
-                    || (strpos($key, 'REQUEST_') === 0)
-                    || (strpos($key, 'SERVER_') === 0) 
-                    || (strpos($key, 'CONTENT_') === 0)
+                if ((0 === strpos($key, 'HTTP_'))
+                    || (0 === strpos($key, 'REQUEST_'))
+                    || (0 === strpos($key, 'SERVER_'))
+                    || (0 === strpos($key, 'CONTENT_'))
                 ) {
                     $trimmedValue = trim($value);
-                    $this->_headers[$key] = isset($trimmedValue) ? $trimmedValue : null;
+                    $this->headers[$key] = isset($trimmedValue) ? $trimmedValue : null;
                 }
             }
-
         }
 
-        return $this->_headers;
+        return $this->headers;
     }
 
     /**
-     * get the raw incoming url
-     * 
+     * get the raw incoming url.
+     *
      * @return string RequestURI called by User with the value of QueryString
-     */  
+     */
     public function getRawUrl()
     {
-        if (is_null($this->_rawUrl)) {
-            if (!preg_match('/^HTTTPS/', $_SERVER[ODataConstants::HTTPREQUEST_PROTOCOL])) {
-                $this->_rawUrl = ODataConstants::HTTPREQUEST_PROTOCOL_HTTP;
+        if (null === $this->rawUrl) {
+            if (false === stripos($_SERVER[ODataConstants::HTTPREQUEST_PROTOCOL], 'HTTPS')) {
+                $this->rawUrl = ODataConstants::HTTPREQUEST_PROTOCOL_HTTP;
             } else {
-                $this->_rawUrl = ODataConstants::HTTPREQUEST_PROTOCOL_HTTPS;
+                $this->rawUrl = ODataConstants::HTTPREQUEST_PROTOCOL_HTTPS;
             }
 
-            $this->_rawUrl .= "://" . $_SERVER[HttpProcessUtility::headerToServerKey(ODataConstants::HTTPREQUEST_HEADER_HOST)];
-            $this->_rawUrl .= utf8_decode(urldecode($_SERVER[ODataConstants::HTTPREQUEST_URI]));
+            $this->rawUrl .= '://' . $_SERVER[HttpProcessUtility::headerToServerKey(ODataConstants::HTTPREQUEST_HEADER_HOST)];
+            $this->rawUrl .= utf8_decode(urldecode($_SERVER[ODataConstants::HTTPREQUEST_URI]));
         }
 
-        return $this->_rawUrl;
+        return $this->rawUrl;
     }
 
     /**
-     * get the specific request headers
-     * 
+     * get the specific request headers.
+     *
      * @param string $key The header name
-     * 
-     * @return string|null value of the header, NULL if header is absent.
+     *
+     * @return string|null value of the header, NULL if header is absent
      */
     public function getRequestHeader($key)
     {
-        if (!$this->_headers) {
+        if (0 == count($this->headers)) {
             $this->getHeaders();
         }
         //PHP normalizes header keys
         $trimmedKey = HttpProcessUtility::headerToServerKey(trim($key));
 
-        if (array_key_exists($trimmedKey, $this->_headers)) {
-            return $this->_headers[$trimmedKey];
+        if (array_key_exists($trimmedKey, $this->headers)) {
+            return $this->headers[$trimmedKey];
         }
-
         return null;
     }
 
     /**
      * Get the QUERY_STRING
      * Note: This method will return empty string if no query string present.
-     * 
+     *
      * @return string $_header[HttpRequestHeaderQueryString]
      */
     private function getQueryString()
@@ -174,53 +169,53 @@ class IncomingRequest implements IHTTPRequest
         if (array_key_exists(ODataConstants::HTTPREQUEST_QUERY_STRING, $_SERVER)) {
             return utf8_decode(trim($_SERVER[ODataConstants::HTTPREQUEST_QUERY_STRING]));
         } else {
-            return "";
+            return '';
         }
     }
-    
+
     /**
-     * Split the QueryString and assigns them as array element in KEY=VALUE
-     * 
+     * Split the QueryString and assigns them as array element in KEY=VALUE.
+     *
      * @return string[]
      */
     public function getQueryParameters()
     {
-        if (is_null($this->_queryOptions)) {
+        if (0 == count($this->queryOptions)) {
             $queryString = $this->getQueryString();
-            $this->_queryOptions = array();
+            $this->queryOptions = [];
 
             foreach (explode('&', $queryString) as $queryOptionAsString) {
                 $queryOptionAsString = trim($queryOptionAsString);
-                if (!empty($queryOptionAsString)) {    
+                if (!empty($queryOptionAsString)) {
                     $result = explode('=', $queryOptionAsString, 2);
-                    $isNamedOptions = count($result) == 2;
+                    $isNamedOptions = 2 == count($result);
+                    $rawUrl = rawurldecode($result[0]);
                     if ($isNamedOptions) {
-                        $this->_queryOptions[]
-                            = array(rawurldecode($result[0]) => trim(rawurldecode($result[1])));
+                        $this->queryOptions[] = [$rawUrl => trim(rawurldecode($result[1]))];
                     } else {
-                        $this->_queryOptions[]
-                            = array(null => trim(rawurldecode($result[0])));
+                        $this->queryOptions[] = [null => trim($rawUrl)];
                     }
                 }
             }
         }
 
-        return $this->_queryOptions;
+        return $this->queryOptions;
     }
 
-
-    
     /**
      * Get the HTTP method
-     * Value will be set from the value of the HTTP method of the 
+     * Value will be set from the value of the HTTP method of the
      * incoming Web request.
-     * 
+     *
      * @return string $_header[HttpRequestHeaderMethod]
      */
     public function getMethod()
     {
-        return $this->_method;
+        return $this->method;
     }
 
-
+    public function getAllInput()
+    {
+        return file_get_contents('php://input');
+    }
 }

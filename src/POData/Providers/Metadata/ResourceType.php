@@ -2,42 +2,45 @@
 
 namespace POData\Providers\Metadata;
 
+use InvalidArgumentException;
+use POData\Common\InvalidOperationException;
+use POData\Common\Messages;
+use POData\Common\ReflectionHandler;
 use POData\Providers\Metadata\Type\Binary;
 use POData\Providers\Metadata\Type\Boolean;
 use POData\Providers\Metadata\Type\Byte;
 use POData\Providers\Metadata\Type\DateTime;
 use POData\Providers\Metadata\Type\Decimal;
 use POData\Providers\Metadata\Type\Double;
+use POData\Providers\Metadata\Type\EdmPrimitiveType;
 use POData\Providers\Metadata\Type\Guid;
 use POData\Providers\Metadata\Type\Int16;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Int64;
+use POData\Providers\Metadata\Type\IType;
 use POData\Providers\Metadata\Type\SByte;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
+use POData\Providers\Metadata\Type\TypeCode;
 use POData\Providers\Metadata\Type\EdmPrimitiveType;
 use POData\Providers\Metadata\Type\IType;
-use POData\Providers\Metadata\Type\Time;
 use POData\Common\Messages;
 use POData\Common\InvalidOperationException;
-use ReflectionClass;
-use InvalidArgumentException;
+use POData\Common;
 
 /**
- * Class ResourceType
+ * Class ResourceType.
  *
  * A type to describe an entity type, complex type or primitive type.
- *
- * @package POData\Providers\Metadata
  */
-class ResourceType
+abstract class ResourceType
 {
     /**
      * Name of the resource described by this class instance.
      *
      * @var string
      */
-    private $_name;
+    protected $name;
 
     /**
      * Namespace name in which resource described by this class instance
@@ -45,34 +48,34 @@ class ResourceType
      *
      * @var string
      */
-    private $_namespaceName;
+    protected $namespaceName;
 
     /**
      * The fully qualified name of the resource described by this class instance.
      *
      * @var string
      */
-    private $_fullName;
+    protected $fullName;
 
     /**
      * The type the resource described by this class instance.
-     * Note: either Entity or Complex Type
+     * Note: either Entity or Complex Type.
      *
-     * @var  ResourceTypeKind
+     * @var ResourceTypeKind
      */
-    private $_resourceTypeKind;
+    protected $resourceTypeKind;
 
     /**
-     * @var boolean
+     * @var bool
      */
-    private $_abstractType;
+    protected $abstractType;
 
     /**
-     * Refrence to ResourceType instance for base type, if any.
+     * Reference to ResourceType instance for base type, if any.
      *
      * @var ResourceType
      */
-    private $_baseType;
+    protected $baseType;
 
     /**
      * Collection of ResourceProperty for all properties declared on the
@@ -81,7 +84,7 @@ class ResourceType
      *
      * @var ResourceProperty[] indexed by name
      */
-    private $_propertiesDeclaredOnThisType = array();
+    protected $propertiesDeclaredOnThisType = [];
 
     /**
      * Collection of ResourceStreamInfo for all named streams declared on
@@ -90,15 +93,7 @@ class ResourceType
      *
      * @var ResourceStreamInfo[] indexed by name
      */
-    private $_namedStreamsDeclaredOnThisType = array();
-
-    /**
-     * Collection of ReflectionProperty instances for each property declared
-     * on this type
-     *
-     * @var array(ResourceProperty, ReflectionProperty)
-     */
-    private $_propertyInfosDeclaredOnThisType = array();
+    protected $namedStreamsDeclaredOnThisType = [];
 
     /**
      * Collection of ResourceProperty for all properties declared on this type.
@@ -106,97 +101,97 @@ class ResourceType
      *
      * @var ResourceProperty[] indexed by name
      */
-    private $_allProperties = array();
+    protected $allProperties = [];
 
     /**
      * Collection of ResourceStreamInfo for all named streams declared on this type.
-     * and base types
+     * and base types.
      *
      * @var ResourceStreamInfo[]
      */
-    private $_allNamedStreams = array();
+    protected $allNamedStreams = [];
 
     /**
-     * Collection of properties which has etag defined subset of $_allProperties
-     * @var ResourceProperty[]
-     */
-    private $_etagProperties = array();
-
-    /**
-     * Collection of key properties subset of $_allProperties
+     * Collection of properties which has etag defined subset of $_allProperties.
      *
      * @var ResourceProperty[]
      */
-    private $_keyProperties = array();
+    protected $eTagProperties = [];
 
     /**
-     * Whether the resource type described by this class instance is a MLE or not
+     * Collection of key properties subset of $_allProperties.
      *
-     * @var boolean
+     * @var ResourceProperty[]
      */
-    private $_isMediaLinkEntry = false;
+    protected $keyProperties = [];
+
+    /**
+     * Whether the resource type described by this class instance is a MLE or not.
+     *
+     * @var bool
+     */
+    protected $isMediaLinkEntry = false;
 
     /**
      * Whether the resource type described by this class instance has bag properties
      * Note: This has been initialized with null, later in hasBagProperty method,
-     * this flag will be set to boolean value
+     * this flag will be set to boolean value.
      *
-     * @var boolean
+     * @var bool
      */
-    private $_hasBagProperty = null;
+    protected $hasBagProperty = null;
 
     /**
      * Whether the resource type described by this class instance has named streams
-     * Note: This has been intitialized with null, later in hasNamedStreams method,
-     * this flag will be set to boolean value
+     * Note: This has been intialised with null, later in hasNamedStreams method,
+     * this flag will be set to boolean value.
      *
-     * @var boolean
+     * @var bool
      */
-    private $_hasNamedStreams = null;
+    protected $hasNamedStreams = null;
 
     /**
      * ReflectionClass (for complex/Entity) or IType (for Primitive) instance for
-     * the resource (type) described by this class instance
+     * the resource (type) described by this class instance.
      *
-     * @var ReflectionClass|IType
+     * @var ReflectionClass|IType|string
      */
-    private $_type;
+    protected $type;
 
     /**
-     * To store any custom information related to this class instance
+     * To store any custom information related to this class instance.
      *
-     * @var Object
+     * @var object
      */
-    private $_customState;
+    protected $customState;
 
     /**
-     * Array to detect looping in bag's complex type
+     * Array to detect looping in bag's complex type.
      *
      * @var array
      */
-    private $_arrayToDetectLoopInComplexBag;
+    protected $arrayToDetectLoopInComplexBag;
 
     /**
-     * Create new instance of ResourceType
+     * Create new instance of ResourceType.
      *
      * @param ReflectionClass|IType $instanceType     Instance type for the resource,
-     *                                                for entity and
-     *                                                complex this will
-     *                                                be 'ReflectionClass' and for
-     *                                                primitive type this
-     *                                                will be IType
-     * @param ResourceTypeKind      $resourceTypeKind Kind of resource (Entity, Complex or Primitive)
-     * @param string                $name             Name of the resource
-     * @param string                $namespaceName    Namespace of the resource
-     * @param ResourceType          $baseType         Base type of the resource, if exists
-     *
-     * @param boolean               $isAbstract       Whether resource is abstract
+     *                                                 for entity and
+     *                                                 complex this will
+     *                                                 be 'ReflectionClass' and for
+     *                                                 primitive type this
+     *                                                 will be IType
+     * @param ResourceTypeKind       $resourceTypeKind Kind of resource (Entity, Complex or Primitive)
+     * @param string                 $name             Name of the resource
+     * @param string|null            $namespaceName    Namespace of the resource
+     * @param ResourceType|null      $baseType         Base type of the resource, if exists
+     * @param bool                   $isAbstract       Whether resource is abstract
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(
+    protected function __construct(
         $instanceType,
-        $resourceTypeKind,
+       ResourceTypeKind $resourceTypeKind,
         $name,
         $namespaceName = null,
         ResourceType $baseType = null,
@@ -205,25 +200,25 @@ class ResourceType
         $this->_type = $instanceType;
         if ($resourceTypeKind == ResourceTypeKind::PRIMITIVE) {
             if ($baseType != null) {
-                throw new InvalidArgumentException(
+                throw new \InvalidArgumentException(
                     Messages::resourceTypeNoBaseTypeForPrimitive()
                 );
             }
 
             if ($isAbstract) {
-                throw new InvalidArgumentException(
+                throw new \InvalidArgumentException(
                     Messages::resourceTypeNoAbstractForPrimitive()
                 );
             }
 
             if (!($instanceType instanceof IType)) {
-                throw new InvalidArgumentException(
+                throw new \InvalidArgumentException(
                     Messages::resourceTypeTypeShouldImplementIType('$instanceType')
                 );
             }
         } else {
-            if (!($instanceType instanceof ReflectionClass)) {
-                throw new InvalidArgumentException(
+            if (!($instanceType instanceof \ReflectionClass)) {
+                throw new \InvalidArgumentException(
                     Messages::resourceTypeTypeShouldReflectionClass('$instanceType')
                 );
             }
@@ -231,9 +226,9 @@ class ResourceType
 
         $this->_resourceTypeKind = $resourceTypeKind;
         $this->_name = $name;
-        $this->_baseType = $baseType;
-        $this->_namespaceName = $namespaceName;
-        $this->_fullName
+        $this->_baseType = $baseType;        
+        $this->_namespaceName = $namespaceName; 
+        $this->_fullName 
             = is_null($namespaceName) ? $name : $namespaceName . '.' . $name;
         $this->_abstractType = $isAbstract;
         $this->_isMediaLinkEntry = false;
@@ -243,67 +238,70 @@ class ResourceType
     }
 
     /**
-     * Get reference to ResourceType for base class
+     * Get reference to ResourceType for base class.
      *
      * @return ResourceType
      */
     public function getBaseType()
     {
-        return $this->_baseType;
+        return $this->baseType;
     }
 
     /**
-     * To check whether this resource type has base type
+     * To check whether this resource type has base type.
      *
-     * @return boolean True if base type is defined, false otherwise
+     * @return bool True if base type is defined, false otherwise
      */
     public function hasBaseType()
     {
-        return !is_null($this->_baseType);
+        return null !== $this->baseType;
     }
 
     /**
-     * To get custom state object for this type
+     * To get custom state object for this type.
      *
      * @return object
      */
     public function getCustomState()
     {
-        return $this->_customState;
+        return $this->customState;
     }
 
     /**
-     * To set custom state object for this type
+     * To set custom state object for this type.
      *
-     * @param ResourceSet $object The custom object.
-     *
-     * @return void
+     * @param ResourceSet $object The custom object
      */
     public function setCustomState($object)
     {
-        $this->_customState = $object;
+        $this->customState = $object;
     }
 
     /**
-     * Get the instance type. If the resource type describes a complex or entity type
-     * then this function returns refernece to ReflectionClass instance for the type.
-     * If resource type describes a primitive type then this function returns ITYpe.
+     * Get the instance type. If the resource type describes a complex or entity type,
+     * then this function returns reference to ReflectionClass instance for the type.
+     * If resource type describes a primitive type, then this function returns ITYpe.
      *
      * @return ReflectionClass|IType
      */
     public function getInstanceType()
     {
-        return $this->_type;
+        if (is_string($this->type)) {
+            $this->__wakeup();
+        }
+        assert($this->type instanceof \ReflectionClass || $this->type instanceof IType);
+
+        return $this->type;
     }
 
     /**
-     * Get name of the type described by this resource type
+     * Get name of the type described by this resource type.
      *
      * @return string
      */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -314,7 +312,7 @@ class ResourceType
      */
     public function getNamespace()
     {
-        return $this->_namespaceName;
+        return $this->namespaceName;
     }
 
     /**
@@ -325,92 +323,99 @@ class ResourceType
      */
     public function getFullName()
     {
-        return $this->_fullName;
+        return $this->fullName;
     }
 
     /**
-     * To check whether the type described by this resource type is abstract or not
+     * To check whether the type described by this resource type is abstract or not.
      *
-     * @return boolean True if type is abstract else False
+     * @return bool True if type is abstract else False
      */
     public function isAbstract()
     {
-        return $this->_abstractType;
+        return $this->abstractType;
     }
 
     /**
-     * To get the kind of type described by this resource class
+     * To get the kind of type described by this resource class.
      *
      * @return ResourceTypeKind
      */
     public function getResourceTypeKind()
     {
-        return $this->_resourceTypeKind;
+        return $this->resourceTypeKind;
     }
 
     /**
-     * To check whether the type described by this resource type is MLE
+     * To check whether the type described by this resource type is MLE.
      *
-     * @return boolean True if type is MLE else False
+     * @return bool True if type is MLE else False
      */
     public function isMediaLinkEntry()
     {
-        return $this->_isMediaLinkEntry;
+        return $this->isMediaLinkEntry;
     }
 
     /**
-     * Set the resource type as MLE or non-MLE
+     * Set the resource type as MLE or non-MLE.
      *
-     * @param boolean $isMLE True to set as MLE, false for non-MLE
+     * @param bool $isMLE True to set as MLE, false for non-MLE
      *
-     * @return void
+     * @throws InvalidOperationException
      */
     public function setMediaLinkEntry($isMLE)
     {
-        if ($this->_resourceTypeKind != ResourceTypeKind::ENTITY) {
+        if (ResourceTypeKind::ENTITY() != $this->resourceTypeKind) {
             throw new InvalidOperationException(
                 Messages::resourceTypeHasStreamAttributeOnlyAppliesToEntityType()
             );
         }
 
-        $this->_isMediaLinkEntry = $isMLE;
+        $this->isMediaLinkEntry = $isMLE;
     }
 
     /**
-     * Add a property belongs to this resource type instance
+     * Add a property belongs to this resource type instance.
      *
      * @param ResourceProperty $property Property to add
+     *@param bool             $throw    Throw exception on name collision?
      *
      * @throws InvalidOperationException
-     * @return void
      */
-    public function addProperty(ResourceProperty $property)
+    public function addProperty(ResourceProperty $property, $throw = true)
     {
-        if ($this->_resourceTypeKind == ResourceTypeKind::PRIMITIVE) {
+        if (ResourceTypeKind::PRIMITIVE() == $this->resourceTypeKind) {
             throw new InvalidOperationException(
                 Messages::resourceTypeNoAddPropertyForPrimitive()
             );
         }
 
         $name = $property->getName();
-        foreach (array_keys($this->_propertiesDeclaredOnThisType) as $propertyName) {
-            if (strcasecmp($propertyName, $name) == 0) {
+        foreach (array_keys($this->propertiesDeclaredOnThisType) as $propertyName) {
+            if (0 == strcasecmp($propertyName, $name)) {
+                if (false === $throw) {
+                    return;
+                }
                 throw new InvalidOperationException(
                     Messages::resourceTypePropertyWithSameNameAlreadyExists(
-                        $propertyName, $this->_name
+                        $propertyName,
+                        $this->name
                     )
                 );
             }
         }
 
         if ($property->isKindOf(ResourcePropertyKind::KEY)) {
-            if ($this->_resourceTypeKind != ResourceTypeKind::ENTITY) {
+            if (ResourceTypeKind::ENTITY() != $this->resourceTypeKind) {
                 throw new InvalidOperationException(
                     Messages::resourceTypeKeyPropertiesOnlyOnEntityTypes()
                 );
             }
 
-            if ($this->_baseType != null) {
+            $base = $this->baseType;
+            $derivedGood = null === $base || ($base instanceof ResourceEntityType && $base->isAbstract());
+
+            if (!$derivedGood) {
                 throw new InvalidOperationException(
                     Messages::resourceTypeNoKeysInDerivedTypes()
                 );
@@ -418,7 +423,7 @@ class ResourceType
         }
 
         if ($property->isKindOf(ResourcePropertyKind::ETAG)
-            && ($this->_resourceTypeKind != ResourceTypeKind::ENTITY)
+            && (ResourceTypeKind::ENTITY() != $this->resourceTypeKind)
         ) {
             throw new InvalidOperationException(
                 Messages::resourceTypeETagPropertiesOnlyOnEntityTypes()
@@ -426,14 +431,14 @@ class ResourceType
         }
 
         //Check for Base class properties
-        $this->_propertiesDeclaredOnThisType[$name] = $property;
-        // Set $this->_allProperties to null, this is very important because the
-        // first call to getAllProperties will initilaize $this->_allProperties,
+        $this->propertiesDeclaredOnThisType[$name] = $property;
+        // Set $this->allProperties to null, this is very important because the
+        // first call to getAllProperties will initialise $this->allProperties,
         // further call to getAllProperties will not reinitialize _allProperties
         // so if addProperty is called after calling getAllProperties then the
-        // property just added will not be reflected in $this->_allProperties
-        unset($this->_allProperties);
-        $this->_allProperties = array();
+        // property just added will not be reflected in $this->allProperties
+        unset($this->allProperties);
+        $this->allProperties = [];
     }
 
     /**
@@ -445,7 +450,7 @@ class ResourceType
      */
     public function getPropertiesDeclaredOnThisType()
     {
-        return $this->_propertiesDeclaredOnThisType;
+        return $this->propertiesDeclaredOnThisType;
     }
 
     /**
@@ -457,17 +462,18 @@ class ResourceType
      */
     public function getAllProperties()
     {
-        if (empty($this->_allProperties)) {
-            if ($this->_baseType != null) {
-                $this->_allProperties = $this->_baseType->getAllProperties();
+        if (empty($this->allProperties)) {
+            if (null != $this->baseType) {
+                $this->allProperties = $this->baseType->getAllProperties();
             }
 
-            $this->_allProperties = array_merge(
-                $this->_allProperties, $this->_propertiesDeclaredOnThisType
+            $this->allProperties = array_merge(
+                $this->allProperties,
+                $this->propertiesDeclaredOnThisType
             );
         }
 
-        return $this->_allProperties;
+        return $this->allProperties;
     }
 
     /**
@@ -479,22 +485,22 @@ class ResourceType
      */
     public function getKeyProperties()
     {
-        if (empty($this->_keyProperties)) {
+        if (empty($this->keyProperties)) {
             $baseType = $this;
-            while ($baseType->_baseType != null) {
-                $baseType = $baseType->_baseType;
+            while (null != $baseType->baseType) {
+                $baseType = $baseType->baseType;
             }
 
-            foreach ($baseType->_propertiesDeclaredOnThisType
-                as $propertyName => $resourceProperty
-            ) {
+            foreach ($baseType->propertiesDeclaredOnThisType
+                as $propertyName => $resourceProperty) {
+
                 if ($resourceProperty->isKindOf(ResourcePropertyKind::KEY) || $resourceProperty->isKindOf(ResourcePropertyKind::KEY_RESOURCE_REFERENCE)) {
-                    $this->_keyProperties[$propertyName] = $resourceProperty;
+                    $this->keyProperties[$propertyName] = $resourceProperty;
                 }
             }
         }
 
-        return $this->_keyProperties;
+        return $this->keyProperties;
     }
 
     /**
@@ -504,68 +510,67 @@ class ResourceType
      */
     public function getETagProperties()
     {
-        if (empty ($this->_etagProperties)) {
+        if (empty($this->eTagProperties)) {
             foreach ($this->getAllProperties()
                 as $propertyName => $resourceProperty
             ) {
                 if ($resourceProperty->isKindOf(ResourcePropertyKind::ETAG)) {
-                    $this->_etagProperties[$propertyName] = $resourceProperty;
+                    $this->eTagProperties[$propertyName] = $resourceProperty;
                 }
             }
         }
 
-        return $this->_etagProperties;
+        return $this->eTagProperties;
     }
 
     /**
-     * To check this type has any eTag properties
+     * To check this type has any eTag properties.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasETagProperties()
     {
-        $this->getETagProperties();
-        return !empty($this->_etagProperties);
+        $properties = $this->getETagProperties();
+
+        return !empty($properties);
     }
 
     /**
      * Try to get ResourceProperty for a property defined for this resource type
-     * excluding base class properties
+     * excluding base class properties.
      *
-     * @param string $propertyName The name of the property to resolve.
+     * @param string $propertyName The name of the property to resolve
      *
      * @return ResourceProperty|null
      */
     public function resolvePropertyDeclaredOnThisType($propertyName)
     {
-        if (array_key_exists($propertyName, $this->_propertiesDeclaredOnThisType)) {
-            return $this->_propertiesDeclaredOnThisType[$propertyName];
+        if (array_key_exists($propertyName, $this->propertiesDeclaredOnThisType)) {
+            return $this->propertiesDeclaredOnThisType[$propertyName];
         }
-
         return null;
     }
 
     /**
      * Try to get ResourceProperty for a property defined for this resource type
-     * including base class properties
+     * including base class properties.
      *
-     * @param string $propertyName The name of the property to resolve.
+     * @param string $propertyName The name of the property to resolve
      *
      * @return ResourceProperty|null
      */
     public function resolveProperty($propertyName)
     {
         if (array_key_exists($propertyName, $this->getAllProperties())) {
-            return $this->_allProperties[$propertyName];
+            return $this->allProperties[$propertyName];
         }
-
         return null;
     }
 
     /**
-     * Add a named stream belongs to this resource type instance
+     * Add a named stream belongs to this resource type instance.
      *
-     * @param ResourceStreamInfo $namedStream ResourceStreamInfo instance describing the named stream to add.
+     * @param ResourceStreamInfo $namedStream ResourceStreamInfo instance describing the named stream to add
      *
      * @return void
      *
@@ -573,44 +578,45 @@ class ResourceType
      */
     public function addNamedStream(ResourceStreamInfo $namedStream)
     {
-        if ($this->_resourceTypeKind != ResourceTypeKind::ENTITY) {
+        if ($this->resourceTypeKind != ResourceTypeKind::ENTITY()) {
             throw new InvalidOperationException(
                 Messages::resourceTypeNamedStreamsOnlyApplyToEntityType()
             );
         }
 
         $name = $namedStream->getName();
-        foreach (array_keys($this->_namedStreamsDeclaredOnThisType)
+        foreach (array_keys($this->namedStreamsDeclaredOnThisType)
             as $namedStreamName
         ) {
-            if (strcasecmp($namedStreamName, $name) == 0) {
+            if (0 == strcasecmp($namedStreamName, $name)) {
                 throw new InvalidOperationException(
                     Messages::resourceTypeNamedStreamWithSameNameAlreadyExists(
-                        $name, $this->_name
+                        $name,
+                        $this->name
                     )
                 );
             }
         }
 
-        $this->_namedStreamsDeclaredOnThisType[$name] = $namedStream;
-        // Set $this->_allNamedStreams to null, the first call to getAllNamedStreams
-        // will initialize $this->_allNamedStreams, further call to
+        $this->namedStreamsDeclaredOnThisType[$name] = $namedStream;
+        // Set $this->allNamedStreams to null, the first call to getAllNamedStreams
+        // will initialize $this->allNamedStreams, further call to
         // getAllNamedStreams will not reinitialize _allNamedStreams
         // so if addNamedStream is called after calling getAllNamedStreams then the
-        // property just added will not be reflected in $this->_allNamedStreams
-        unset($this->_allNamedStreams);
-        $this->_allNamedStreams = array();
+        // property just added will not be reflected in $this->allNamedStreams
+        unset($this->allNamedStreams);
+        $this->allNamedStreams = [];
     }
 
     /**
      * Get collection of ResourceStreamInfo describing the named streams belongs
-     * to this resource type (excluding base class properties)
+     * to this resource type (excluding base class properties).
      *
      * @return ResourceStreamInfo[]
      */
     public function getNamedStreamsDeclaredOnThisType()
     {
-        return $this->_namedStreamsDeclaredOnThisType;
+        return $this->namedStreamsDeclaredOnThisType;
     }
 
     /**
@@ -621,52 +627,50 @@ class ResourceType
      */
     public function getAllNamedStreams()
     {
-        if (empty($this->_allNamedStreams)) {
-            if ($this->_baseType != null) {
-                $this->_allNamedStreams = $this->_baseType->getAllNamedStreams();
+        if (empty($this->allNamedStreams)) {
+            if (null != $this->baseType) {
+                $this->allNamedStreams = $this->baseType->getAllNamedStreams();
             }
 
-            $this->_allNamedStreams
+            $this->allNamedStreams
                 = array_merge(
-                    $this->_allNamedStreams,
-                    $this->_namedStreamsDeclaredOnThisType
+                    $this->allNamedStreams,
+                    $this->namedStreamsDeclaredOnThisType
                 );
         }
 
-        return $this->_allNamedStreams;
+        return $this->allNamedStreams;
     }
 
     /**
      * Try to get ResourceStreamInfo for a named stream defined for this
-     * resource type excluding base class named streams
+     * resource type excluding base class named streams.
      *
-     * @param string $namedStreamName Name of the named stream to resolve.
+     * @param string $namedStreamName Name of the named stream to resolve
      *
      * @return ResourceStreamInfo|null
      */
     public function tryResolveNamedStreamDeclaredOnThisTypeByName($namedStreamName)
     {
-        if (array_key_exists($namedStreamName, $this->_namedStreamsDeclaredOnThisType)) {
-            return $this->_namedStreamsDeclaredOnThisType[$namedStreamName];
+        if (array_key_exists($namedStreamName, $this->namedStreamsDeclaredOnThisType)) {
+            return $this->namedStreamsDeclaredOnThisType[$namedStreamName];
         }
-
         return null;
     }
 
     /**
      * Try to get ResourceStreamInfo for a named stream defined for this resource
-     * type including base class named streams
+     * type including base class named streams.
      *
-     * @param string $namedStreamName Name of the named stream to resolve.
+     * @param string $namedStreamName Name of the named stream to resolve
      *
-     * @return ResourceStreamInfo|NULL
+     * @return ResourceStreamInfo|null
      */
     public function tryResolveNamedStreamByName($namedStreamName)
     {
         if (array_key_exists($namedStreamName, $this->getAllNamedStreams())) {
-            return $this->_allNamedStreams[$namedStreamName];
+            return $this->allNamedStreams[$namedStreamName];
         }
-
         return null;
     }
 
@@ -674,7 +678,7 @@ class ResourceType
      * Check this resource type instance has named stream associated with it
      * Note: This is an internal method used by library. Devs don't use this.
      *
-     * @return boolean true if resource type instance has named stream else false
+     * @return bool true if resource type instance has named stream else false
      */
     public function hasNamedStream()
     {
@@ -683,12 +687,12 @@ class ResourceType
         // from null depending on the current state of _allNamedStreams
         // array, so method should be called only after adding all
         // named streams
-        if (is_null($this->_hasNamedStreams)) {
+        if (null === $this->hasNamedStreams) {
             $this->getAllNamedStreams();
-            $this->_hasNamedStreams = !empty($this->_allNamedStreams);
+            $this->hasNamedStreams = !empty($this->allNamedStreams);
         }
 
-        return $this->_hasNamedStreams;
+        return $this->hasNamedStreams;
     }
 
     /**
@@ -706,17 +710,17 @@ class ResourceType
         // from null depending on the current state of
         // _propertiesDeclaredOnThisType array, so method
         // should be called only after adding all properties
-        if (!is_null($this->_hasBagProperty)) {
-            return $this->_hasBagProperty;
+        if (null !== $this->hasBagProperty) {
+            return $this->hasBagProperty;
         }
 
-        if ($this->_baseType != null && $this->_baseType->hasBagProperty($arrayToDetectLoopInComplexType)) {
-            $this->_hasBagProperty = true;
+        if (null != $this->baseType && $this->baseType->hasBagProperty($arrayToDetectLoopInComplexType)) {
+            $this->hasBagProperty = true;
         } else {
-            foreach ($this->_propertiesDeclaredOnThisType as $resourceProperty) {
+            foreach ($this->propertiesDeclaredOnThisType as $resourceProperty) {
                 $hasBagInComplex = false;
                 if ($resourceProperty->isKindOf(ResourcePropertyKind::COMPLEX_TYPE)) {
-                    //We can say current ResouceType ("this")
+                    //We can say current ResourceType ("this")
                     //is contains a bag property if:
                     //1. It contain a property of kind bag.
                     //2. It contains a normal complex property
@@ -740,15 +744,15 @@ class ResourceType
                     //    }
                     //  }
                     //}
-                    //
+
                     //Here the resource type of Customer::Address and
                     //Customer::Address::AltAddress
                     //are same, this is a loop, we need to detect
                     //this and avoid infinite recursive loop.
-                    //
+
                     $count = count($arrayToDetectLoopInComplexType);
                     $foundLoop = false;
-                    for ($i = 0; $i < $count; $i++) {
+                    for ($i = 0; $i < $count; ++$i) {
                         if ($arrayToDetectLoopInComplexType[$i] === $resourceProperty->getResourceType()) {
                             $foundLoop = true;
                             break;
@@ -757,33 +761,33 @@ class ResourceType
 
                     if (!$foundLoop) {
                         $arrayToDetectLoopInComplexType[$count] = $resourceProperty->getResourceType();
-                        $hasBagInComplex = $resourceProperty->getResourceType()->hasBagProperty($arrayToDetectLoopInComplexType);
+                        $hasBagInComplex = $resourceProperty
+                            ->getResourceType()
+                            ->hasBagProperty($arrayToDetectLoopInComplexType);
                         unset($arrayToDetectLoopInComplexType[$count]);
                     }
                 }
 
                 if ($resourceProperty->isKindOf(ResourcePropertyKind::BAG) || $hasBagInComplex) {
-                    $this->_hasBagProperty = true;
+                    $this->hasBagProperty = true;
                     break;
                 }
             }
         }
 
-
-        return $this->_hasBagProperty;
+        return $this->hasBagProperty;
     }
 
     /**
-     * Validate the type
+     * Validate the type.
      *
-     * @return void
-     *
+     * 
      * @throws InvalidOperationException
      */
     public function validateType()
     {
         $keyProperties = $this->getKeyProperties();
-        if (($this->_resourceTypeKind == ResourceTypeKind::ENTITY) && empty($keyProperties)) {
+        if (($this->resourceTypeKind == ResourceTypeKind::ENTITY()) && empty($keyProperties)) {
             throw new InvalidOperationException(
                 Messages::resourceTypeMissingKeyPropertiesForEntity(
                     $this->getFullName()
@@ -795,148 +799,141 @@ class ResourceType
     /**
      * To check the type described by this resource type is assignable from
      * a type described by another resource type. Or this type is a sub-type
-     * of (derived from the) given resource type
+     * of (derived from the) given resource type.
      *
-     * @param ResourceType $resourceType Another resource type.
+     * @param ResourceType $resourceType Another resource type
      *
-     * @return boolean
+     * @return bool
      */
     public function isAssignableFrom(ResourceType $resourceType)
     {
         $base = $this;
-        while ($base != null) {
+        while (null != $base) {
             if ($resourceType == $base) {
                 return true;
             }
 
-            $base = $base->_baseType;
+            $base = $base->baseType;
         }
 
         return false;
     }
 
     /**
-     * Get predefined ResourceType for a primitive type
+     * Get predefined ResourceType for a primitive type.
      *
      * @param EdmPrimitiveType $typeCode Typecode of primitive type
      *
      * @return ResourceType
      *
      * @throws InvalidArgumentException
+     *
+     * @return ResourcePrimitiveType
      */
     public static function getPrimitiveResourceType($typeCode)
     {
         switch ($typeCode) {
             case EdmPrimitiveType::BINARY:
-                return new ResourceType(
-                    new Binary(), ResourceTypeKind::PRIMITIVE,
-                    'Binary', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Binary());
             case EdmPrimitiveType::BOOLEAN:
-                return new ResourceType(
-                    new Boolean(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Boolean', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Boolean());
             case EdmPrimitiveType::BYTE:
-                return new ResourceType(
-                    new Byte(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Byte', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Byte());
             case EdmPrimitiveType::DATETIME:
-                return new ResourceType(
-                    new DateTime(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'DateTime', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new DateTime());
             case EdmPrimitiveType::DECIMAL:
-                return new ResourceType(
-                    new Decimal(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Decimal', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Decimal());
             case EdmPrimitiveType::DOUBLE:
-                return new ResourceType(
-                    new Double(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Double', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Double());
             case EdmPrimitiveType::GUID:
-                return new ResourceType(
-                    new Guid(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Guid', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Guid());
             case EdmPrimitiveType::INT16:
-                return new ResourceType(
-                    new Int16(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Int16', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Int16());
             case EdmPrimitiveType::INT32:
-                return new ResourceType(
-                    new Int32(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Int32', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Int32());
             case EdmPrimitiveType::INT64:
-                return new ResourceType(
-                    new Int64(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Int64', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Int64());
             case EdmPrimitiveType::SBYTE:
-                return new ResourceType(
-                    new SByte(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'SByte', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new SByte());
             case EdmPrimitiveType::SINGLE:
-                return new ResourceType(
-                    new Single(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'Single', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new Single());
             case EdmPrimitiveType::STRING:
-                return new ResourceType(
-                    new StringType(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'String', 'Edm'
-                );
-                break;
-            case EdmPrimitiveType::TIMESPAN:
-                return new ResourceType(
-                    new StringType(),
-                    ResourceTypeKind::PRIMITIVE,
-                    'TimeSpan', 'Edm'
-                );
-                break;
+                return new ResourcePrimitiveType(new StringType());
             default:
-                throw new InvalidArgumentException(
+                throw new \InvalidArgumentException(
                     Messages::commonNotValidPrimitiveEDMType(
-                        '$typeCode', 'getPrimitiveResourceType'
+                        '$typeCode',
+                        'getPrimitiveResourceType'
                     )
                 );
         }
     }
 
+    /**
+     * @param string $property
+     * @param mixed  $entity
+     * @param mixed  $value
+     *
+     * @return ResourceType
+     */
+    public function setPropertyValue($entity, $property, $value)
+    {
+        $targ = $this->unpackEntityForPropertyGetSet($entity);
+        ReflectionHandler::setProperty($targ, $property, $value);
 
-    function __wakeup() {
+        return $this;
+    }
+
+    /**
+     * @param $entity
+     * @param $property
+     * @return mixed
+     */
+    public function getPropertyValue($entity, $property)
+    {
+        $targ = $this->unpackEntityForPropertyGetSet($entity);
+        return ReflectionHandler::getProperty($targ, $property);
+    }
+
+    public function __sleep()
+    {
+        if (null == $this->type || $this->type instanceof IType) {
+            return array_keys(get_object_vars($this));
+        }
+        if (is_object($this->type)) {
+            $this->type = $this->type->name;
+        }
+        assert(is_string($this->type), 'Type name should be a string at end of serialisation');
+        $result = array_keys(get_object_vars($this));
+
+        return $result;
+    }
+
+    public function __wakeup()
+    {
+        if (is_string($this->type)) {
+            $this->type = new \ReflectionClass($this->type);
+        }
+
         if ($this->_type instanceof ReflectionClass) {
             $this->_type = new ReflectionClass($this->_type->name);
         }
+
+        assert(
+            $this->type instanceof \ReflectionClass || $this->type instanceof IType,
+            '_type neither instance of reflection class nor IType'
+        );
+    }
+
+    /**
+     * @param $entity
+     * @return mixed|null
+     */
+    private function unpackEntityForPropertyGetSet($entity)
+    {
+        $targ = ($entity instanceof QueryResult)
+            ? (is_array($entity->results) && 0 < count($entity->results)) ? $entity->results[0] : null
+            : $entity;
+        return $targ;
     }
 }

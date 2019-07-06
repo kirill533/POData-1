@@ -12,8 +12,8 @@ class NullType implements IType
 {
     /**
      * Gets the type code
-     * Note: implementation of IType::getTypeCode
-     *   
+     * Note: implementation of IType::getTypeCode.
+     *
      * @return TypeCode
      */
     public function getTypeCode()
@@ -23,11 +23,13 @@ class NullType implements IType
 
     /**
      * Checks this type (Null) is compatible with another type
-     * Note: implementation of IType::isCompatibleWith
-     * 
+     * Note: implementation of IType::isCompatibleWith.
+     *
      * @param IType $type Type to check compatibility
-     * 
-     * @return boolean 
+     *
+     * @throws NotImplementedException
+     *
+     * @return NoType
      */
     public function isCompatibleWith(IType $type)
     {
@@ -36,28 +38,29 @@ class NullType implements IType
 
     /**
      * Validate a value in Astoria uri is in a format for this type
-     * Note: implementation of IType::validate
-     * 
-     * @param string $value     The value to validate 
-     * @param string &$outValue The stripped form of $value that can 
+     * Note: implementation of IType::validate.
+     *
+     * @param string $value     The value to validate
+     * @param string &$outValue The stripped form of $value that can
      *                          be used in PHP expressions
-     * 
-     * @return boolean
+     *
+     * @return bool
      */
     public function validate($value, &$outValue)
     {
-        if (strcmp($value, 'null') != 0) {
+        if (0 != strcmp($value, 'null')) {
             return false;
         }
-        
+
         $outValue = $value;
+
         return true;
     }
 
     /**
      * Gets full name of this type in EDM namespace
-     * Note: implementation of IType::getFullTypeName
-     * 
+     * Note: implementation of IType::getFullTypeName.
+     *
      * @return string
      */
     public function getFullTypeName()
@@ -67,14 +70,14 @@ class NullType implements IType
 
     /**
      * Converts the given string value to null type.
-     * 
+     *
      * @param string $stringValue value to convert
-     * 
-     * @return string
+     *
+     * @return string|null
      */
     public function convert($stringValue)
     {
-        if (strcmp($stringValue, 'null') == 0) {
+        if (0 == strcmp($stringValue, 'null')) {
             return null;
         }
 
@@ -83,15 +86,25 @@ class NullType implements IType
 
     /**
      * Convert the given value to a form that can be used in OData uri.
-     * 
+     *
      * @param mixed $value value to convert
-     * 
-     * @return void
-     * 
+     *
      * @throws NotImplementedException
+     * @return NoType
      */
     public function convertToOData($value)
     {
         throw new NotImplementedException();
+    }
+
+    /**
+     * Gets full name of the type implementing this interface in EDM namespace
+     * Note: implementation of IType::getFullTypeName.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getFullTypeName();
     }
 }

@@ -3,54 +3,55 @@
 namespace POData\Common;
 
 /**
- * Class ODataException
- * @package POData\Common
+ * Class ODataException.
  */
 class ODataException extends \Exception
 {
     /**
-     * The error code
+     * The error code.
+     *
+     * @var string
+     */
+    private $errorCode;
+
+    /**
+     * The HTTP status code.
      *
      * @var int
      */
-    private $_errorCode;
-
+    private $statusCode;
     /**
-     * The HTTP status code
+     * Create new instance of ODataException.
      *
-     * @var int
-     */
-    private $_statusCode;
-
-    /**
-     * Create new instance of ODataException
-     *
-     * @param string $message    The error message
-     * @param string $statusCode The status code
-     * @param string $errorCode  The error code
+     * @param string      $message    The error message
+     * @param int         $statusCode The status code
+     * @param string|null $errorCode  The error code
      *
      * @return ODataException
      */
     public function __construct($message, $statusCode, $errorCode = null)
     {
-        $this->_errorCode = $errorCode;
-        $this->_statusCode = $statusCode;
+        assert(is_int($statusCode) && 0 < $statusCode, 'Status code must be integer and positive');
+        assert(is_string($message), 'Message must be a string');
+        assert(null === $errorCode || is_string($errorCode), 'Error code must be null or a string');
+        $this->errorCode = $errorCode;
+        $this->statusCode = $statusCode;
         parent::__construct($message, $errorCode);
     }
 
     /**
-     * Get the status code
+     * Get the status code.
      *
      * @return int
      */
     public function getStatusCode()
     {
-        return $this->_statusCode;
+        return $this->statusCode;
     }
 
     /**
      * Creates an instance of ODataException
-     * representing HTTP bad request error
+     * representing HTTP bad request error.
      *
      * @param string $message The error message
      *
@@ -58,12 +59,12 @@ class ODataException extends \Exception
      */
     public static function createBadRequestError($message)
     {
-        return new ODataException($message, 400);
+        return new self($message, 400);
     }
 
     /**
      * Creates an instance of ODataException
-     * representing syntax error in the query
+     * representing syntax error in the query.
      *
      * @param string $message The error message
      *
@@ -76,21 +77,21 @@ class ODataException extends \Exception
 
     /**
      * Creates an instance of ODataException when a
-     * resource represented by a segment in the url is not found
+     * resource represented by a segment in the url is not found.
      *
-     * @param String $segment The segment in the url for which corresponding
-     * resource not present in the data source
+     * @param string $segment The segment in the url for which corresponding
+     *                        resource not present in the data source
      *
      * @return ODataException
      */
     public static function createResourceNotFoundError($segment)
     {
-        return new ODataException(Messages::uriProcessorResourceNotFound($segment), 404);
+        return new self(Messages::uriProcessorResourceNotFound($segment), 404);
     }
 
     /**
      * Creates an instance of ODataException when a
-     * resouce not found in the data source
+     * resouce not found in the data source.
      *
      * @param string $message The error message
      *
@@ -98,12 +99,12 @@ class ODataException extends \Exception
      */
     public static function resourceNotFoundError($message)
     {
-        return new ODataException($message, 404);
+        return new self($message, 404);
     }
 
     /**
      * Creates an instance of ODataException when some
-     * internal error happens in the library
+     * internal error happens in the library.
      *
      * @param string $message The detailed internal error message
      *
@@ -111,18 +112,18 @@ class ODataException extends \Exception
      */
     public static function createInternalServerError($message)
     {
-        return new ODataException($message, 500);
+        return new self($message, 500);
     }
 
     /**
      * Creates an instance of ODataException when requestor tries to
-     * access a resource which is forbidden
+     * access a resource which is forbidden.
      *
      * @return ODataException
      */
     public static function createForbiddenError()
     {
-        return new ODataException(Messages::uriProcessorForbidden(), 403);
+        return new self(Messages::uriProcessorForbidden(), 403);
     }
 
     /**
@@ -134,7 +135,7 @@ class ODataException extends \Exception
      */
     public static function createPreConditionFailedError($message)
     {
-        return new ODataException($message, 412);
+        return new self($message, 412);
     }
 
     /**
@@ -147,12 +148,12 @@ class ODataException extends \Exception
      */
     public static function createNotImplementedError($message)
     {
-        return new ODataException($message, 501);
+        return new self($message, 501);
     }
 
     /**
      * Creates an instance of ODataException when requestor to
-     * set value which is not allowed
+     * set value which is not allowed.
      *
      * @param string $message Error message for this exception
      *
@@ -160,7 +161,6 @@ class ODataException extends \Exception
      */
     public static function notAcceptableError($message)
     {
-        return new ODataException($message, 406);
+        return new self($message, 406);
     }
-
 }

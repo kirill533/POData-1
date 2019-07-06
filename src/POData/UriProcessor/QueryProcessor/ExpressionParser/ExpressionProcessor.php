@@ -5,119 +5,112 @@ namespace POData\UriProcessor\QueryProcessor\ExpressionParser;
 use POData\Providers\Expression\IExpressionProvider;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\AbstractExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ArithmeticExpression;
-use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\LogicalExpression;
-use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\RelationalExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ConstantExpression;
-use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\PropertyAccessExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\FunctionCallExpression;
+use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\LogicalExpression;
+use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\PropertyAccessExpression;
+use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\RelationalExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\UnaryExpression;
 
-
 /**
- * Class ExpressionProcessor
+ * Class ExpressionProcessor.
  *
  * Class to process an expression tree and generate specialized
  * (e.g. PHP) expression using expression provider
- *
- * @package POData\UriProcessor\QueryProcessor\ExpressionParser
  */
 class ExpressionProcessor
 {
-    private $_expressionProvider;
-    
-    /**
-     * Construct new instance of ExpressionProcessor
-     * 
-     * @param IExpressionProvider $expressionProvider Reference to the language specific provider.
-     *
-     */
-    public function __construct(IExpressionProvider $expressionProvider) {
+    private $expressionProvider;
 
-        $this->_expressionProvider = $expressionProvider;
+    /**
+     * Construct new instance of ExpressionProcessor.
+     *
+     * @param IExpressionProvider $expressionProvider Reference to the language specific provider
+     */
+    public function __construct(IExpressionProvider $expressionProvider)
+    {
+        $this->expressionProvider = $expressionProvider;
     }
 
     /**
-     * Process the expression tree using expression provider and return the 
-     * expression as string
+     * Process the expression tree using expression provider and return the
+     * expression as string.
      *
-     * @param AbstractExpression  $rootExpression     The root of the expression tree.
+     * @param AbstractExpression $rootExpression The root of the expression tree
      *
-     * @return string
+     * @return string|null
      */
     public function processExpression(AbstractExpression $rootExpression)
     {
-        return $this->_processExpressionNode($rootExpression);
+        return $this->processExpressionNode($rootExpression);
     }
 
     /**
-     * Recursive function to process each node of the expression
-     * 
-     * @param AbstractExpression $expression Current node to process.
-     * 
-     * @return string The language specific expression.
+     * Recursive function to process each node of the expression.
+     *
+     * @param AbstractExpression|null $expression Current node to process
+     *
+     * @return string|null The language specific expression
      */
-    private function _processExpressionNode(AbstractExpression $expression)
+    private function processExpressionNode(AbstractExpression $expression = null)
     {
+        if (null === $expression) {
+            return null;
+        }
+        $funcName = null;
         if ($expression instanceof ArithmeticExpression) {
-            $left = $this->_processExpressionNode($expression->getLeft());
-            $right = $this->_processExpressionNode($expression->getRight());
-            return $this->_expressionProvider->onArithmeticExpression(
-                $expression->getNodeType(), 
-                $left, 
-                $right
-            );
+            $funcName = 'onArithmeticExpression';
+        } elseif ($expression instanceof LogicalExpression) {
+            $funcName = 'onLogicalExpression';
+        } elseif ($expression instanceof RelationalExpression) {
+            $funcName = 'onRelationalExpression';
         }
 
-        if ($expression instanceof LogicalExpression) {
-            $left = $this->_processExpressionNode($expression->getLeft());
-            $right = $this->_processExpressionNode($expression->getRight());
-            return $this->_expressionProvider->onLogicalExpression(
-                $expression->getNodeType(), 
-                $left, 
-                $right
-            );
-        }
+        if (null !== $funcName) {
+            $left = $this->processExpressionNode($expression->getLeft());
+            $right = $this->processExpressionNode($expression->getRight());
 
-        if ($expression instanceof RelationalExpression) {
-            $left = $this->_processExpressionNode($expression->getLeft());
-            $right = $this->_processExpressionNode($expression->getRight());
-            return $this->_expressionProvider->onRelationalExpression(
-                $expression->getNodeType(), 
-                $left, 
+            return $this->expressionProvider->$funcName(
+                $expression->getNodeType(),
+                $left,
                 $right
             );
         }
 
         if ($expression instanceof ConstantExpression) {
-            return $this->_expressionProvider->onConstantExpression(
-                $expression->getType(), 
+            return $this->expressionProvider->onConstantExpression(
+                $expression->getType(),
                 $expression->getValue()
             );
         }
 
         if ($expression instanceof PropertyAccessExpression) {
-            return $this->_expressionProvider->onPropertyAccessExpression(
+            return $this->expressionProvider->onPropertyAccessExpression(
                 $expression
             );
         }
 
         if ($expression instanceof FunctionCallExpression) {
-            $params = array();
+            $params = [];
             foreach ($expression->getParamExpressions() as $paramExpression) {
-                $params[] = $this->_processExpressionNode($paramExpression);
+                $params[] = $this->processExpressionNode($paramExpression);
             }
-            return $this->_expressionProvider->onFunctionCallExpression(
-                $expression->getFunctionDescription(), 
+
+            return $this->expressionProvider->onFunctionCallExpression(
+                $expression->getFunctionDescription(),
                 $params
             );
         }
 
         if ($expression instanceof UnaryExpression) {
-            $child = $this->_processExpressionNode($expression->getChild());
-            return $this->_expressionProvider->onUnaryExpression(
-                $expression->getNodeType(), 
+            $child = $this->processExpressionNode($expression->getChild());
+
+            return $this->expressionProvider->onUnaryExpression(
+                $expression->getNodeType(),
                 $child
             );
         }
+
+        return null;
     }
 }

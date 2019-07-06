@@ -2,18 +2,20 @@
 
 namespace POData\UriProcessor;
 
-use POData\Common\Url;
-use POData\Common\ODataConstants;
+use JMS\Serializer\SerializerBuilder;
 use POData\Common\Messages;
 use POData\Common\MimeTypes;
-use POData\Common\Version;
+use POData\Common\ODataConstants;
 use POData\Common\ODataException;
-use POData\IService;
+use POData\Common\Url;
+use POData\Common\Version;
+use POData\ObjectModel\ODataEntry;
+use POData\OperationContext\IHTTPRequest;
 use POData\Providers\Metadata\ResourceProperty;
 use POData\Providers\Metadata\ResourceSetWrapper;
 use POData\Providers\Metadata\ResourceStreamInfo;
+use POData\UriProcessor\QueryProcessor\QueryProcessor;
 use POData\UriProcessor\UriProcessor;
-use POData\UriProcessor\ResourcePathProcessor\SegmentParser\SegmentParser;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetSource;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\SegmentDescriptor;
@@ -23,11 +25,11 @@ use POData\UriProcessor\QueryProcessor\ExpressionParser\FilterInfo;
 use POData\UriProcessor\QueryProcessor\ExpandProjectionParser\RootProjectionNode;
 use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Query\QueryType;
+use Verdant\XML2Array;
 
 
 /**
- * Class RequestDescription
- * @package POData\UriProcessor
+ * Class RequestDescription.
  */
 class RequestDescription
 {
@@ -35,7 +37,7 @@ class RequestDescription
      * Holds the value of HTTP 'DataServiceVersion' header in the request,
      * DataServiceVersion header value states the version of the
      * Open Data Protocol used by the client to generate the request.
-     * Refer http://www.odata.org/developers/protocols/overview#ProtocolVersioning
+     * Refer http://www.odata.org/developers/protocols/overview#ProtocolVersioning.
      *
      * @var Version
      */
@@ -45,7 +47,7 @@ class RequestDescription
      * Holds the value of HTTP 'MaxDataServiceVersion' header in the request,
      * MaxDataServiceVersion header value specifies the maximum version number
      * the client can accept in a response.
-     * Refer http://www.odata.org/developers/protocols/overview#ProtocolVersioning
+     * Refer http://www.odata.org/developers/protocols/overview#ProtocolVersioning.
      *
      * @var Version
      */
@@ -59,7 +61,7 @@ class RequestDescription
      * 'MaxDataServiceVersion' header in the client request to see whether the
      * client can interpret the response or not. The client should use this
      * value to determine whether it can correctly interpret the response or not.
-     * Refer http://www.odata.org/developers/protocols/overview#ProtocolVersioning
+     * Refer http://www.odata.org/developers/protocols/overview#ProtocolVersioning.
      *
      * @var Version
      */
@@ -84,10 +86,9 @@ class RequestDescription
      *
      * @var Version[]
      */
-    private static $_knownDataServiceVersions = null;
+    private static $knownDataServiceVersions = null;
 
     /**
-     *
      * @var Url
      */
     private $requestUrl;
@@ -108,12 +109,11 @@ class RequestDescription
     private $lastSegment;
 
     /**
-     * The name of the container for results
+     * The name of the container for results.
      *
      * @var string|null
      */
-    private $_containerName;
-
+    private $containerName;
 
     /**
      * The count option specified in the request.
@@ -127,7 +127,7 @@ class RequestDescription
      *
      * @var int
      */
-    private $_segmentCount;
+    private $segmentCount;
 
     /**
      * Holds the value of $skip query option, if no $skip option
@@ -135,7 +135,7 @@ class RequestDescription
      *
      * @var int|null
      */
-    private $_skipCount;
+    private $skipCount;
 
     /**
      * Holds the value of take count, this value is depends on
@@ -143,7 +143,7 @@ class RequestDescription
      *
      * @var int|null
      */
-    private $_topCount;
+    private $topCount;
 
     /**
      * Holds the value of $top query option, if no $top option
@@ -151,7 +151,7 @@ class RequestDescription
      *
      * @var int|null
      */
-    private $_topOptionCount;
+    private $topOptionCount;
 
     /**
      * Holds the parsed details for sorting, this will
@@ -171,14 +171,14 @@ class RequestDescription
      *
      * @var InternalSkipTokenInfo|null
      */
-    private $_internalSkipTokenInfo;
+    private $internalSkipTokenInfo;
 
     /**
      * Holds the parsed details for $filter option, this will be NULL if $filter option is absent.
      *
      * @var FilterInfo|null
      */
-    private $_filterInfo;
+    private $filterInfo;
 
     /**
      * Holds reference to the root of the tree describing expand
@@ -187,37 +187,37 @@ class RequestDescription
      *
      * @var RootProjectionNode|null
      */
-    private $_rootProjectionNode;
+    private $rootProjectionNode;
 
     /**
      * Holds number of entities in the result set, if either $count or
-     * $inlinecount=allpages is specified, otherwise NULL
+     * $inlinecount=allpages is specified, otherwise NULL.
      *
      *
      * @var int|null
      */
-    private $_countValue;
+    private $countValue;
 
     /**
-     * Data of request from request body
+     * Data of request from request body.
      *
-     * @var array
+     * @var array|null
      */
-    private $_data;
+    private $data;
 
     /**
      * Flag indicating status of query execution.
      *
-     * @var boolean
+     * @var bool
      */
-    private $_isExecuted;
+    private $isExecuted;
 
     /**
      * Reference to Uri processor.
      *
-     * @var UriProcessor
+     * @var IUriProcessor
      */
-    private $_uriProcessor;
+    private $uriProcessor;
 
 
     /**
@@ -233,24 +233,32 @@ class RequestDescription
         private $_parts;
 
     /**
-     * @param SegmentDescriptor[] $segmentDescriptors Description of segments in the resource path.
-     * @param Url $requestUri
-     * @param Version $serviceMaxVersion
-     * @param null|string $requestVersion
-     * @param null|string $maxRequestVersion
-     * @param string $dataType
+     * @param SegmentDescriptor[] $segmentDescriptors Description of segments in the resource path
+     * @param Url                 $requestUri
+     * @param Version             $serviceMaxVersion
+     * @param string|null         $requestVersion
+     * @param string|null         $maxRequestVersion
+     * @param string|null         $dataType
+     * @param IHTTPRequest|null   $payload
      */
-    public function __construct($segmentDescriptors, Url $requestUri, Version $serviceMaxVersion, $requestVersion, $maxRequestVersion, $dataType = null, IService $service = null)
-    {
+    public function __construct(
+        array $segmentDescriptors,
+        Url $requestUri,
+        Version $serviceMaxVersion,
+        $requestVersion,
+        $maxRequestVersion,
+        $dataType = null,
+        IHTTPRequest $payload = null
+    ) {
         $this->segments = $segmentDescriptors;
-        $this->_segmentCount = count($this->segments);
+        $this->segmentCount = count($this->segments);
         $this->requestUrl = $requestUri;
-        $this->lastSegment = $segmentDescriptors[$this->_segmentCount - 1];
+        $this->lastSegment = $segmentDescriptors[$this->segmentCount - 1];
         $this->queryType = QueryType::ENTITIES;
         $this->_service = $service;
         $this->_parts = array();
 
-        //we use this for validation checks down in validateVersions...but maybe we should check that outside of this object...
+        //we use this for validation checks down in validateVersions...//but maybe we should check that outside of this object...
         $this->maxServiceVersion = $serviceMaxVersion;
 
         //Per OData 1 & 2 spec we must return the smallest size
@@ -261,15 +269,18 @@ class RequestDescription
 
         //see http://www.odata.org/documentation/odata-v2-documentation/overview/#ProtocolVersioning
         //if requestVersion isn't there, use Service Max Version
-        $this->requestVersion = is_null($requestVersion) ? $serviceMaxVersion : self::parseVersionHeader($requestVersion, ODataConstants::ODATAVERSIONHEADER);
+        $this->requestVersion = null === $requestVersion
+            ? $serviceMaxVersion
+            : self::parseVersionHeader($requestVersion, ODataConstants::ODATAVERSIONHEADER);
 
         //if max version isn't there, use the request version
-        $this->requestMaxVersion = is_null($maxRequestVersion) ? $this->requestVersion : self::parseVersionHeader($maxRequestVersion, ODataConstants::ODATAMAXVERSIONHEADER);
+        $this->requestMaxVersion = null === $maxRequestVersion
+            ? $this->requestVersion
+            : self::parseVersionHeader($maxRequestVersion, ODataConstants::ODATAMAXVERSIONHEADER);
 
         //if it's OData v3..things change a bit
         if ($this->maxServiceVersion == Version::v3()) {
-            if (is_null($maxRequestVersion))
-            {
+            if (null === $maxRequestVersion) {
                 //if max request version isn't specified we use the service max version instead of the request version
                 //thus we favour newer versions
                 $this->requestMaxVersion = $this->maxServiceVersion;
@@ -280,22 +291,20 @@ class RequestDescription
             $this->requiredMinResponseVersion = clone $this->requestMaxVersion;
         }
 
-
-
-        $this->_containerName = null;
-        $this->_skipCount = null;
-        $this->_topCount = null;
-        $this->_topOptionCount = null;
+        $this->containerName = null;
+        $this->skipCount = null;
+        $this->topCount = null;
+        $this->topOptionCount = null;
         $this->internalOrderByInfo = null;
-        $this->_internalSkipTokenInfo = null;
+        $this->internalSkipTokenInfo = null;
 
-        $this->_filterInfo = null;
-        $this->_countValue = null;
-        $this->_isExecuted = false;
-
+        $this->filterInfo = null;
+        $this->countValue = null;
+        $this->isExecuted = false;
+$this->data = isset($payload) ? $payload->getAllInput() : null;
         // Define data from request body
-        if ($dataType) {
-            $this->_readData($dataType);
+        if (null !== $dataType) {
+            $this->readData($dataType);
         }
     }
 
@@ -304,25 +313,35 @@ class RequestDescription
     }
 
     /**
-     * Define request data from body
+     * Define request data from body.
+     *
      * @param string $dataType
      */
-    private function _readData($dataType) {
-        $this->_data = null;
-        $string = file_get_contents('php://input');
-        if ($dataType === MimeTypes::MIME_APPLICATION_XML) {
-            $data = Xml2Array::createArray($string);
-            if (!empty($data['a:entry']['a:content']['m:properties'])) {
-                $clearData = $data['a:entry']['a:content']['m:properties'];
-                if (is_array($clearData)) {
-                    foreach ($clearData as $key => $value) {
-                        $this->_data[substr($key, 2)] = $value['@value'];
-                    }
-                }
+    private function readData($dataType)
+    {
+        $string = $this->data;
+        if (MimeTypes::MIME_APPLICATION_ATOM === $dataType || MimeTypes::MIME_APPLICATION_XML === $dataType) {
+            if (is_array($string) && 1 == count($string)) {
+                $string = $string[0];
             }
+            if (0 == strlen(trim($string))) {
+                return;
+            }
+            $ymlDir = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR .
+                'POData' . DIRECTORY_SEPARATOR . 'Writers' . DIRECTORY_SEPARATOR . 'YML';
+            $serialize =
+                SerializerBuilder::create()
+                    ->addMetadataDir($ymlDir)
+                    ->build();
+            $objectType = strpos($this->requestUrl->getUrlAsString(), '$links') !== false
+                ? 'POData\ObjectModel\ODataURL' : 'POData\ObjectModel\ODataEntry';
+            $this->data = $serialize->deserialize($string, $objectType, 'xml');
+            $msg = null;
+            assert($this->data instanceof $objectType);
+            assert($this->data->isOk($msg), $msg);
         } elseif ($dataType === MimeTypes::MIME_APPLICATION_JSON) {
-            $data = json_decode($string, true);
-            $this->_data = $data;
+            $data = !is_array($string) ? json_decode($string, true) : $string;
+            $this->data = $data;
         } elseif (explode(';', $dataType)[0] === MimeTypes::MIME_MULTIPART_MIXED) {
             preg_match('/boundary=(.*)$/', $dataType, $matches);
             $boundary = $matches[1];
@@ -385,10 +404,11 @@ class RequestDescription
     }
 
     /**
-     * Get request data from body
+     * Get request data from body.
      */
-    public function getData() {
-        return $this->_data;
+    public function getData()
+    {
+        return $this->data;
     }
 
     /**
@@ -398,11 +418,11 @@ class RequestDescription
      * @param int $major The major segment of the version
      * @param int $minor The minor segment of the version
      *
-     * @throws ODataException If capability negotiation fails.
+     * @throws ODataException If capability negotiation fails
      */
-    public function raiseMinVersionRequirement($major, $minor) {
-        if ($this->requiredMinRequestVersion->raiseVersion($major, $minor))
-        {
+    public function raiseMinVersionRequirement($major, $minor)
+    {
+        if ($this->requiredMinRequestVersion->raiseVersion($major, $minor)) {
             $this->validateVersions();
         }
     }
@@ -414,13 +434,13 @@ class RequestDescription
      * @param int $major The major segment of the version
      * @param int $minor The minor segment of the version
      *
-     * @throws ODataException If capability negotiation fails.
+     * @throws ODataException If capability negotiation fails
      */
-    public function raiseResponseVersion($major, $minor) {
+    public function raiseResponseVersion($major, $minor)
+    {
         if ($this->requiredMinResponseVersion->raiseVersion($major, $minor)) {
             $this->validateVersions();
         }
-
     }
 
     /**
@@ -502,13 +522,13 @@ class RequestDescription
      *      (e) MLE
      *          http://server/NW.svc/Employees(123)/$value
      *      (f) Named Stream
-     *          http://server/NW.svc/Employees(123)/Thumnail48_48
+     *          http://server/NW.svc/Employees(123)/Thumbnail48_48
      *      (g) metadata
      *          http://server/NW.svc/$metadata
      *      (h) service directory
      *          http://server/NW.svc
      *      (i) $bath
-     *          http://server/NW.svc/$batch
+     *          http://server/NW.svc/$batch.
      *
      * @return ResourceSetWrapper|null
      */
@@ -544,7 +564,7 @@ class RequestDescription
      *      (h) MLE
      *          http://server/NW.svc/Employees(123)/$value
      *      (i) Named Stream
-     *          http://server/NW.svc/Employees(123)/Thumnail48_48
+     *          http://server/NW.svc/Employees(123)/Thumbnail48_48
      * ResourceType will be absent (NULL) in the following cases:
      * if the last segment descriptor describes
      *      (a) metadata
@@ -552,7 +572,7 @@ class RequestDescription
      *      (b) service directory
      *          http://server/NW.svc
      *      (c) $bath
-     *          http://server/NW.svc/$batch
+     *          http://server/NW.svc/$batch.
      *
      * @return ResourceType|null
      */
@@ -584,7 +604,7 @@ class RequestDescription
      *      (g) Bag
      *          http://server/NW.svc/Employees(123)/Emails
      *      (h) MLE
-     *          http://server/NW.svc/Employees(123)/$value
+     *          http://server/NW.svc/Employees(123)/$value.
      *
      * ResourceType will be absent (NULL) in the following cases:
      * if the last segment descriptor describes
@@ -593,7 +613,7 @@ class RequestDescription
      *          http://server/NW.svc/Customers
      *          http://server/NW.svc/Customers('ALFKI')
      *      (b) Named Stream
-     *          http://server/NW.svc/Employees(123)/Thumnail48_48
+     *          http://server/NW.svc/Employees(123)/Thumbnail48_48
      *      (c) metadata
      *          http://server/NW.svc/$metadata
      *      (d) service directory
@@ -615,25 +635,23 @@ class RequestDescription
      */
     public function getContainerName()
     {
-        return $this->_containerName;
+        return $this->containerName;
     }
 
     /**
      * Sets the name of the container for results.
      *
-     * @param string $containerName The container name.
-     *
-     * @return void
+     * @param string $containerName The container name
      */
     public function setContainerName($containerName)
     {
-        $this->_containerName = $containerName;
+        $this->containerName = $containerName;
     }
 
     /**
      * Whether thr request targets a single result or not.
      *
-     * @return boolean
+     * @return bool
      */
     public function isSingleResult()
     {
@@ -661,41 +679,37 @@ class RequestDescription
     }
 
     /**
-     * Gets the value of $skip query option
+     * Gets the value of $skip query option.
      *
-     * @return int|null The value of $skip query option, NULL if $skip is absent.
-     *
+     * @return int|null The value of $skip query option, NULL if $skip is absent
      */
     public function getSkipCount()
     {
-        return $this->_skipCount;
+        return $this->skipCount;
     }
 
     /**
-     * Sets skip value
+     * Sets skip value.
      *
-     * @param int $skipCount The value of $skip query option.
-     *
-     * @return void
+     * @param int $skipCount The value of $skip query option
      */
     public function setSkipCount($skipCount)
     {
-        $this->_skipCount = $skipCount;
+        $this->skipCount = $skipCount;
     }
 
     /**
-     * Gets the value of take count
+     * Gets the value of take count.
      *
-     * @return int|null The value of take, NULL if no take to be applied.
-     *
+     * @return int|null The value of take, NULL if no take to be applied
      */
     public function getTopCount()
     {
-        return $this->_topCount;
+        return $this->topCount;
     }
 
     /**
-     * Sets the value of take count
+     * Sets the value of take count.
      *
      * @param int $topCount The value of take query option
      *
@@ -703,30 +717,27 @@ class RequestDescription
      */
     public function setTopCount($topCount)
     {
-        $this->_topCount = $topCount;
+        $this->topCount = $topCount;
     }
 
     /**
-     * Gets the value of $top query option
+     * Gets the value of $top query option.
      *
-     * @return int|null The value of $top query option, NULL if $top is absent.
-     *
+     * @return int|null The value of $top query option, NULL if $top is absent
      */
     public function getTopOptionCount()
     {
-        return $this->_topOptionCount;
+        return $this->topOptionCount;
     }
 
     /**
-     * Sets top value
+     * Sets top value.
      *
      * @param int $topOptionCount The value of $top query option
-     *
-     * @return void
      */
     public function setTopOptionCount($topOptionCount)
     {
-        $this->_topOptionCount = $topOptionCount;
+        $this->topOptionCount = $topOptionCount;
     }
 
     /**
@@ -747,9 +758,7 @@ class RequestDescription
     /**
      * Sets sorting (orderby) information.
      *
-     * @param InternalOrderByInfo &$internalOrderByInfo The sorting information.
-     *
-     * @return void
+     * @param InternalOrderByInfo &$internalOrderByInfo The sorting information
      */
     public function setInternalOrderByInfo(InternalOrderByInfo &$internalOrderByInfo)
     {
@@ -759,93 +768,81 @@ class RequestDescription
     /**
      * Gets the parsed details for $skiptoken option.
      *
-     * @return InternalSkipTokenInfo|null Returns parsed details of $skiptoken option, NULL if $skiptoken is absent.
-     *
+     * @return InternalSkipTokenInfo|null Returns parsed details of $skiptoken option, NULL if $skiptoken is absent
      */
     public function getInternalSkipTokenInfo()
     {
-        return $this->_internalSkipTokenInfo;
+        return $this->internalSkipTokenInfo;
     }
 
     /**
      * Sets $skiptoken information.
      *
-     * @param InternalSkipTokenInfo &$internalSkipTokenInfo The paging information.
-     *
-     * @return void
+     * @param InternalSkipTokenInfo &$internalSkipTokenInfo The paging information
      */
     public function setInternalSkipTokenInfo(
         InternalSkipTokenInfo &$internalSkipTokenInfo
     ) {
-        $this->_internalSkipTokenInfo = $internalSkipTokenInfo;
+        $this->internalSkipTokenInfo = $internalSkipTokenInfo;
     }
 
     /**
-     *
-     * @return FilterInfo|null Returns parsed details of $filter option, NULL if $filter is absent.
-     *
+     * @return FilterInfo|null Returns parsed details of $filter option, NULL if $filter is absent
      */
     public function getFilterInfo()
     {
-        return $this->_filterInfo;
+        return $this->filterInfo;
     }
 
     /**
-     *
-     * @param FilterInfo $filterInfo The filter information.
-     *
+     * @param FilterInfo $filterInfo The filter information
      */
     public function setFilterInfo(FilterInfo $filterInfo)
     {
-        $this->_filterInfo = $filterInfo;
+        $this->filterInfo = $filterInfo;
     }
 
     /**
      * Sets $expand and $select information.
      *
-     * @param RootProjectionNode &$rootProjectionNode Root of the projection tree.
-     *
-     * @return void
+     * @param RootProjectionNode &$rootProjectionNode Root of the projection tree
      */
     public function setRootProjectionNode(RootProjectionNode &$rootProjectionNode)
     {
-        $this->_rootProjectionNode = $rootProjectionNode;
+        $this->rootProjectionNode = $rootProjectionNode;
     }
 
     /**
-     * Gets the root of the tree describing expand and select options,
+     * Gets the root of the tree describing expand and select options,.
      *
      * @return RootProjectionNode|null Returns parsed details of $expand
      *                                 and $select options, NULL if
-     *                                 $both options are absent.
+     *                                 $both options are absent
      */
     public function getRootProjectionNode()
     {
-        return $this->_rootProjectionNode;
+        return $this->rootProjectionNode;
     }
-
 
     /**
      * Gets the count of result set if $count or $inlinecount=allpages
-     * has been applied otherwise NULL
+     * has been applied otherwise NULL.
      *
      * @return int|null
      */
     public function getCountValue()
     {
-        return $this->_countValue;
+        return $this->countValue;
     }
 
     /**
      * Sets the count of result set.
      *
-     * @param int $countValue The count value.
-     *
-     * @return void
+     * @param int $countValue The count value
      */
     public function setCountValue($countValue)
     {
-        $this->_countValue = $countValue;
+        $this->countValue = $countValue;
     }
 
     /**
@@ -855,17 +852,17 @@ class RequestDescription
      */
     public function setExecuted()
     {
-        $this->_isExecuted = true;
+        $this->isExecuted = true;
     }
 
     /**
      * To check whether to execute the query using IDSQP.
      *
-     * @return boolean True if query need to be executed, False otherwise.
+     * @return bool True if query need to be executed, False otherwise
      */
     public function needExecution()
     {
-        return !$this->_isExecuted
+        return !$this->isExecuted
             && ($this->lastSegment->getTargetKind() != TargetKind::METADATA)
             && ($this->lastSegment->getTargetKind() != TargetKind::SERVICE_DIRECTORY);
     }
@@ -873,27 +870,28 @@ class RequestDescription
     /**
      * To check if the resource path is a request for link uri.
      *
-     * @return boolean True if request is for link uri else false.
+     * @return bool True if request is for link uri else false
      */
     public function isLinkUri()
     {
-        return (($this->_segmentCount > 2) && ($this->segments[$this->_segmentCount - 2]->getTargetKind() == TargetKind::LINK));
+        return ($this->segmentCount > 2)
+            && ($this->segments[$this->segmentCount - 2]->getTargetKind() == TargetKind::LINK);
     }
 
     /**
-     * To check if the resource path is a request for meida resource
+     * To check if the resource path is a request for media resource.
      *
-     * @return boolean True if request is for media resource else false.
+     * @return bool True if request is for media resource else false
      */
     public function isMediaResource()
     {
-        return ($this->lastSegment->getTargetKind() == TargetKind::MEDIA_RESOURCE);
+        return $this->lastSegment->getTargetKind() == TargetKind::MEDIA_RESOURCE();
     }
 
     /**
-     * To check if the resource path is a request for named stream
+     * To check if the resource path is a request for named stream.
      *
-     * @return boolean True if request is for named stream else false.
+     * @return bool True if request is for named stream else false
      */
     public function isNamedStream()
     {
@@ -904,7 +902,7 @@ class RequestDescription
      * Get ResourceStreamInfo for the media link entry or named stream request.
      *
      * @return ResourceStreamInfo|null Instance of ResourceStreamInfo if the
-     *         current request targets named stream, NULL for MLE
+     *                                 current request targets named stream, NULL for MLE
      */
     public function getResourceStreamInfo()
     {
@@ -915,7 +913,6 @@ class RequestDescription
                     $this->lastSegment->getIdentifier()
                 );
         }
-
         return null;
     }
 
@@ -952,17 +949,17 @@ class RequestDescription
     /**
      * Checks whether etag headers are allowed for this request.
      *
-     * @return boolean True if ETag header (If-Match or If-NoneMatch)
-     *                 is allowed for the request, False otherwise.
+     * @return bool True if ETag header (If-Match or If-NoneMatch)
+     *              is allowed for the request, False otherwise
      */
     public function isETagHeaderAllowed()
     {
         return $this->lastSegment->isSingleResult()
             && ($this->queryType != QueryType::COUNT)
             && !$this->isLinkUri()
-            && (is_null($this->_rootProjectionNode)
-                || !($this->_rootProjectionNode->isExpansionSpecified())
-                );
+            && (null === $this->rootProjectionNode
+                || !($this->rootProjectionNode->isExpansionSpecified())
+            );
     }
 
     /**
@@ -972,15 +969,15 @@ class RequestDescription
      */
     public static function getKnownDataServiceVersions()
     {
-        if (is_null(self::$_knownDataServiceVersions)) {
-            self::$_knownDataServiceVersions = array(
+        if (null === self::$knownDataServiceVersions) {
+            self::$knownDataServiceVersions = [
                 new Version(1, 0),
                 new Version(2, 0),
-                new Version(3, 0)
-            );
+                new Version(3, 0),
+            ];
         }
 
-        return self::$_knownDataServiceVersions;
+        return self::$knownDataServiceVersions;
     }
 
     /**
@@ -999,9 +996,10 @@ class RequestDescription
      *  'MaxDataServiceVersion'.
      *
      *
-     * @throws ODataException If any of the above 3 check fails.
+     * @throws ODataException If any of the above 3 check fails
      */
-    public function validateVersions() {
+    public function validateVersions()
+    {
 
         //If the request version is below the minimum version required by supplied request arguments..throw an exception
         if ($this->requestVersion->compare($this->requiredMinRequestVersion) < 0) {
@@ -1023,7 +1021,8 @@ class RequestDescription
             );
         }
 
-        //If the max version supported by the service is below the version required to fulfill the response..throw an exception
+        //If the max version supported by the service is below the version required to fulfill the response..
+        //throw an exception
         if ($this->maxServiceVersion->compare($this->requiredMinResponseVersion) < 0) {
             throw ODataException::createBadRequestError(
                 Messages::requestVersionIsBiggerThanProtocolVersion(
@@ -1035,10 +1034,11 @@ class RequestDescription
     }
 
     /**
-     * Validates the given version in string format and returns the version as instance of Version
+     * Validates the given version in string format and returns the version as instance of Version.
      *
      * @param string $versionHeader The DataServiceVersion or MaxDataServiceVersion header value
      * @param string $headerName    The name of the header
+     ** @throws ODataException If the version is malformed or not supported
      *
      * @return Version
      *
@@ -1046,40 +1046,31 @@ class RequestDescription
      */
     private static function parseVersionHeader($versionHeader, $headerName)
     {
-        $libName = null;
         $versionHeader = trim($versionHeader);
         $libNameIndex = strpos($versionHeader, ';');
-        if ($libNameIndex !== false) {
-            $libName = substr($versionHeader, $libNameIndex);
-        } else {
+        if (false === $libNameIndex) {
             $libNameIndex = strlen($versionHeader);
         }
 
         $dotIndex = -1;
-        for ($i = 0; $i < $libNameIndex; $i++) {
+        $badVersionMsg = Messages::requestDescriptionInvalidVersionHeader(
+            $versionHeader,
+            $headerName
+        );
+        for ($i = 0; $i < $libNameIndex; ++$i) {
             if ($versionHeader[$i] == '.') {
 
                 //Throw an exception if we find more than 1 dot
                 if ($dotIndex != -1) {
                     throw ODataException::createBadRequestError(
-                        Messages::requestDescriptionInvalidVersionHeader(
-                            $versionHeader,
-                            $headerName
-                        )
-                    );
+                        $badVersionMsg);
                 }
 
                 $dotIndex = $i;
-            } else if ($versionHeader[$i] < '0' || $versionHeader[$i] > '9') {
-                throw ODataException::createBadRequestError(
-                    Messages::requestDescriptionInvalidVersionHeader(
-                        $versionHeader,
-                        $headerName
-                    )
-                );
+            } elseif ($versionHeader[$i] < '0' || $versionHeader[$i] > '9') {
+                throw ODataException::createBadRequestError($badVersionMsg);
             }
         }
-
 
         $major = intval(substr($versionHeader, 0, $dotIndex));
         $minor = 0;
@@ -1088,21 +1079,15 @@ class RequestDescription
         if ($dotIndex != -1) {
             if ($dotIndex == 0) {
                 //If it starts with a ., throw an exception
-                throw ODataException::createBadRequestError(
-                    Messages::requestDescriptionInvalidVersionHeader(
-                        $versionHeader,
-                        $headerName
-                    )
-                );
+                throw ODataException::createBadRequestError($badVersionMsg);
             }
             $minor = intval(substr($versionHeader, $dotIndex + 1, $libNameIndex));
         }
 
-
         $version = new Version($major, $minor);
 
         //TODO: move this somewhere...
-        /*
+        //$this->validateVersions();
         $isSupportedVersion = false;
         foreach (self::getKnownDataServiceVersions() as $version1) {
             if ($version->compare($version1) == 0) {
@@ -1122,34 +1107,31 @@ class RequestDescription
                 Messages::requestDescriptionUnSupportedVersion(
                     $headerName,
                     $versionHeader,
-	                $availableVersions
+                    $availableVersions
                 )
             );
         }
-	    */
 
         return $version;
     }
 
     /**
-     * Gets reference to the UriProcessor instance.
+     * Gets reference to the IUriProcessor instance.
      *
-     * @return UriProcessor
+     * @return IUriProcessor
      */
     public function getUriProcessor()
     {
-        return $this->_uriProcessor;
+        return $this->uriProcessor;
     }
 
     /**
-     * Set reference to UriProcessor instance.
+     * Set reference to IUriProcessor instance.
      *
-     * @param UriProcessor $uriProcessor Reference to the UriProcessor
-     *
-     * @return void
+     * @param IUriProcessor $uriProcessor Reference to the UriProcessor
      */
-    public function setUriProcessor(UriProcessor $uriProcessor)
+    public function setUriProcessor(IUriProcessor $uriProcessor)
     {
-        $this->_uriProcessor = $uriProcessor;
+        $this->uriProcessor = $uriProcessor;
     }
 }

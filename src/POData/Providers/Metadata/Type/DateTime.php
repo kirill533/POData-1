@@ -1,18 +1,21 @@
 <?php
 
-
 namespace POData\Providers\Metadata\Type;
 
+use Carbon\Carbon;
+
 /**
- * Class DateTime
- * @package POData\Providers\Metadata\Type
+ * Class DateTime.
  */
 class DateTime implements IType
 {
+    protected static $comboRegex =
+        "/^datetime\'(\d{4})-(\d{2})-(\d{2})((\s|T)([0-1][0-9]|2[0-4]):([0-5][0-9])(:([0-5][0-9])([Z]|[\+|-]\d{2}:\d{2})?)?)?\'$/";
+
     /**
      * Gets the type code
-     * Note: implementation of IType::getTypeCode
-     *   
+     * Note: implementation of IType::getTypeCode.
+     *
      * @return TypeCode
      */
     public function getTypeCode()
@@ -22,52 +25,63 @@ class DateTime implements IType
 
     /**
      * Checks this type is compatible with another type
-     * Note: implementation of IType::isCompatibleWith
-     * 
+     * Note: implementation of IType::isCompatibleWith.
+     *
      * @param IType $type Type to check compatibility
-     * 
-     * @return boolean 
+     *
+     * @return bool
      */
     public function isCompatibleWith(IType $type)
     {
-        return ($type->getTypeCode() == TypeCode::DATETIME);
+        return TypeCode::DATETIME == $type->getTypeCode();
     }
 
     /**
      * Validate a value in Astoria uri is in a format for this type
-     * Note: implementation of IType::validate
-     * 
-     * @param string $value     The value to validate 
-     * @param string &$outValue The stripped form of $value that can 
+     * Note: implementation of IType::validate.
+     *
+     * @param string $value     The value to validate
+     * @param string &$outValue The stripped form of $value that can
      *                          be used in PHP expressions
-     * 
-     * @return boolean
+     *
+     * @return bool
      */
     public function validate($value, &$outValue)
     {
-        //1. The datetime value present in the $filter option should have 
-        //   'datetime' prefix.
+        //1. The datetime value present in the $filter option should have 'datetime' prefix.
         //2. Month and day should be two digit
-        if (!preg_match("/^datetime\'(\d{4})-(\d{2})-(\d{2})((\s|T)([0-1][0-9]|2[0-4]):([0-5][0-9])(:([0-5][0-9])([Z])?)?)?\'$/", strval($value), $matches)
-        ) {
-            return false;
-        } 
-
-        //stripoff prefix, and quotes from both ends
-        $value = trim($value, 'datetime\'');
-        //Validate the date using PHP DateTime class
-        if (!self::validateWithoutPreFix($value)) {
+        if (!preg_match(
+            self::$comboRegex,
+            strval($value),
+            $matches
+        )) {
             return false;
         }
-    
+
+        //strip off prefix, and quotes from both ends
+        $value = trim($value, 'datetime\'');
+        $valLen = strlen($value) - 6;
+        $offsetChek = $value[$valLen];
+        if (18 < $valLen && ('-' == $offsetChek || '+' == $offsetChek)) {
+            $value = substr($value, 0, $valLen);
+        }
+
+        //Validate the date using PHP Carbon class
+        try {
+            new Carbon($value, new \DateTimeZone('UTC'));
+        } catch (\Exception $e) {
+            return false;
+        }
+
         $outValue = "'" . $value . "'";
+
         return true;
     }
 
     /**
      * Gets full name of this type in EDM namespace
-     * Note: implementation of IType::getFullTypeName
-     * 
+     * Note: implementation of IType::getFullTypeName.
+     *
      * @return string
      */
     public function getFullTypeName()
@@ -76,25 +90,25 @@ class DateTime implements IType
     }
 
     /**
-     * Converts the given string value to datetime type.     
+     * Converts the given string value to datetime type.
      * Note: This function will not perform any conversion.
-     * 
-     * @param string $stringValue Value to convert.
-     * 
+     *
+     * @param string $stringValue Value to convert
+     *
      * @return string
      */
     public function convert($stringValue)
     {
-        return $stringValue;     
+        return $stringValue;
     }
 
     /**
-     * Convert the given value to a form that can be used in OData uri. 
-     * Note: The calling function should not pass null value, as this 
-     * function will not perform any check for nullability 
-     * 
-     * @param mixed $value Value to convert.
-     * 
+     * Convert the given value to a form that can be used in OData uri.
+     * Note: The calling function should not pass null value, as this
+     * function will not perform any check for nullability.
+     *
+     * @param mixed $value Value to convert
+     *
      * @return string
      */
     public function convertToOData($value)
@@ -103,114 +117,132 @@ class DateTime implements IType
     }
 
     /**
-     * Checks a value is valid datetime
-     * 
-     * @param string $dateTime value to validate. 
-     * 
-     * @return boolean
-     */
-    public static function validateWithoutPreFix($dateTime)
-    {
-        try {
-                $dt = new \DateTime($dateTime, new \DateTimeZone('UTC'));
-        } catch (\Exception $e) {
-                return false;
-        }
-            
-        return true;
-    }
-
-    /**
-     * Gets year from datetime
-     * 
+     * Gets year from datetime.
+     *
      * @param string $dateTime datetime to get the year from
-     * 
+     *
      * @return string
      */
     public static function year($dateTime)
     {
-        $date = new \DateTime($dateTime);
-        return $date->format("Y");
+        $date = new Carbon($dateTime);
+
+        return $date->format('Y');
     }
 
     /**
-     * Gets month from datetime
-     * 
+     * Gets month from datetime.
+     *
      * @param string $dateTime datetime to get the month from
-     * 
+     *
      * @return string
      */
     public static function month($dateTime)
     {
-        $date = new \DateTime($dateTime);
-        return $date->format("m");
+        $date = new Carbon($dateTime);
+
+        return $date->format('m');
     }
 
     /**
-     * Gets day from datetime
-     * 
+     * Gets day from datetime.
+     *
      * @param string $dateTime datetime to get the day from
-     * 
+     *
      * @return string
      */
     public static function day($dateTime)
     {
-        $date = new \DateTime($dateTime);
-        return $date->format("d");
+        $date = new Carbon($dateTime);
+
+        return $date->format('d');
     }
 
     /**
-     * Gets hour from datetime
-     * 
+     * Gets hour from datetime.
+     *
      * @param string $dateTime datetime to get the hour from
-     * 
+     *
      * @return string
      */
     public static function hour($dateTime)
     {
-        $date = new \DateTime($dateTime);
-        return $date->format("H");
+        $date = new Carbon($dateTime);
+
+        return $date->format('H');
     }
 
     /**
-     * Gets minute from datetime
-     * 
+     * Gets minute from datetime.
+     *
      * @param string $dateTime datetime to get the minute from
-     * 
+     *
      * @return string
      */
     public static function minute($dateTime)
     {
-        $date = new \DateTime($dateTime);
-        return $date->format("i");
+        $date = new Carbon($dateTime);
+
+        return $date->format('i');
     }
 
     /**
-     * Gets second from datetime
-     * 
+     * Gets second from datetime.
+     *
      * @param string $dateTime datetime to get the second from
-     * 
+     *
      * @return string
      */
     public static function second($dateTime)
     {
-        $date = new \DateTime($dateTime);
-        return $date->format("s");
+        $date = new Carbon($dateTime);
+
+        return $date->format('s');
     }
-    
+
     /**
      * Compare two dates. Note that this function will not perform any
      * validation on dates, one should use either validate or
-     * validateWithoutPrefix to validate the date before calling this 
-     * function
-     * 
+     * validateWithoutPrefix to validate the date before calling this
+     * function.
+     *
      * @param string $dateTime1 First date
      * @param string $dateTime2 Second date
-     * 
+     *
      * @return int
      */
     public static function dateTimeCmp($dateTime1, $dateTime2)
     {
-        return strtotime($dateTime1) - strtotime($dateTime2);
+        $firstStamp = self::dateTimeCmpCheckInput($dateTime1, 'Invalid input - datetime1 must be DateTime or string');
+        $secondStamp = self::dateTimeCmpCheckInput($dateTime2, 'Invalid input - datetime2 must be DateTime or string');
+
+        if ($firstStamp == $secondStamp) {
+            return 0;
+        }
+        return $firstStamp < $secondStamp ? -1 : 1;
+    }
+
+    /**
+     * Gets full name of the type implementing this interface in EDM namespace
+     * Note: implementation of IType::getFullTypeName.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getFullTypeName();
+    }
+
+    protected static function dateTimeCmpCheckInput($dateTime, $msg)
+    {
+        if (is_object($dateTime) && $dateTime instanceof \DateTime) {
+            $firstStamp = $dateTime->getTimestamp();
+            return $firstStamp;
+        }
+        if (is_string($dateTime)) {
+            $firstStamp = strtotime($dateTime);
+            return $firstStamp;
+        }
+        throw new \Exception($msg);
     }
 }

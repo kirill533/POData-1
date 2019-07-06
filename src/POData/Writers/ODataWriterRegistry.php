@@ -3,18 +3,15 @@
 namespace POData\Writers;
 
 use POData\Common\Version;
-use POData\Writers\IODataWriter;
 
 /**
- * Class ODataWriterRegistry
- * @package POData\Writers\Common
+ * Class ODataWriterRegistry.
  */
 class ODataWriterRegistry
 {
 
     /** @var IODataWriter[]  */
-    private $writers = array();
-
+    private $writers = [];
 
     public function register(IODataWriter $writer)
     {
@@ -23,7 +20,7 @@ class ODataWriterRegistry
 
     public function reset()
     {
-        $this->writers = array();
+        $this->writers = [];
     }
 
     /**
@@ -32,17 +29,15 @@ class ODataWriterRegistry
      *
      * @return IODataWriter|null the writer that can handle the give criteria, or null
      */
-    public function getWriter(Version $responseVersion, $contentType) {
+    public function getWriter(Version $responseVersion, $contentType)
+    {
+        foreach ($this->writers as $writer){
 
-        foreach ($this->writers as $writer)
-        {
             if ($writer->canHandle($responseVersion, $contentType)) {
                 return $writer;
             }
         }
-
+}
         return null;
     }
-
-
 }

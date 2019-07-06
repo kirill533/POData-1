@@ -2,18 +2,20 @@
 
 namespace POData\Configuration;
 
+use MyCLabs\Enum\Enum;
+
 /**
- * @method static \POData\Configuration\ProtocolVersion V1
- * @method static \POData\Configuration\ProtocolVersion V2
- * @method static \POData\Configuration\ProtocolVersion V3
+ * @method static ProtocolVersion V1()
+ * @method static ProtocolVersion V2()
+ * @method static ProtocolVersion V3()
  */
-class ProtocolVersion
+class ProtocolVersion extends Enum
 {
     /**
      * Version 1 of the OData protocol.
      */
     const V1 = 1;
-    
+
     /**
      * Version 2 of the OData protocol.
      */

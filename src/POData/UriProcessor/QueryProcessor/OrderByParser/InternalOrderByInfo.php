@@ -4,61 +4,89 @@ namespace POData\UriProcessor\QueryProcessor\OrderByParser;
 
 use POData\Common\Messages;
 use POData\Common\ODataException;
+use POData\Providers\Metadata\ResourceType;
+use POData\Providers\Metadata\Type\IType;
+use POData\Providers\Query\QueryResult;
 
 /**
- * Class InternalOrderByInfo
- * @package POData\UriProcessor\QueryProcessor\OrderByParser
+ * Class InternalOrderByInfo.
  */
 class InternalOrderByInfo
 {
     /**
      * The structure holds information about the navigation properties used in the
-     * orderby clause (if any) and orderby path if IDSQP implementor want to perform
-     * sorting.
+     * orderby clause (if any), and orderby path if IDSQP implementor want to perform sorting.
      *
      * @var OrderByInfo
      */
-    private $_orderByInfo;
+    private $orderByInfo;
+
+    /**
+     * Collection of sub sorter functions corresponding to each orderby path segment.
+     *
+     * @var callable[]
+     */
+    private $subSorterFunctions;
+
+    /**
+     * The top level anonymous sorter function.
+     *
+     * @var callable
+     */
+    private $sorterFunction;
 
     /**
      * This object will be of type of the resource set identified by the request uri.
      *
      * @var mixed
      */
-    private $_dummyObject;
+    private $dummyObject;
 
     /**
-     * Creates new instance of InternalOrderByInfo
+     * The ResourceType for the
+     resource targeted by resource path
+     .
      *
-     * @param OrderByInfo              $orderByInfo        The structure holds
-     *                                                     information about the
-     *                                                     navigation properties
-     *                                                     used in the orderby clause
-     *                                                     (if any) and orderby path
-     *                                                     if IDSQP implementation wants to perform sorting.
-     *
-     *
-     *
-     *
-     *
-     * @param mixed                    $dummyObject        A dummy object of type
-     *                                                     of the resource set
-     *                                                     identified by the
-     *                                                     request uri.
+     * @var ResourceType
      */
-    public function __construct(OrderByInfo $orderByInfo, $dummyObject) {
-        $this->_orderByInfo = $orderByInfo;
-        $this->_dummyObject = $dummyObject;
+    private $resourceType;
+
+    /**
+     * Creates new instance of InternalOrderByInfo.
+     *
+     * @param OrderByInfo  $orderByInfo        The structure holds information about the
+     *                                         navigation properties used in the orderby clause
+     *                                         (if any) and orderby path if IDSQP implementation wants to perform
+     *                                         sorting
+     * @param callable[]   $subSorterFunctions Collection of sub sorter functions corresponding to each orderby path
+     *                                         segment
+     * @param callable     $sorterFunction     The top level anonymous sorter function
+     * @param mixed        $dummyObject        A dummy object of type of the resource set
+     *                                         identified by the request uri
+     * @param ResourceType $resourceType       The ResourceType for the resource targeted by resource path
+     */
+    public function __construct(
+        OrderByInfo $orderByInfo,
+        $subSorterFunctions,
+        callable  $sorterFunction,
+        $dummyObject,
+        ResourceType $resourceType
+    ) {
+        $this->orderByInfo = $orderByInfo;
+        $this->sorterFunction = $sorterFunction;
+        $this->subSorterFunctions = $subSorterFunctions;
+        $this->dummyObject = $dummyObject;
+        $this->resourceType = $resourceType;
     }
 
     /**
-     * Get reference to order information to pe passed to IDSQP implementation calls
+     * Get reference to order information to be passed to IDSQP implementation calls.
      *
      * @return OrderByInfo
      */
     public function getOrderByInfo()
     {
-        return $this->_orderByInfo;
+        return $this->orderByInfo;
     }
 
     /**
@@ -68,7 +96,27 @@ class InternalOrderByInfo
      */
     public function getOrderByPathSegments()
     {
-        return $this->_orderByInfo->getOrderByPathSegments();
+        return $this->orderByInfo->getOrderByPathSegments();
+    }
+
+    /**
+     * Gets reference to the top level sorter function.
+     *
+     * @return callable
+     */
+    public function getSorterFunction()
+    {
+        return $this->sorterFunction;
+    }
+
+    /**
+     * Gets collection of sub sorter functions.
+     *
+     * @return callable[]
+     */
+    public function getSubSorterFunctions()
+    {
+        return $this->subSorterFunctions;
     }
 
     /**
@@ -78,7 +126,17 @@ class InternalOrderByInfo
      */
     public function &getDummyObject()
     {
-        return $this->_dummyObject;
+        return $this->dummyObject;
+    }
+
+    /**
+     * Get resource type this InternalOrderByInfo object points to.
+     *
+     * @return ResourceType
+     */
+    public function getResourceType()
+    {
+        return $this->resourceType;
     }
 
     /**
@@ -86,7 +144,8 @@ class InternalOrderByInfo
      * last object in the page.
      *
      * @param mixed $lastObject entity instance from which skiptoken needs
-     *                          to be built.
+      to be built
+     ** @throws ODataException If reflection exception occurs while accessing property
      *
      * @return string
      *
@@ -103,21 +162,22 @@ class InternalOrderByInfo
             $subPathCount = count($subPathSegments);
             foreach ($subPathSegments as &$subPathSegment) {
                 $isLastSegment = ($index == $subPathCount - 1);
+                $segName = $subPathSegment->getName();
                 try {
-                    $dummyProperty = new \ReflectionProperty(
-                        $currentObject, $subPathSegment->getName()
-                    );
+                    if ($currentObject instanceof QueryResult) {
+                        $currentObject = $currentObject->results;
+                    }
                     $dummyProperty->setAccessible(true);
-                    $currentObject = $dummyProperty->getValue($currentObject);
-                    if (is_null($currentObject)) {
-                            $nextPageLink .= 'null, ';
-                            break;
-                    } else if ($isLastSegment) {
+                    $currentObject = $this->getResourceType()->getPropertyValue($currentObject, $segName);
+                    if (null === $currentObject) {
+                        $nextPageLink .= 'null, ';
+                        break;
+                    } elseif ($isLastSegment) {
                         $type = $subPathSegment->getInstanceType();
-                        // assert($type implements IType)
+                        assert($type instanceof IType);
                         // If this is a string then do utf8_encode to convert
                         // utf8 decoded characters to
-                        // corrospoding utf8 char (e.g. � to í), then do a
+                        // corresponding utf8 char (e.g. � to í), then do a
                         // urlencode to convert í to %C3%AD
                         // urlencode is needed for datetime and guid too
                         // if ($type instanceof String || $type instanceof DateTime
@@ -129,27 +189,24 @@ class InternalOrderByInfo
                         //    $currentObject = urlencode($currentObject);
                         //}
 
-                        // call IType::convertToOData to attach reuqired suffix
-                        // and prepfix.
+                        // call IType::convertToOData to attach required suffix
+                         and prefix.
                         // e.g. $valueM, $valueF, datetime'$value', guid'$value',
                         // '$value' etc..
                         // Also we can think about moving above urlencode to this
-                        // function
+                         function
                         $value = $type->convertToOData($currentObject);
                         $nextPageLink .= $value . ', ';
                     }
                 } catch (\ReflectionException $reflectionException) {
-                    throw ODataException::createInternalServerError(
-                        Messages::internalSkipTokenInfoFailedToAccessOrInitializeProperty(
-                            $subPathSegment->getName()
-                        )
-                    );
+                    $msg = Messages::internalSkipTokenInfoFailedToAccessOrInitializeProperty($segName);
+                    throw ODataException::createInternalServerError($msg);
                 }
 
-                $index++;
+                ++$index;
             }
         }
 
-        return rtrim($nextPageLink, ", ");
+        return rtrim($nextPageLink, ', ');
     }
 }

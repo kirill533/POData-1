@@ -1,15 +1,16 @@
 <?php
 
 namespace POData\UriProcessor\QueryProcessor\ExpandProjectionParser;
+
 use POData\Providers\Metadata\ResourceProperty;
 
 /**
- * Class ProjectionNode
+ * Class ProjectionNode.
  *
  * ExpandProjectionParser will create a 'Projection Tree' from the $expand
- * and/or $select query options, Each path segement in the $expand/$select
- * will be represented by a node in the proejction tree, A path segment in
- * $expand option (which is not appear in expand option) will be represented
+ * and/or $select query options, Each path segment in the $expand/$select
+ * will be represented by a node in the projection tree, A path segment in
+ * $expand option (which does not appear in expand option) will be represented
  * using a type derived from this type 'ExpandedProjectionNode' and a path
  * segment in $select option will be represented using 'ProjectionNode'.
  * The root of the projection tree will be represented using the type
@@ -25,15 +26,13 @@ use POData\Providers\Metadata\ResourceProperty;
  *
  * Note: In the context of library we use the term 'Projection' to represent
  * both expansion and selection.
- *
- * @package POData\UriProcessor\QueryProcessor\ExpandProjectionParser
  */
 class ProjectionNode
 {
     /**
      * The name of the property to be projected. When this node represents a
      * select path segment then this member holds the name of the property to
-     * select, when this node represents an expand path segment then this 
+     * select, when this node represents an expand path segment then this
      * member holds the name of the property (a navigation property) to expand,
      * if this node represents root of the projection tree, this field will be
      * null.
@@ -43,22 +42,22 @@ class ProjectionNode
     protected $propertyName;
 
     /**
-     * The resource type of the property to be projected. if this node 
+     * The resource type of the property to be projected. if this node
      * represents root of the projection tree, this field will be null.
-     *     
+     *
      * @var ResourceProperty
      */
     protected $resourceProperty;
 
     /**
      * Constructs a new instance of ProjectionNode.
-     * 
-     * @param string           $propertyName     Name of the property to 
-     *                                           be projected.
-     * @param ResourceProperty $resourceProperty The resource type of the
-     *                                           property to be projected.
+     *
+     * @param string                $propertyName     Name of the property to
+     *                                                be projected
+     * @param ResourceProperty|null $resourceProperty The resource type of the
+     *                                                property to be projected
      */
-    public function __construct($propertyName, $resourceProperty)
+    public function __construct($propertyName, ResourceProperty $resourceProperty = null)
     {
         $this->propertyName = $propertyName;
         $this->resourceProperty = $resourceProperty;
@@ -67,7 +66,7 @@ class ProjectionNode
     /**
      * Gets name of the property to be projected, if this is root node then
      * name will be null.
-     * 
+     *
      * @return string
      */
     public function getPropertyName()
@@ -78,8 +77,8 @@ class ProjectionNode
     /**
      * Gets reference to the resource property instance for the property to be
      * projected, if this is root node then name will be null.
-     * 
-     * @return ResourceProperty
+     *
+     * @return ResourceProperty|null
      */
     public function getResourceProperty()
     {

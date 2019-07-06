@@ -2,17 +2,18 @@
 
 namespace UnitTests\POData\Writers;
 
-use POData\Common\Version;
-use POData\Common\Url;
+use Mockery as m;
 use POData\Common\MimeTypes;
-use POData\Writers\ODataWriterRegistry;
-use POData\UriProcessor\RequestDescription;
+use POData\Common\Version;
 use POData\Writers\IODataWriter;
 
-use UnitTests\BaseUnitTestCase;
+use PhockitoUnit\PhockitoUnitTestCase;
 use Phockito;
 
-class ODataWriterRegistryTest extends BaseUnitTestCase {
+use POData\Writers\ODataWriterRegistry;
+use UnitTests\POData\TestCase;
+
+class ODataWriterRegistryTest extends TestCase
 
 	/** @var  IODataWriter */
 	protected $mockWriter1;
@@ -20,31 +21,33 @@ class ODataWriterRegistryTest extends BaseUnitTestCase {
 	/** @var  IODataWriter */
 	protected $mockWriter2;
 
-	public function testConstructor()
-	{
-		$registry = new ODataWriterRegistry();
-		//the registry should start empty, so there should be no matches
-		$this->assertNull($registry->getWriter(Version::v1(), MimeTypes::MIME_APPLICATION_JSON));
-	}
+    public function testConstructor()
+    {
+        $registry = new ODataWriterRegistry();
+        //the registry should start empty, so there should be no matches
+        $this->assertNull($registry->getWriter(Version::v1(), MimeTypes::MIME_APPLICATION_JSON));
+    }
 
+    public function testRegister()
+    {
+        $writer1 = m::mock(IODataWriter::class)->makePartial();
+        $writer1->shouldReceive('canHandle')->andReturn(false);
+        $writer2 = m::mock(IODataWriter::class)->makePartial();
+        $writer2->shouldReceive('canHandle')->withArgs([Version::v2(), MimeTypes::MIME_APPLICATION_ATOM])
+            ->andReturn(true);
+        $writer2->shouldReceive('canHandle')->andReturn(false);
 
-	public function testRegister()
-	{
-		$registry = new ODataWriterRegistry();
+        $registry = new ODataWriterRegistry();
 
-		$registry->register($this->mockWriter1);
-		$registry->register($this->mockWriter2);
+        $registry->register($writer1);
+        $registry->register($writer2);
 
-		Phockito::when($this->mockWriter2->canHandle(Version::v2(), MimeTypes::MIME_APPLICATION_ATOM))
-			->return(true);
+        $this->assertEquals($writer2, $registry->getWriter(Version::v2(), MimeTypes::MIME_APPLICATION_ATOM));
 
-		$this->assertEquals($this->mockWriter2, $registry->getWriter(Version::v2(), MimeTypes::MIME_APPLICATION_ATOM));
+        $this->assertNull($registry->getWriter(Version::v1(), MimeTypes::MIME_APPLICATION_ATOM));
 
-		$this->assertNull($registry->getWriter(Version::v1(), MimeTypes::MIME_APPLICATION_ATOM));
-
-		//now clear it, should be no matches
-		$registry->reset();
-		$this->assertNull( $registry->getWriter(Version::v2(), MimeTypes::MIME_APPLICATION_ATOM));
-	}
-
+        //now clear it, should be no matches
+        $registry->reset();
+        $this->assertNull($registry->getWriter(Version::v2(), MimeTypes::MIME_APPLICATION_ATOM));
+    }
 }

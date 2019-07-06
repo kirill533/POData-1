@@ -2,7 +2,6 @@
 
 namespace POData\Common;
 
-
 class MimeTypes
 {
     //MIME type for ATOM bodies
@@ -61,5 +60,4 @@ class MimeTypes
 
     //'json' - constant for MIME JSON subtypes.
     const MIME_JSON_SUBTYPE = 'json';
-
 }

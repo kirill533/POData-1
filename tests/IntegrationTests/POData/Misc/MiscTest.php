@@ -1,38 +1,32 @@
-<?php    
+<?php
+
 /**
- * Note: 
+ * Note:
  * 1. This test case requires the service 'NorthWind' to be
- *    accessed using http://localhost:8086/NorthWind.svc 
+ *    accessed using http://localhost:8086/NorthWind.svc.
  */
-use POData\ObjectModel\ODataBagContent;
-use POData\Common\ODataConstants;
-use POData\Common\Messages;
-use POData\Common\HttpStatus                             ;
-use POData\Common\Url;
-use POData\Common\UrlFormatException;
-use POData\Common\ODataException;
-use POData\OperationContext\ServiceHost;
+use POData\Common\HttpStatus;
 use POData\Common\MimeTypes;
+use POData\Common\ODataConstants;
 use PHPUnit\Framework\TestCase;
 
-
 class TestETag extends TestCase
-{	
+{
     const BASE_SERIVE_URL = 'http://localhost:8089/NorthWind.svc';
 
     protected function setUp()
-    {        
+    {
     }
 
     /**
      * Test content ype header for service document.
      */
-	function testContentTypeHeader_ServiceDocument()
-	{
+    public function testContentTypeHeader_ServiceDocument()
+    {
 
         // Atom service document
         $ch = curl_init();
-        $headers = array();
+        $headers = [];
         curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -44,8 +38,8 @@ class TestETag extends TestCase
 
         // JSON service document
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL  . '?$format=json');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'?$format=json');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -53,20 +47,18 @@ class TestETag extends TestCase
         curl_close($ch);
         $this->assertTrue(array_key_exists('content_type', $info));
         $this->assertEquals($info['content_type'], 'application/json;charset=utf-8');
-            
-
-	}
+    }
 
     /**
-     * Test content type header for metadata
+     * Test content type header for metadata.
      */
-	function testContentTypeHeader_Metadata()
-	{
+    public function testContentTypeHeader_Metadata()
+    {
 
         // Atom metadata document
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/$metadata');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/$metadata');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -77,8 +69,8 @@ class TestETag extends TestCase
 
         // request unsupported content type (metadata cannot be in json format)
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_JSON);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/$metadata');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_JSON];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/$metadata');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -89,19 +81,18 @@ class TestETag extends TestCase
         // Should get error message for unsupported media type in json format
         $this->assertTrue(array_key_exists('content_type', $info));
         $this->assertEquals($info['content_type'], 'application/json');
+    }
 
-	}
-
-	/**
-	 * Test content type of feed response	 
-	 */
-	function testContentType_Feed()
-	{
+    /**
+     * Test content type of feed response.
+     */
+    public function testContentType_Feed()
+    {
 
         // Request feed in atom format
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -112,8 +103,8 @@ class TestETag extends TestCase
 
         // Request feed in json format
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_JSON);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_JSON];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -121,20 +112,18 @@ class TestETag extends TestCase
         curl_close($ch);
         $this->assertTrue(array_key_exists('content_type', $info));
         $this->assertEquals($info['content_type'], 'application/json;charset=utf-8');
+    }
 
-
-	}
-
-	/**
-	 * Test content type of entry response	 
-	 */
-	function testContentType_Entry()
-	{
+    /**
+     * Test content type of entry response.
+     */
+    public function testContentType_Entry()
+    {
 
         // Request feed in atom format
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -145,8 +134,8 @@ class TestETag extends TestCase
 
         // Request feed in json format
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_JSON);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_JSON];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -154,20 +143,18 @@ class TestETag extends TestCase
         curl_close($ch);
         $this->assertTrue(array_key_exists('content_type', $info));
         $this->assertEquals($info['content_type'], 'application/json;charset=utf-8');
+    }
 
-
-	}
-
-	/**
-	 * Test content type of primitive value
-	 */
-	function testContentType_Count_Value()
-	{
+    /**
+     * Test content type of primitive value.
+     */
+    public function testContentType_Count_Value()
+    {
 
         // Request for count
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers/$count');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers/$count');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -178,8 +165,8 @@ class TestETag extends TestCase
 
         // Request for count in json format, this iwll cause service to thow error
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_JSON);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers/$count');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_JSON];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers/$count');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -193,8 +180,8 @@ class TestETag extends TestCase
 
         // Request for count in atom format, this iwll cause service to thow error
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_ATOM);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers/$count');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_ATOM];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers/$count');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -205,20 +192,18 @@ class TestETag extends TestCase
         // Should get error message for unsupported media type in json format
         $this->assertTrue(array_key_exists('content_type', $info));
         $this->assertEquals($info['content_type'], 'application/xml');
+    }
 
-
-	}
-
-	/**
-	 * Test content type for $links response
-	 */
-	function testContentType_Links()
-	{
+    /**
+     * Test content type for $links response.
+     */
+    public function testContentType_Links()
+    {
 
         // Request for count
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')/$links/Orders');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')/$links/Orders');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -229,8 +214,8 @@ class TestETag extends TestCase
 
         // Request for $links in json format, is allowed
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_JSON);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')/$links/Orders');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_JSON];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')/$links/Orders');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -243,8 +228,8 @@ class TestETag extends TestCase
 
         // Request for $links in atom format, does not support
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_ATOM);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')/$links/Orders');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_ATOM];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')/$links/Orders');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -255,20 +240,18 @@ class TestETag extends TestCase
         // Should get error message for unsupported media type in json format
         $this->assertTrue(array_key_exists('content_type', $info));
         $this->assertEquals($info['content_type'], 'application/xml');
+    }
 
-
-	}
-
-	/**
-	 * Test content tyoe for complex value
-	 */
-	function testContentType_Complex()
-	{
+    /**
+     * Test content tyoe for complex value.
+     */
+    public function testContentType_Complex()
+    {
 
         // Request for complex
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')/Address');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')/Address');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -279,8 +262,8 @@ class TestETag extends TestCase
 
         // Request for complex in json format, is allowed
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_JSON);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')/Address');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_JSON];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')/Address');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -293,8 +276,8 @@ class TestETag extends TestCase
 
         // Request for $links in atom format, does not support
         $ch = curl_init();
-        $headers = array(ODataConstants::HTTP_REQUEST_ACCEPT .':'. MimeTypes::MIME_APPLICATION_ATOM);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')/Address');
+        $headers = [ODataConstants::HTTP_REQUEST_ACCEPT.':'.MimeTypes::MIME_APPLICATION_ATOM];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')/Address');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -305,23 +288,21 @@ class TestETag extends TestCase
         // Should get error message for unsupported media type in json format
         $this->assertTrue(array_key_exists('content_type', $info));
         $this->assertEquals($info['content_type'], 'application/xml');
-
-	}
-
+    }
 
     // Test if-Match
-	function testETag_For_Entry1()
-	{
+    public function testETag_For_Entry1()
+    {
 
         // Get ETag of an entry
-        $responseHeaders = get_headers(self::BASE_SERIVE_URL . '/Orders(OrderID=10248)', 1);
+        $responseHeaders = get_headers(self::BASE_SERIVE_URL.'/Orders(OrderID=10248)', 1);
         $this->assertTrue(array_key_exists('ETag', $responseHeaders));
         $eTag = $responseHeaders['ETag'];
 
         //Get the same entry without if-Match or If-None-Match header
         $ch = curl_init();
-        $headers = array();
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Orders(OrderID=10248)');
+        $headers = [];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Orders(OrderID=10248)');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $order_entry1 = curl_exec($ch);
@@ -329,8 +310,8 @@ class TestETag extends TestCase
 
         //Get the same entry with correct if-Match value
         $ch = curl_init();
-        $headers = array('If-Match:' . $eTag);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Orders(OrderID=10248)');
+        $headers = ['If-Match:'.$eTag];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Orders(OrderID=10248)');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $order_entry2 = curl_exec($ch);
@@ -338,39 +319,38 @@ class TestETag extends TestCase
 
         $this->assertNotEmpty($order_entry1);
         $this->assertNotEmpty($order_entry2);
-        $this->assertContains("<id>".self::BASE_SERIVE_URL."/Orders(OrderID=10248)</id>",$order_entry1);
-        $this->assertContains("<id>".self::BASE_SERIVE_URL."/Orders(OrderID=10248)</id>",$order_entry2);
+        $this->assertContains('<id>'.self::BASE_SERIVE_URL.'/Orders(OrderID=10248)</id>', $order_entry1);
+        $this->assertContains('<id>'.self::BASE_SERIVE_URL.'/Orders(OrderID=10248)</id>', $order_entry2);
         $order_entry1 = preg_replace('/<updated>.*<\/updated>/', '', $order_entry1);
         $order_entry2 = preg_replace('/<updated>.*<\/updated>/', '', $order_entry2);
         $this->assertEquals($order_entry1, $order_entry2);
 
         //Try to get the same entry with incorrect if-Match value
         $ch = curl_init();
-        $headers = array('If-Match:' . 'ABC');
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Orders(OrderID=10248)');
+        $headers = ['If-Match:'.'ABC'];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Orders(OrderID=10248)');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
         curl_close($ch);
         $pos = strpos($result, '<message>The etag value in the request header does not match with the current etag value of the object.</message>');
         $this->assertTrue($pos !== false);
+    }
 
-	}
-
-	//test If-None-Match
-	function testETag_For_Entry2()
-	{
+    //test If-None-Match
+    public function testETag_For_Entry2()
+    {
 
         // Get ETag of an entry
-        $responseHeaders = get_headers(self::BASE_SERIVE_URL . '/Orders(OrderID=10248)', 1);
+        $responseHeaders = get_headers(self::BASE_SERIVE_URL.'/Orders(OrderID=10248)', 1);
         $this->assertTrue(array_key_exists('ETag', $responseHeaders));
         $eTag = $responseHeaders['ETag'];
 
         // Server will give entry only if eTag does not match, we are trying wih
         // matching etag so server should not give response body.
         $ch = curl_init();
-        $headers = array('If-None-Match:' . $eTag);
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Orders(OrderID=10248)');
+        $headers = ['If-None-Match:'.$eTag];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Orders(OrderID=10248)');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -378,18 +358,16 @@ class TestETag extends TestCase
         curl_close($ch);
         $this->assertTrue(array_key_exists('http_code', $info));
         $this->assertEquals($info['http_code'], HttpStatus::CODE_NOT_MODIFIED);
+    }
 
-
-	}
-
-	// eTag headers are not allowed if the requested entry doed not have etag property defined
-	function testETag_For_Entry3()
-	{
+    // eTag headers are not allowed if the requested entry doed not have etag property defined
+    public function testETag_For_Entry3()
+    {
 
         // If-Match/If-None-Match allowed only for entry with etag properties
         $ch = curl_init();
-        $headers = array('If-None-Match:' . 'AAA');
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers(\'ALFKI\')');
+        $headers = ['If-None-Match:'.'AAA'];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers(\'ALFKI\')');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -397,18 +375,16 @@ class TestETag extends TestCase
         curl_close($ch);
         $pos = strpos($result, '<message>If-Match or If-None-Match headers cannot ');
         $this->assertTrue($pos !== false);
+    }
 
-
-	}
-
-	// ETag headrs are not allowed for feed
-	function testETag_For_Feed()
-	{
+    // ETag headrs are not allowed for feed
+    public function testETag_For_Feed()
+    {
 
         // If-Match/If-None-Match allowed only for entry with etag properties
         $ch = curl_init();
-        $headers = array('If-None-Match:' . 'AAA');
-        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL . '/Customers');
+        $headers = ['If-None-Match:'.'AAA'];
+        curl_setopt($ch, CURLOPT_URL, self::BASE_SERIVE_URL.'/Customers');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($ch);
@@ -416,16 +392,14 @@ class TestETag extends TestCase
         curl_close($ch);
         $pos = strpos($result, '<message>If-Match or If-None-Match HTTP headers cannot be specified since the URI \'http');
         $this->assertTrue($pos !== false);
+    }
 
-	}
+    public function in_array($haystack)
+    {
+        return in_array(strtolower($needle), array_map('strtolower', array_keys($haystack)));
+    }
 
-	function in_array($haystack)
-	{
-	    return (in_array(strtolower($needle), array_map('strtolower', array_keys($haystack)))) ;
-	}
-
-	protected function tearDown()
-	{
-
-	}
+    protected function tearDown()
+    {
+    }
 }

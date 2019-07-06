@@ -1,24 +1,26 @@
 <?php
+
 namespace POData\OperationContext;
 
-use POData\OperationContext\IHTTPRequest;
-use POData\OperationContext\IOperationContext;
 use POData\OperationContext\Web\OutgoingResponse;
-class SimpleOperationContextAdapter implements IOperationContext
+
+class SimpleOperativeContext implements IOperationContext
 {
     /**
-     * @var RequestAdapter;
+     * @var SimpleRequestAdapter;
      */
     protected $request;
     protected $response;
+
     /**
-     * @param yii\base\Request $request
+     * @param SimpleRequestAdapter $request
      */
     public function __construct($request)
     {
-        $this->request = new RequestAdapter($request);
+        $this->request = new SimpleRequestAdapter($request);
         $this->response = new OutgoingResponse();
     }
+
     /**
      * Gets the Web request context for the request being sent.
      *
@@ -28,6 +30,7 @@ class SimpleOperationContextAdapter implements IOperationContext
     {
         return $this->response;
     }
+
     /**
      * Gets the Web request context for the request being received.
      *
