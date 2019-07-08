@@ -33,7 +33,7 @@ class MetadataWriterTest extends TestCase
 		$northWindMetadata = NorthWindMetadata::Create();
         $configuration = new ServiceConfiguration($northWindMetadata);
         $configuration->setEntitySetAccessRule("*", EntitySetRights::ALL);
-        $configuration->setMaxDataServiceVersion(ProtocolVersion::V3);
+        $configuration->setMaxDataServiceVersion(ProtocolVersion::V3());
 
         $providersWrapper = new ProvidersWrapper(
             $northWindMetadata, //IMetadataProvider implementation

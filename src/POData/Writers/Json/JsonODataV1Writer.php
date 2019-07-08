@@ -2,6 +2,7 @@
 
 namespace POData\Writers\Json;
 
+use POData\ObjectModel\ODataCategory;
 use POData\ObjectModel\ODataFeed;
 use POData\ObjectModel\ODataEntry;
 use POData\ObjectModel\ODataURLCollection;
@@ -161,7 +162,7 @@ class JsonODataV1Writer implements IODataWriter
             $this->writeLink($link);
         }
 
-        $this->writeCustomProperties($entry->customProperties);
+        //$this->writeCustomProperties($entry->customProperties);
 
         $this->writeProperties($entry->propertyContent);
 

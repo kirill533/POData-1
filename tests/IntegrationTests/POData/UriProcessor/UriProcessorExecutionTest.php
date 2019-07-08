@@ -5,11 +5,10 @@ use POData\OperationContext\ServiceHost;
 use POData\Common\Url;
 use POData\Common\Version;
 use UnitTests\POData\Facets\NorthWind2\DataServiceHost1;
+use UnitTests\POData\TestCase;
 
 //require_once(dirname(__FILE__) . "/./../Resources/NorthWind2/NorthWindDataService.php");
 //require_once(dirname(__FILE__) . "/./../Resources/NorthWind2/ServiceHostTestFake.php");
-
-use UnitTests\POData\Facets\NorthWind2\DataServiceHost1;
 
 class UriProcessorExecutionTest extends TestCase
 {

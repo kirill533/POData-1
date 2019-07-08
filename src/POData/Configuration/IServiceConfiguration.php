@@ -155,10 +155,10 @@ interface IServiceConfiguration
     /**
      * Sets Maximum version of the response sent by server.
      *
-     * @param  ProtocolVersion $version The version to set
+     * @param  ProtocolVersion|int $version The version to set
      * @return void
      */
-    public function setMaxDataServiceVersion(ProtocolVersion $version);
+    public function setMaxDataServiceVersion($version);
 
     /**
      * Specify whether to validate the ETag or not.

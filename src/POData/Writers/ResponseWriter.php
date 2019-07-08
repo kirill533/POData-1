@@ -36,6 +36,15 @@ class ResponseWriter
         if ($targetKind == TargetKind::METADATA()) {
             // /$metadata
             $responseBody = $service->getProvidersWrapper()->getMetadataXML();
+        } elseif (TargetKind::SERVICE_DIRECTORY() == $targetKind) {
+            $writer = $service->getODataWriterRegistry()->getWriter(
+                $request->getResponseVersion(),
+                $responseContentType
+            );
+            if (null === $writer) {
+                throw new \Exception(Messages::noWriterToHandleRequest());
+            }
+            $responseBody = $writer->writeServiceDocument($service->getProvidersWrapper())->getOutput();
         } else if ($targetKind == TargetKind::PRIMITIVE_VALUE()
             && $responseContentType != MimeTypes::MIME_APPLICATION_OCTETSTREAM) {
 	        //This second part is to exclude binary properties
@@ -75,7 +84,8 @@ class ResponseWriter
             if (1 < $numSeg && '$links' == $segments[$numSeg-2]->getIdentifier()) {
                 if (null !== $entityModel) {
                     throw new \Exception(Messages::modelPayloadOnLinkModification());
-            }} else {
+                }
+            } else {
                 assert(null !== $entityModel, 'EntityModel must not be null when not manipulating links');
             }
 

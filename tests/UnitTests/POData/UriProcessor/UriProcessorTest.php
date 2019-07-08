@@ -829,7 +829,7 @@ class UriProcessorTest extends TestCase
     */
 }
 
-class UriProcessorTest2 extends BaseUnitTestCase
+class UriProcessorTest2 extends \UnitTests\BaseUnitTestCase
 {
 
     public function setUp(){
@@ -3050,7 +3050,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
     {
 
 
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $requestURI = new Url('http://host.com/data.svc/Collection');
         Phockito::when($this->mockServiceHost->getAbsoluteRequestUri())
@@ -3094,7 +3094,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
 
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1); //because this is V1 and $count requires V2, this will fail
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1()); //because this is V1 and $count requires V2, this will fail
 
 
         try{
@@ -3135,7 +3135,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return($requestURI);
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3175,7 +3175,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return($requestURI);
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3242,7 +3242,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return("allpages");
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1());
 
         try{
             UriProcessor::process($this->mockService);
@@ -3268,7 +3268,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return("none");
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3313,7 +3313,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return("allpages");
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3358,7 +3358,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return("allpages");
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3395,7 +3395,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
     public function testProcessRequestForRelatedCollection()
     {
 
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $requestURI = new Url('http://host.com/data.svc/Collection(0)/RelatedCollection');
         Phockito::when($this->mockServiceHost->getAbsoluteRequestUri())
@@ -3435,7 +3435,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return($requestURI);
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3476,7 +3476,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return($requestURI);
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3521,7 +3521,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return("allpages");
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3565,7 +3565,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return("allpages");
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 
@@ -3612,7 +3612,7 @@ class UriProcessorTest2 extends BaseUnitTestCase
             ->return("none");
 
         $this->fakeServiceConfig->setAcceptCountRequests(true);
-        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1);
+        $this->fakeServiceConfig->setMaxDataServiceVersion(ProtocolVersion::V1());
 
         $uriProcessor = UriProcessor::process($this->mockService);
 

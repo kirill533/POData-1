@@ -184,8 +184,6 @@ class ExpressionLexer
                     $this->parseIdentifier();
                     $currentIdentifier = substr($this->text, $tokenPos + 1, $this->textPos - $tokenPos - 1);
 
-
-
                     if (self::isInfinityLiteralDouble($currentIdentifier)) {
                         $t = ExpressionTokenId::DOUBLE_LITERAL;
                         break;
@@ -194,12 +192,9 @@ class ExpressionLexer
                         break;
                     }
 
-                    // If it looked like '-INF' but wasn't we'll rewind and fall
-                     through to a simple '-' token.
+                    // If it looked like '-INF' but wasn't we'll rewind and fall through to a simple '-' token.
                 }
-                    $this->setTextPos($tokenPos);
-
-
+                $this->setTextPos($tokenPos);
                 $this->nextChar();
                 $t = ExpressionTokenId::MINUS;
                 break;

@@ -541,7 +541,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this and see if it still applies
         * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
-        QueryType::ENTITIES,
+        QueryType::ENTITIES(),
         $this->mockResourceSet,
         $this->mockFilterInfo,
         $orderBy,
@@ -555,7 +555,7 @@ class ProvidersWrapperTest extends TestCase
         $wrapper = $this->getMockedWrapper();
 
         $actual = $wrapper->getResourceSet(
-            QueryType::ENTITIES,
+            QueryType::ENTITIES(),
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -573,7 +573,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this and see if it still applies
         * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
-        QueryType::ENTITIES,
+        QueryType::ENTITIES(),
         $this->mockResourceSet,
         $this->mockFilterInfo,
         $orderBy,
@@ -588,7 +588,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getResourceSet(
-                QueryType::ENTITIES,
+                QueryType::ENTITIES(),
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -617,7 +617,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this and see if it still applies
         * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
-        QueryType::COUNT,
+        QueryType::COUNT(),
         $this->mockResourceSet,
         $this->mockFilterInfo,
         $orderBy,
@@ -631,7 +631,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getResourceSet(
-                QueryType::COUNT,
+                QueryType::COUNT(),
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -641,7 +641,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -660,7 +660,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this and see if it still applies
          * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
-            QueryType::COUNT,
+            QueryType::COUNT(),
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -673,7 +673,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getResourceSet(
-                QueryType::COUNT,
+                QueryType::COUNT(),
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -682,7 +682,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getResourceSet', QueryType::COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getResourceSet', QueryType::COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -699,8 +699,9 @@ class ProvidersWrapperTest extends TestCase
         //Because the provider handles paging and this request needs a count, the count must be numeric
         $this->mockQueryProvider->shouldReceive('handlesOrderedPaging')->andReturn(true);
 
-        Phockito::when($this->mockQueryProvider->getResourceSet(
-            QueryType::ENTITIES_WITH_COUNT,
+        /* TODO: Audit this and see if it still applies
+         * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
+            QueryType::COUNT(),
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -713,7 +714,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getResourceSet(
-                QueryType::ENTITIES_WITH_COUNT,
+                QueryType::ENTITIES_WITH_COUNT(),
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -722,7 +723,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES_WITH_COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES_WITH_COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -742,7 +743,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this and see if it still applies
          * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
-            QueryType::ENTITIES_WITH_COUNT,
+            QueryType::ENTITIES_WITH_COUNT(),
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -755,7 +756,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getResourceSet(
-                QueryType::ENTITIES_WITH_COUNT,
+                QueryType::ENTITIES_WITH_COUNT(),
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -764,7 +765,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES_WITH_COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES_WITH_COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -781,7 +782,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this and see if it still applies
          * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
-            QueryType::ENTITIES,
+            QueryType::ENTITIES(),
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -794,7 +795,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getResourceSet(
-                QueryType::ENTITIES,
+                QueryType::ENTITIES(),
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -803,7 +804,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -822,7 +823,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this and see if it still applies
          * $this->mockQueryProvider->shouldReceive('getResourceSet')->withArgs([
-            QueryType::ENTITIES_WITH_COUNT,
+            QueryType::ENTITIES_WITH_COUNT(),
             $this->mockResourceSet,
             $this->mockFilterInfo,
             $orderBy,
@@ -836,7 +837,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getResourceSet(
-                QueryType::ENTITIES_WITH_COUNT,
+                QueryType::ENTITIES_WITH_COUNT(),
                 $this->mockResourceSet,
                 $this->mockFilterInfo,
                 $orderBy,
@@ -845,7 +846,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES_WITH_COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getResourceSet', QueryType::ENTITIES_WITH_COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -863,7 +864,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this to see if it still works
         $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
-            QueryType::ENTITIES,
+            QueryType::ENTITIES(),
             $this->mockResourceSet,
             $fakeSourceEntity,
             $this->mockResourceSet2,
@@ -879,7 +880,7 @@ class ProvidersWrapperTest extends TestCase
         $wrapper = $this->getMockedWrapper();
 
         $actual = $wrapper->getRelatedResourceSet(
-            QueryType::ENTITIES,
+            QueryType::ENTITIES(),
             $this->mockResourceSet,
             $fakeSourceEntity,
             $this->mockResourceSet2,
@@ -902,7 +903,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this to see if it still works
         $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
-        QueryType::ENTITIES,
+        QueryType::ENTITIES(),
         $this->mockResourceSet,
         $fakeSourceEntity,
         $this->mockResourceSet2,
@@ -919,7 +920,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getRelatedResourceSet(
-                QueryType::ENTITIES,
+                QueryType::ENTITIES(),
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -952,8 +953,9 @@ class ProvidersWrapperTest extends TestCase
 
         $fakeSourceEntity = new \stdClass();
 
-        Phockito::when($this->mockQueryProvider->getRelatedResourceSet(
-            QueryType::COUNT,
+        /* TODO: Audit this to see if it still works
+        $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
+        QueryType::ENTITIES(),
             $this->mockResourceSet,
             $fakeSourceEntity,
             $this->mockResourceSet2,
@@ -962,13 +964,15 @@ class ProvidersWrapperTest extends TestCase
             $orderBy,
             $top,
             $skip
-        ))->return($fakeQueryResult);
+        ])->andReturn($fakeQueryResult); */
+
+        $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->andReturn($fakeQueryResult);
 
         $wrapper = $this->getMockedWrapper();
 
         try {
             $wrapper->getRelatedResourceSet(
-                QueryType::COUNT,
+                QueryType::COUNT(),
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -980,7 +984,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -1001,7 +1005,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this to see if it still works
         $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
-        QueryType::COUNT,
+        QueryType::COUNT(),
         $this->mockResourceSet,
         $fakeSourceEntity,
         $this->mockResourceSet2,
@@ -1018,7 +1022,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getRelatedResourceSet(
-                QueryType::COUNT,
+                QueryType::COUNT(),
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -1030,7 +1034,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getRelatedResourceSet', QueryType::COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getRelatedResourceSet', QueryType::COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -1051,7 +1055,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this to see if it still works
         $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
-        QueryType::ENTITIES_WITH_COUNT,
+        QueryType::ENTITIES_WITH_COUNT(),
         $this->mockResourceSet,
         $fakeSourceEntity,
         $this->mockResourceSet2,
@@ -1068,7 +1072,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getRelatedResourceSet(
-                QueryType::ENTITIES_WITH_COUNT,
+                QueryType::ENTITIES_WITH_COUNT(),
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -1080,7 +1084,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES_WITH_COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultCountMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES_WITH_COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -1102,7 +1106,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this to see if it still works
         $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
-        QueryType::ENTITIES_WITH_COUNT,
+        QueryType::ENTITIES_WITH_COUNT(),
         $this->mockResourceSet,
         $fakeSourceEntity,
         $this->mockResourceSet2,
@@ -1119,7 +1123,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getRelatedResourceSet(
-                QueryType::ENTITIES_WITH_COUNT,
+                QueryType::ENTITIES_WITH_COUNT(),
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -1131,7 +1135,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES_WITH_COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES_WITH_COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -1150,7 +1154,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this to see if it still works
         $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
-        QueryType::ENTITIES,
+        QueryType::ENTITIES(),
         $this->mockResourceSet,
         $fakeSourceEntity,
         $this->mockResourceSet2,
@@ -1167,7 +1171,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getRelatedResourceSet(
-                QueryType::ENTITIES,
+                QueryType::ENTITIES(),
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -1179,7 +1183,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }
@@ -1200,7 +1204,7 @@ class ProvidersWrapperTest extends TestCase
 
         /* TODO: Audit this to see if it still works
         $this->mockQueryProvider->shouldReceive('getRelatedResourceSet')->withArgs([
-        QueryType::ENTITIES_WITH_COUNT,
+        QueryType::ENTITIES_WITH_COUNT(),
         $this->mockResourceSet,
         $fakeSourceEntity,
         $this->mockResourceSet2,
@@ -1217,7 +1221,7 @@ class ProvidersWrapperTest extends TestCase
 
         try {
             $wrapper->getRelatedResourceSet(
-                QueryType::ENTITIES_WITH_COUNT,
+                QueryType::ENTITIES_WITH_COUNT(),
                 $this->mockResourceSet,
                 $fakeSourceEntity,
                 $this->mockResourceSet2,
@@ -1229,7 +1233,7 @@ class ProvidersWrapperTest extends TestCase
             );
             $this->fail('expected exception not thrown');
         } catch (ODataException $ex) {
-            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES_WITH_COUNT), $ex->getMessage());
+            $this->assertEquals(Messages::queryProviderResultsMissing('IQueryProvider::getRelatedResourceSet', QueryType::ENTITIES_WITH_COUNT()), $ex->getMessage());
             $this->assertEquals(500, $ex->getStatusCode());
         }
     }

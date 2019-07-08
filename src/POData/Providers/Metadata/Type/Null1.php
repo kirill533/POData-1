@@ -5,10 +5,9 @@ namespace POData\Providers\Metadata\Type;
 use POData\Common\NotImplementedException;
 
 /**
- * Class VoidType
- * @package POData\Providers\Metadata\Type
+ * Class Null1.
  */
-class VoidType implements IType
+class Null1 implements IType
 {
     /**
      * Gets the type code
@@ -18,20 +17,22 @@ class VoidType implements IType
      */
     public function getTypeCode()
     {
-        return TypeCode::VOID;
+        return TypeCode::NULL1;
     }
 
     /**
-     * Checks this type (Void) is compatible with another type
+     * Checks this type (Null) is compatible with another type
      * Note: implementation of IType::isCompatibleWith.
      *
      * @param IType $type Type to check compatibility
      *
-     * @return bool
+     * @throws NotImplementedException
+     *
+     * @return NoType
      */
     public function isCompatibleWith(IType $type)
     {
-        return TypeCode::VOID == $type->getTypeCode();
+        throw new NotImplementedException();
     }
 
     /**
@@ -42,13 +43,17 @@ class VoidType implements IType
      * @param string &$outValue The stripped form of $value that can
      *                          be used in PHP expressions
      *
-     * @throws NotImplementedException
-     * @return NoType
+     * @return bool
      */
     public function validate($value, &$outValue)
     {
-        //No EDM void primitive type
-        throw new NotImplementedException();
+        if (0 != strcmp($value, 'null')) {
+            return false;
+        }
+
+        $outValue = $value;
+
+        return true;
     }
 
     /**
@@ -59,26 +64,29 @@ class VoidType implements IType
      */
     public function getFullTypeName()
     {
-        return 'System.Void';
+        return 'System.NULL';
     }
 
     /**
-     * Converts the given string value to void type.
+     * Converts the given string value to null type.
      *
      * @param string $stringValue value to convert
      *
-     * @throws NotImplementedException
-     * @return NoType
+     * @return string|null
      */
     public function convert($stringValue)
     {
-        throw new NotImplementedException();
+        if (0 == strcmp($stringValue, 'null')) {
+            return null;
+        }
+
+        return $stringValue;
     }
 
     /**
      * Convert the given value to a form that can be used in OData uri.
      *
-     * @param string $value value to convert to OData
+     * @param mixed $value value to convert
      *
      * @throws NotImplementedException
      * @return NoType

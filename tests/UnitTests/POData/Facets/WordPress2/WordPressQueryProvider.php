@@ -89,7 +89,7 @@ class WordPressQueryProvider implements IQueryProvider
      * @return QueryResult
      */
     public function getResourceSet(
-        QueryType $queryType,
+        $queryType,
         ResourceSet $resourceSet,
         $filterInfo = null,
         $orderBy = null,

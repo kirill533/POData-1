@@ -2,7 +2,6 @@
 
 namespace UnitTests\POData\Common;
 
-use Doctrine\Common\Annotations\Annotation\Target;
 use Mockery as m;
 use POData\Common\MimeTypes;
 use POData\Common\ODataConstants;
@@ -12,17 +11,10 @@ use POData\OperationContext\ServiceHost;
 use POData\UriProcessor\RequestDescription;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind;
 use POData\UriProcessor\UriProcessor;
-use POData\Common\ODataConstants;
-use POData\Common\MimeTypes;
-use POData\OperationContext\ServiceHost;
-use POData\Common\Version;
 use UnitTests\POData\BaseServiceDummy;
-use UnitTests\POData\TestCase;
-use PhockitoUnit\PhockitoUnitTestCase;
-use Phockito;
 
 
-class BaseServiceGetResponseContentTest extends PhockitoUnitTestCase {
+class BaseServiceGetResponseContentTest extends \UnitTests\POData\TestCase {
 
 	/** @var  RequestDescription */
 	protected $mockRequest;

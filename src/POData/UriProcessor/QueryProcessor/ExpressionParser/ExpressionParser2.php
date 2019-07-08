@@ -8,7 +8,6 @@ use POData\Providers\Expression\IExpressionProvider;
 use POData\Providers\Expression\PHPExpressionProvider;
 use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\Type\Boolean;
-use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\ResourceTypeKind;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\AbstractExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ArithmeticExpression;

@@ -14,14 +14,15 @@ use POData\Providers\Metadata\Type\DateTime;
 use POData\Providers\Metadata\Type\Decimal;
 use POData\Providers\Metadata\Type\Double;
 use POData\Providers\Metadata\Type\Guid;
-use POData\Providers\Metadata\Type\Binary;
+use POData\Providers\Metadata\Type\Int32;
+use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\Null1;
 use POData\Providers\Metadata\Type\INavigationType;
+use POData\Providers\Metadata\Type\Single;
+use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\TypeCode;
 use POData\Providers\Metadata\Type\IType;
-use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\ResourceSet;
-use POData\Providers\Metadata\ResourcePropertyKind;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\AbstractExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ArithmeticExpression;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ConstantExpression;
@@ -406,7 +407,8 @@ class ExpressionParser
 
     /**
      * Parse Sub expression.
-     ** @throws ODataException
+     *
+     * @throws ODataException
      * @return AbstractExpression
      */
     private function parseParenExpression()
@@ -474,7 +476,6 @@ class ExpressionParser
             );
         }
 
-        /*
         if ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCESET_REFERENCE) {
             throw ODataException::createSyntaxError(
                 Messages::expressionParserEntityCollectionNotAllowedInFilter(
@@ -484,17 +485,16 @@ class ExpressionParser
                 )
             );
         }
-        */
 
         $exp = new PropertyAccessExpression($resourceProperty, $parentExpression);
         $this->lexer->nextToken();
+
         return $exp;
     }
 
     /**
      * Try to parse an identifier which is followed by an open bracket as an astoria URI function call.
      *
-
      * @throws ODataException
      *
      * @return FunctionCallExpression
@@ -516,7 +516,8 @@ class ExpressionParser
 
     /**
      * Start parsing argument list of a function-call.
-     ** @throws ODataException
+     *
+     * @throws ODataException
      * @return array<AbstractExpression>
      */
     private function parseArgumentList()
@@ -526,8 +527,7 @@ class ExpressionParser
         }
 
         $this->lexer->nextToken();
-        $args
-            = $this->getCurrentToken()->Id != ExpressionTokenId::CLOSEPARAM
+        $args = $this->getCurrentToken()->Id != ExpressionTokenId::CLOSEPARAM
              ? $this->parseArguments() : [];
         if ($this->getCurrentToken()->Id != ExpressionTokenId::CLOSEPARAM) {
             throw ODataException::createSyntaxError('Close parenthesis expected.');
@@ -563,7 +563,6 @@ class ExpressionParser
      *
      * @param IType $targetType Expected type of the current literal
      *
-
      * @throws ODataException
      *
      * @return ConstantExpression
@@ -597,7 +596,7 @@ class ExpressionParser
     {
         $this->lexer->nextToken();
 
-        return new ConstantExpression(null, new NullType());
+        return new ConstantExpression(null, new Null1());
     }
 
     /**
@@ -619,7 +618,6 @@ class ExpressionParser
      * @param ExpressionTokenId $expressionTokenId Token to check
      *                                             with current token
      *
-
      * @throws ODataException
      */
     private function validateToken($expressionTokenId)
@@ -674,7 +672,10 @@ class ExpressionParser
         // be converted to language specific function call by expression
         // provider
         $string = new StringType();
-        if ($left->typeIs($string) && $right->typeIs($string) && !in_array($expressionToken->Text, [ODataConstants::KEYWORD_EQUAL, ODataConstants::KEYWORD_NOT_EQUAL])) {
+        if ($left->typeIs($string) && $right->typeIs($string)/*
+            && !in_array($expressionToken->Text,
+                [ODataConstants::KEYWORD_EQUAL, ODataConstants::KEYWORD_NOT_EQUAL])*/
+        ) {
             $strcmpFunctions = FunctionDescription::stringComparisonFunctions();
             $left = new FunctionCallExpression($strcmpFunctions[0], [$left, $right]);
             $right = new ConstantExpression(0, new Int32());
@@ -701,7 +702,7 @@ class ExpressionParser
             $right = new ConstantExpression(true, new Boolean());
         }
 
-        $null = new NullType();
+        $null = new Null1();
         if ($left->typeIs($null) || $right->typeIs($null)) {
             // If the end user is responsible for implementing IExpressionProvider
             // then the sub-tree for a nullability check would be:
@@ -723,8 +724,7 @@ class ExpressionParser
             //                       |- Signature => bool (typeof(CustomerID))
             //                       |- args => {CustomerID}
 
-            //
-              CustomerID ne null
+            //  CustomerID ne null
             //  ==================
 
             //              UnaryExpression (not)
@@ -740,15 +740,12 @@ class ExpressionParser
                 switch ($expressionToken->Text) {
                     case ODataConstants::KEYWORD_EQUAL:
                         return new FunctionCallExpression($isNullFunctionDescription, [$arg]);
-
-
                     case ODataConstants::KEYWORD_NOT_EQUAL:
                         return new UnaryExpression(
                             new FunctionCallExpression($isNullFunctionDescription, [$arg]),
                             ExpressionType::NOT_LOGICAL(),
                             new Boolean()
                         );
-
                 }
             }
         }

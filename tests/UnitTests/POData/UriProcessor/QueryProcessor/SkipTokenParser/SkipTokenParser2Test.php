@@ -16,8 +16,6 @@ use UnitTests\POData\TestCase;
 use PhockitoUnit\PhockitoUnitTestCase;
 use Phockito;
 
-use UnitTests\POData\TestCase;
-
 class SkipTokenParser2Test extends TestCase
 {
     /** @var IQueryProvider */

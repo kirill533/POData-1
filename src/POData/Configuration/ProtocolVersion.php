@@ -14,15 +14,15 @@ class ProtocolVersion extends Enum
     /**
      * Version 1 of the OData protocol.
      */
-    const V1 = 1;
+    const V1 = '1';
 
     /**
      * Version 2 of the OData protocol.
      */
-    const V2 = 2;
+    const V2 = '2';
 
     /**
      * Version 3 of the OData protocol.
      */
-    const V3 = 3;
+    const V3 = '3';
 }

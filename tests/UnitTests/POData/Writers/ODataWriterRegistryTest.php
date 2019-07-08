@@ -14,7 +14,7 @@ use POData\Writers\ODataWriterRegistry;
 use UnitTests\POData\TestCase;
 
 class ODataWriterRegistryTest extends TestCase
-
+{
 	/** @var  IODataWriter */
 	protected $mockWriter1;
 

@@ -15,9 +15,6 @@ use POData\ObjectModel\ODataBagContent;
 use POData\ObjectModel\ODataProperty;
 use POData\ObjectModel\ODataMediaLink;
 
-use POData\Common\MimeTypes;
-use POData\Common\Version;
-use POData\Common\ODataConstants;
 use POData\Common\Messages;
 use POData\Common\ODataException;
 use POData\Common\InvalidOperationException;
@@ -184,6 +181,6 @@ class JsonODataV2Writer extends JsonODataV1Writer
 
 
         $this->writer->endScope();
-    }}
+    }
 
 }

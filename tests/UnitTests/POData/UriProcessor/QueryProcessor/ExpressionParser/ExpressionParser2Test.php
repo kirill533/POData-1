@@ -8,7 +8,6 @@ use POData\Providers\Metadata\ResourceProperty;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionParser2;
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use UnitTests\POData\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class ExpressionParser2Test extends TestCase
 {

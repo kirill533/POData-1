@@ -12,10 +12,12 @@ use POData\ObjectModel\ODataFeed;
 use POData\ObjectModel\ODataLink;
 use POData\ObjectModel\ODataProperty;
 use POData\ObjectModel\ODataMediaLink;
+use POData\ObjectModel\ODataPropertyContent;
+use POData\ObjectModel\ODataTitle;
+use POData\ObjectModel\ODataURL;
+use POData\ObjectModel\ODataURLCollection;
+use POData\Providers\ProvidersWrapper;
 use POData\Writers\Json\JsonWriter;
-use POData\Common\Version;
-use POData\Common\ODataConstants;
-use POData\Common\MimeTypes;
 use POData\Common\Messages;
 use POData\Common\ODataException;
 use POData\Common\InvalidOperationException;
@@ -353,7 +355,7 @@ class JsonLightODataWriter extends JsonODataV2Writer
      * @return JsonLightODataWriter
      */
     public function writeServiceDocument(ProvidersWrapper $providers) {
-        $writer = $this->_writer;
+        $writer = $this->writer;
         $writer
             ->startObjectScope() // {
                 ->writeName("odata.metadata")

@@ -228,7 +228,6 @@ class OrderByParser
                     }
                 } elseif ($resourceProperty->getKind() == ResourcePropertyKind::RESOURCESET_REFERENCE
                     || $resourceProperty->getKind() == ResourcePropertyKind::RESOURCE_REFERENCE
-                    || $resourceProperty->getKind() == ResourcePropertyKind::KEY_RESOURCE_REFERENCE
                 ) {
                     $this->assertion($currentNode instanceof OrderByRootNode || $currentNode instanceof OrderByNode);
                     $resourceSetWrapper = $currentNode->getResourceSetWrapper();
@@ -258,7 +257,6 @@ class OrderByParser
                     }
 
                     $resourceSetWrapper->checkResourceSetRightsForRead(true);
-                    /*
                     if ($isLastSegment) {
                         throw ODataException::createBadRequestError(
                             Messages::orderByParserSortByNavigationPropertyIsNotAllowed(
@@ -266,7 +264,6 @@ class OrderByParser
                             )
                         );
                     }
-                    */
 
                     $ancestors[] = $orderBySubPathSegment;
                 } elseif ($resourceProperty->isKindOf(ResourcePropertyKind::COMPLEX_TYPE)) {
@@ -287,7 +284,7 @@ class OrderByParser
 
                 $node = $currentNode->findNode($orderBySubPathSegment);
                 if (null === $node) {
-                    if ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE) || $resourceProperty->isKindOf(ResourcePropertyKind::KEY_RESOURCE_REFERENCE)) {
+                    if ($resourceProperty->isKindOf(ResourcePropertyKind::PRIMITIVE)) {
                         $node = new OrderByLeafNode(
                             $orderBySubPathSegment,
                             $resourceProperty,
@@ -366,7 +363,8 @@ class OrderByParser
      *
      * @param array<array> $orderByPaths The orderby paths
      *
-     * @throws ODataException If parser finds an inconsistent-tree                         state, throws unexpected state error*
+     * @throws ODataException If parser finds an inconsistent-tree state, throws unexpected state error
+     *
      * @return OrderByInfo|null
      */
     private function createOrderInfo($orderByPaths)
@@ -481,12 +479,10 @@ class OrderByParser
     }
 
     /**
-     * Assert that the given condition is true, if false throw
-      ODataException for unexpected state.
+     * Assert that the given condition is true, if false throw ODataException for unexpected state.
      *
      * @param bool $condition The condition to assert
      *
-
      * @throws ODataException
      */
     private function assertion($condition)

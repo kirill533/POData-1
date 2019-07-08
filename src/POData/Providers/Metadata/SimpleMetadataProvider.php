@@ -6,16 +6,6 @@ use AlgoWeb\ODataMetadata\MetadataManager;
 use AlgoWeb\ODataMetadata\MetadataV3\edm\TComplexTypeType;
 use AlgoWeb\ODataMetadata\MetadataV3\edm\TEntityTypeType;
 use Illuminate\Support\Str;
-use POData\Providers\Metadata\ResourceStreamInfo;
-use POData\Providers\Metadata\ResourceAssociationSetEnd;
-use POData\Providers\Metadata\ResourceAssociationSet;
-use POData\Common\NotImplementedException;
-use POData\Providers\Metadata\Type\EdmPrimitiveType;
-use POData\Providers\Metadata\ResourceSet;
-use POData\Providers\Metadata\ResourcePropertyKind;
-use POData\Providers\Metadata\ResourceProperty;
-use POData\Providers\Metadata\ResourceTypeKind;
-use POData\Providers\Metadata\ResourceType;
 use POData\Common\InvalidOperationException;
 use POData\Providers\Metadata\Type\IType;
 use POData\Providers\Metadata\Type\TypeCode;
@@ -437,7 +427,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      * @param ResourceType $resourceType resource type to which key property
      *                                   is to be added
      * @param string       $name         name of the key property
-     * @param int     $typeCode     type of the key property
+     * @param TypeCode     $typeCode     type of the key property
      */
     public function addKeyProperty($resourceType, $name, $typeCode)
     {
@@ -541,7 +531,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      * @param ResourceType $resourceType resource type to which key property
      *                                   is to be added
      * @param string       $name         name of the key property
-     * @param int     $typeCode     type of the key property
+     * @param TypeCode     $typeCode     type of the key property
      * @param bool         $isBag        property is bag or not
      * @param null|mixed   $defaultValue
      * @param mixed        $nullable
@@ -1072,8 +1062,7 @@ class SimpleMetadataProvider implements IMetadataProvider
         return $this->singletons;
     }
 
-    public function callSingleton(
-        $name)
+    public function callSingleton($name)
     {
         if (!array_key_exists($name, $this->singletons)) {
             $msg = 'Requested singleton does not exist';

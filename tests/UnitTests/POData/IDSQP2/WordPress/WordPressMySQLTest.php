@@ -42,7 +42,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(post_title = 'OData PHP Producer')", $mysqlexpression);
+        $this->AssertEquals("(STRCMP(post_title, 'OData PHP Producer') = 0)", $mysqlexpression);
     }
 
     /**
@@ -74,7 +74,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(REPLACE(post_title,'PHP','Java') = 'OData Java Producer')", $mysqlexpression);
+        $this->AssertEquals("(STRCMP(REPLACE(post_title,'PHP','Java'), 'OData Java Producer') = 0)", $mysqlexpression);
 	}
 
     /**
@@ -362,7 +362,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(SUBSTRING(post_title, 1 + 1) = 'Data PHP Producer')", $mysqlexpression);
+        $this->AssertEquals("(STRCMP(SUBSTRING(post_title, 1 + 1), 'Data PHP Producer') = 0)", $mysqlexpression);
     }
 
     /**
@@ -394,7 +394,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(SUBSTRING(post_title, 1 + 1, 6) = 'Data P')", $mysqlexpression);
+        $this->AssertEquals("(STRCMP(SUBSTRING(post_title, 1 + 1, 6), 'Data P') = 0)", $mysqlexpression);
     }
 
     /**
@@ -426,7 +426,8 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(TRIM('  OData PHP Producer   ') = post_title)", $mysqlexpression);}
+        $this->AssertEquals("(STRCMP(TRIM('  OData PHP Producer   '), post_title) = 0)", $mysqlexpression);
+    }
 
     /**
      * test the generated expression endswith function-call in sql server.
@@ -553,7 +554,7 @@ class WordPressMySQLTest extends TestCase
         $this->assertNotNull($filterInfo);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(REPLACE(post_title,' ','') = 'ODataPHPProducer')", $mysqlexpression);
+        $this->AssertEquals("(STRCMP(REPLACE(post_title,' ',''), 'ODataPHPProducer') = 0)", $mysqlexpression);
     }
 
     /**
@@ -652,6 +653,6 @@ class WordPressMySQLTest extends TestCase
         $this->assertTrue($check);
 
         $mysqlexpression = $filterInfo->getExpressionAsString();
-        $this->AssertEquals("(CONCAT(CONCAT(post_title,', '),'Open source now') = 'OData .NET Producer, Open source now')", $mysqlexpression);
+        $this->AssertEquals("(STRCMP(CONCAT(CONCAT(post_title,', '),'Open source now'), 'OData .NET Producer, Open source now') = 0)", $mysqlexpression);
     }
 }

@@ -72,8 +72,6 @@ class JsonWriter
     {
         $this->startScope($this->scopeType['Array']);
 
-
-
         return $this;
     }
 
@@ -132,7 +130,6 @@ class JsonWriter
                 $this->writeCore($value, /* quotes */ false);
                 break;
 
-
             case 'Edm.Int64':
             case 'Edm.Guid':
             case 'Edm.Decimal':
@@ -150,13 +147,11 @@ class JsonWriter
 
                 break;
 
-
             case 'Edm.DateTime':
                 $dateTime = new Carbon($value, new \DateTimeZone('UTC'));
                 $formattedDateTime = $dateTime->format('U')*1000;
                 $this->writeCore('/Date(' . $formattedDateTime . ')/', /* quotes */ true);
                 break;
-
 
             case 'Edm.String':
                 if ($value == null) {
@@ -173,7 +168,6 @@ class JsonWriter
                     $this->writeCore($jsonEncoded, /* quotes */ false);
                 }
                 break;
-
 
             default:
                 $this->writeCore($this->quoteJScriptString($value), /* quotes */ true);
@@ -199,6 +193,7 @@ class JsonWriter
         $processedString = str_replace($search, $replace, $string);
         // Escape some ASCII characters - namely, 0x08 and 0x0c
         $processedString = str_replace([chr(0x08), chr(0x0C)], ['\b', '\f'], $processedString);
+
         return $processedString;
     }
 

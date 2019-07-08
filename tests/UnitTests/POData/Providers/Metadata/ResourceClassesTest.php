@@ -25,7 +25,6 @@ use POData\Providers\Metadata\Type\EdmPrimitiveType;
 use POData\Providers\Metadata\Type\Int16;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\TypeCode;
-use POData\Common\InvalidOperationException;
 
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use UnitTests\POData\TestCase;

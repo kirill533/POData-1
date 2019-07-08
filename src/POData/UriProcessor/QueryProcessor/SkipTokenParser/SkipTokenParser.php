@@ -4,11 +4,9 @@ namespace POData\UriProcessor\QueryProcessor\SkipTokenParser;
 
 use POData\Common\Messages;
 use POData\Common\ODataException;
-use POData\Common\Messages;
+use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\Type\IType;
 use POData\Providers\Metadata\Type\Null1;
-use POData\Providers\Metadata\ResourceType;
-use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
 use POData\UriProcessor\QueryProcessor\OrderByParser\OrderByInfo;
 use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\KeyDescriptor;
@@ -66,17 +64,19 @@ class SkipTokenParser
         $orderByPathSegments = $internalOrderByInfo->getOrderByPathSegments();
         $orderByPathCount = count($orderByPathSegments);
         if ($count != ($orderByPathCount)) {
-                throw ODataException::createBadRequestError(
-                    Messages::skipTokenParserSkipTokenNotMatchingOrdering(
-                        $count, $skipToken, $orderByPathCount
-                    )
-                );
+            throw ODataException::createBadRequestError(
+                Messages::skipTokenParserSkipTokenNotMatchingOrdering(
+                    $count,
+                    $skipToken,
+                    $orderByPathCount
+                )
+            );
         }
 
         $i = 0;
         foreach ($orderByPathSegments as $orderByPathSegment) {
             $typeProvidedInSkipToken = $positionalValues[$i][1];
-            if (!($typeProvidedInSkipToken instanceof NullType)) {
+            if (!($typeProvidedInSkipToken instanceof Null1)) {
                 $orderBySubPathSegments = $orderByPathSegment->getSubPathSegments();
                 $j = count($orderBySubPathSegments) - 1;
                 $expectedType = $orderBySubPathSegments[$j]->getInstanceType();

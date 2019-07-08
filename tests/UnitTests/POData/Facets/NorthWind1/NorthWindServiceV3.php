@@ -28,7 +28,7 @@ class NorthWindServiceV3 extends BaseServiceTestWrapper
         $config->setAcceptCountRequests(true);
         //Disable projection request for testing purpose
         $config->setAcceptProjectionRequests(false);
-        $config->setMaxDataServiceVersion(ProtocolVersion::V3);
+        $config->setMaxDataServiceVersion(ProtocolVersion::V3());
     }
 
     /**

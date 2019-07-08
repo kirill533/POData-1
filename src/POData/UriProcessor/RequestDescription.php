@@ -11,9 +11,11 @@ use POData\Common\Url;
 use POData\Common\Version;
 use POData\ObjectModel\ODataEntry;
 use POData\OperationContext\IHTTPRequest;
+use POData\IService;
 use POData\Providers\Metadata\ResourceProperty;
 use POData\Providers\Metadata\ResourceSetWrapper;
 use POData\Providers\Metadata\ResourceStreamInfo;
+use POData\UriProcessor\Interfaces\IUriProcessor;
 use POData\UriProcessor\QueryProcessor\QueryProcessor;
 use POData\UriProcessor\UriProcessor;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetSource;
@@ -118,7 +120,7 @@ class RequestDescription
     /**
      * The count option specified in the request.
      *
-     * @var string
+     * @var QueryType
      */
     public $queryType;
 
@@ -248,7 +250,8 @@ class RequestDescription
         $requestVersion,
         $maxRequestVersion,
         $dataType = null,
-        IHTTPRequest $payload = null
+        IHTTPRequest $payload = null,
+        IService $service = null
     ) {
         $this->segments = $segmentDescriptors;
         $this->segmentCount = count($this->segments);
@@ -301,7 +304,7 @@ class RequestDescription
         $this->filterInfo = null;
         $this->countValue = null;
         $this->isExecuted = false;
-$this->data = isset($payload) ? $payload->getAllInput() : null;
+        $this->data = isset($payload) ? $payload->getAllInput() : null;
         // Define data from request body
         if (null !== $dataType) {
             $this->readData($dataType);

@@ -14,7 +14,7 @@ use POData\Providers\Metadata\Type\Int16;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\IType;
-use POData\Providers\Metadata\Type\NullType;
+use POData\Providers\Metadata\Type\Null1;
 use POData\Providers\Metadata\Type\SByte;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
@@ -78,7 +78,7 @@ class DateTimeTest extends TestCase
         $this->assertFalse($type->isCompatibleWith(new Int16()));
         $this->assertFalse($type->isCompatibleWith(new Int32()));
         $this->assertFalse($type->isCompatibleWith(new Int64()));
-        $this->assertFalse($type->isCompatibleWith(new NullType()));
+        $this->assertFalse($type->isCompatibleWith(new Null1()));
         $this->assertFalse($type->isCompatibleWith(new SByte()));
         $this->assertFalse($type->isCompatibleWith(new Single()));
         $this->assertFalse($type->isCompatibleWith(new StringType()));

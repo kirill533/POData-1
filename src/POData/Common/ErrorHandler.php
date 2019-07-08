@@ -2,10 +2,6 @@
 
 namespace POData\Common;
 
-
-use POData\Writers\Json\JsonODataV2Writer;
-use POData\Writers\Atom\AtomODataWriter;
-use POData\BaseService;
 use POData\HttpProcessUtility;
 use POData\IService;
 use POData\Writers\Atom\AtomODataWriter;

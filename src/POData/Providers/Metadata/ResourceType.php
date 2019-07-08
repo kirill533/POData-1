@@ -22,11 +22,8 @@ use POData\Providers\Metadata\Type\SByte;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\TypeCode;
-use POData\Providers\Metadata\Type\EdmPrimitiveType;
-use POData\Providers\Metadata\Type\IType;
-use POData\Common\Messages;
-use POData\Common\InvalidOperationException;
 use POData\Common;
+use POData\Providers\Query\QueryResult;
 
 /**
  * Class ResourceType.
@@ -154,7 +151,7 @@ abstract class ResourceType
      * ReflectionClass (for complex/Entity) or IType (for Primitive) instance for
      * the resource (type) described by this class instance.
      *
-     * @var ReflectionClass|IType|string
+     * @var \ReflectionClass|IType|string
      */
     protected $type;
 
@@ -175,7 +172,7 @@ abstract class ResourceType
     /**
      * Create new instance of ResourceType.
      *
-     * @param ReflectionClass|IType $instanceType     Instance type for the resource,
+     * @param \ReflectionClass|IType $instanceType     Instance type for the resource,
      *                                                 for entity and
      *                                                 complex this will
      *                                                 be 'ReflectionClass' and for
@@ -187,7 +184,7 @@ abstract class ResourceType
      * @param ResourceType|null      $baseType         Base type of the resource, if exists
      * @param bool                   $isAbstract       Whether resource is abstract
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function __construct(
         $instanceType,
@@ -197,7 +194,7 @@ abstract class ResourceType
         ResourceType $baseType = null,
         $isAbstract = false
     ) {
-        $this->_type = $instanceType;
+        $this->type = $instanceType;
         if ($resourceTypeKind == ResourceTypeKind::PRIMITIVE) {
             if ($baseType != null) {
                 throw new \InvalidArgumentException(
@@ -224,16 +221,15 @@ abstract class ResourceType
             }
         }
 
-        $this->_resourceTypeKind = $resourceTypeKind;
-        $this->_name = $name;
-        $this->_baseType = $baseType;        
-        $this->_namespaceName = $namespaceName; 
-        $this->_fullName 
-            = is_null($namespaceName) ? $name : $namespaceName . '.' . $name;
-        $this->_abstractType = $isAbstract;
-        $this->_isMediaLinkEntry = false;
-        $this->_customState = null;
-        $this->_arrayToDetectLoopInComplexBag = array();
+        $this->resourceTypeKind = $resourceTypeKind;
+        $this->name = $name;
+        $this->baseType = $baseType;
+        $this->namespaceName = $namespaceName;
+        $this->fullName = null === $namespaceName ? $name : $namespaceName . '.' . $name;
+        $this->abstractType = $isAbstract;
+        $this->isMediaLinkEntry = false;
+        $this->customState = null;
+        $this->arrayToDetectLoopInComplexBag = [];
         //TODO: Set MLE if base type has MLE Set
     }
 
@@ -282,7 +278,7 @@ abstract class ResourceType
      * then this function returns reference to ReflectionClass instance for the type.
      * If resource type describes a primitive type, then this function returns ITYpe.
      *
-     * @return ReflectionClass|IType
+     * @return \ReflectionClass|IType
      */
     public function getInstanceType()
     {
@@ -511,9 +507,7 @@ abstract class ResourceType
     public function getETagProperties()
     {
         if (empty($this->eTagProperties)) {
-            foreach ($this->getAllProperties()
-                as $propertyName => $resourceProperty
-            ) {
+            foreach ($this->getAllProperties() as $propertyName => $resourceProperty) {
                 if ($resourceProperty->isKindOf(ResourcePropertyKind::ETAG)) {
                     $this->eTagProperties[$propertyName] = $resourceProperty;
                 }
@@ -572,8 +566,6 @@ abstract class ResourceType
      *
      * @param ResourceStreamInfo $namedStream ResourceStreamInfo instance describing the named stream to add
      *
-     * @return void
-     *
      * @throws InvalidOperationException
      */
     public function addNamedStream(ResourceStreamInfo $namedStream)
@@ -585,9 +577,7 @@ abstract class ResourceType
         }
 
         $name = $namedStream->getName();
-        foreach (array_keys($this->namedStreamsDeclaredOnThisType)
-            as $namedStreamName
-        ) {
+        foreach (array_keys($this->namedStreamsDeclaredOnThisType) as $namedStreamName) {
             if (0 == strcasecmp($namedStreamName, $name)) {
                 throw new InvalidOperationException(
                     Messages::resourceTypeNamedStreamWithSameNameAlreadyExists(
@@ -699,9 +689,9 @@ abstract class ResourceType
      * Check this resource type instance has bag property associated with it
      * Note: This is an internal method used by library. Devs don't use this.
      *
-     * @param array &$arrayToDetectLoopInComplexType array for detecting loop.
+     * @param array &$arrayToDetectLoopInComplexType array for detecting loop
      *
-     * @return boolean|null true if resource type instance has bag property else false
+     * @return bool|null true if resource type instance has bag property else false
      */
     public function hasBagProperty(&$arrayToDetectLoopInComplexType)
     {
@@ -824,8 +814,6 @@ abstract class ResourceType
      *
      * @param EdmPrimitiveType $typeCode Typecode of primitive type
      *
-     * @return ResourceType
-     *
      * @throws InvalidArgumentException
      *
      * @return ResourcePrimitiveType
@@ -915,13 +903,13 @@ abstract class ResourceType
             $this->type = new \ReflectionClass($this->type);
         }
 
-        if ($this->_type instanceof ReflectionClass) {
-            $this->_type = new ReflectionClass($this->_type->name);
-        }
+//        if ($this->type instanceof ReflectionClass) {
+//            $this->type = new ReflectionClass($this->type->name);
+//        }
 
         assert(
             $this->type instanceof \ReflectionClass || $this->type instanceof IType,
-            '_type neither instance of reflection class nor IType'
+            'type neither instance of reflection class nor IType'
         );
     }
 

@@ -16,9 +16,6 @@ use POData\UriProcessor\ResourcePathProcessor\SegmentParser\SegmentDescriptor;
 use Symfony\Component\EventDispatcher\Tests\Service;
 use UnitTests\POData\TestCase;
 use POData\Providers\Metadata\Type\DateTime;
-use POData\Common\Url;
-use POData\Common\Version;
-use POData\Common\ODataException;
 
 
 use Phockito;

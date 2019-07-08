@@ -12,7 +12,6 @@ use POData\UriProcessor\QueryProcessor\ExpandProjectionParser\ProjectionNode;
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use UnitTests\POData\Facets\NorthWind1\NorthWindQueryProvider;
 use UnitTests\POData\TestCase;
-use POData\Common\ODataException;
 
 class SelectTest extends TestCase
 {

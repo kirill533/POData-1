@@ -14,15 +14,15 @@ class ResourceTypeKind extends Enum
     /**
      * A complex type resource.
      */
-    const COMPLEX = 1;
+    const COMPLEX = '1';
 
     /**
      * An entity type resource.
      */
-    const ENTITY = 2;
+    const ENTITY = '2';
 
     /**
      * A primitive type resource.
      */
-    const PRIMITIVE = 3;
+    const PRIMITIVE = '3';
 }

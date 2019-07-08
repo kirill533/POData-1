@@ -10,10 +10,7 @@ use POData\Providers\Metadata\ResourceType;
 use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
 use POData\Common\Messages;
 use POData\Common\ODataException;
-use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\Type\IType;
-use POData\Providers\Metadata\Type\Null1;
-use POData\UriProcessor\QueryProcessor\OrderByParser\InternalOrderByInfo;
 
 /**
  * Class InternalSkipTokenInfo.
@@ -205,16 +202,15 @@ class InternalSkipTokenInfo
                         // an unexpected state.
                         $subSegName = $subPathSegment->getName();
                         if (!$isLastSegment) {
-                            $currentObject = $this->resourceType->getPropertyValue($dummyProperty->setAccessible(true);
-                            $currentObject, $subSegName);
+                            $currentObject = $this->resourceType->getPropertyValue($currentObject, $subSegName);
                         } else {
-                            $dummyProperty = new \ReflectionProperty(
-                                $currentObject, 
-                                $subPathSegment->getName()
-                            );
-                            $dummyProperty->setAccessible(true);
-                            if ($this->_orderByValuesInSkipToken[$i][1] instanceof NullType) {
-                                $dummyProperty->setValue($currentObject, null);
+//                            $dummyProperty = new \ReflectionProperty(
+//                                $currentObject,
+//                                $subPathSegment->getName()
+//                            );
+//                            $dummyProperty->setAccessible(true);
+                            if ($this->orderByValuesInSkipToken[$i][1] instanceof Null1) {
+                                $this->resourceType->setPropertyValue($currentObject, $subPathSegment->getName(), null);
                             } else {
                                 // The Lexer's Token::Text value will be always
                                 // string, convert the string to

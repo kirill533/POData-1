@@ -7,7 +7,6 @@ namespace POData\UriProcessor\QueryProcessor\ExpressionParser;
  */
 class FilterInfo
 {
-
     /**
      * Collection of navigation properties specified in the filter
      * clause, if no navigation (resource reference) property used

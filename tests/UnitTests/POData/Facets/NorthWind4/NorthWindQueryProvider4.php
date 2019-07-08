@@ -68,7 +68,7 @@ class NorthWindQueryProvider4 implements IQueryProvider
      * @return QueryResult
      */
     public function getResourceSet(
-        QueryType $queryType,
+        $queryType,
         ResourceSet $resourceSet,
         $filter = null,
         $orderBy = null,

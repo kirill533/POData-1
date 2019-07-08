@@ -8,7 +8,6 @@ use POData\Configuration\ServiceConfiguration;
 use POData\Providers\ProvidersWrapper;
 use POData\UriProcessor\QueryProcessor\ExpandProjectionParser\ExpandedProjectionNode;
 use POData\UriProcessor\QueryProcessor\ExpandProjectionParser\ExpandProjectionParser;
-use POData\Common\ODataException;
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use UnitTests\POData\Facets\NorthWind1\NorthWindQueryProvider;
 use UnitTests\POData\TestCase;

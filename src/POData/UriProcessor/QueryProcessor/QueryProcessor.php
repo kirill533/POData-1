@@ -16,16 +16,7 @@ use POData\UriProcessor\QueryProcessor\SkipTokenParser\SkipTokenParser;
 use POData\UriProcessor\RequestDescription;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetKind;
 use POData\UriProcessor\ResourcePathProcessor\SegmentParser\TargetSource;
-use POData\UriProcessor\QueryProcessor\SkipTokenParser\SkipTokenParser;
-use POData\UriProcessor\QueryProcessor\OrderByParser\OrderByParser;
-use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionParser2;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\FilterInfo;
-use POData\UriProcessor\QueryProcessor\ExpandProjectionParser\ExpandProjectionParser;
-use POData\Common\Messages;
-use POData\Common\ODataException;
-use POData\Common\ODataConstants;
-use POData\IService;
-use POData\Providers\Query\QueryType;
 
 /**
  * Class QueryProcessor.
@@ -83,17 +74,17 @@ class QueryProcessor
 
         //$top, $skip, $order, $inlinecount & $count are only applicable if:
         //The query targets a resource collection
-        $this->setQueryApplicable = ($request->getTargetKind() == TargetKind::RESOURCE && !$isSingleResult);
+        $this->setQueryApplicable = ($request->getTargetKind() == TargetKind::RESOURCE() && !$isSingleResult);
         //Or it's a $count resource (although $inlinecount isn't applicable in this case..
         //but there's a check somewhere else for this
-        $this->setQueryApplicable |= $request->queryType == QueryType::COUNT;
+        $this->setQueryApplicable |= $request->queryType == QueryType::COUNT();
 
         //Paging is allowed if
         //The request targets a resource collection
         //and the request isn't for a $count segment
-        $this->pagingApplicable = $this->request->getTargetKind() == TargetKind::RESOURCE
+        $this->pagingApplicable = $this->request->getTargetKind() == TargetKind::RESOURCE()
                                    && !$isSingleResult
-                                   && ($request->queryType != QueryType::COUNT);
+                                   && ($request->queryType != QueryType::COUNT());
 
         $targetResourceType = $this->request->getTargetResourceType();
         $targetResourceSetWrapper = $this->request->getTargetResourceSetWrapper();
@@ -102,7 +93,6 @@ class QueryProcessor
             && null !== $targetResourceSetWrapper
             && $targetResourceType->getResourceTypeKind() == ResourceTypeKind::ENTITY()
             && !$this->request->isLinkUri();
-
     }
 
     /**
@@ -111,7 +101,6 @@ class QueryProcessor
      * @param RequestDescription $request Description of the request submitted by client
      * @param IService           $service Reference to the data service
      *
-
      * @throws ODataException
      */
     public static function process(RequestDescription $request, IService $service)
@@ -272,9 +261,9 @@ class QueryProcessor
         }
 
         $kind = $this->request->getTargetKind();
-        if (!($kind == TargetKind::RESOURCE
-            || $kind == TargetKind::COMPLEX_OBJECT
-            || $this->request->queryType == QueryType::COUNT)
+        if (!($kind == TargetKind::RESOURCE()
+            || $kind == TargetKind::COMPLEX_OBJECT()
+            || $this->request->queryType == QueryType::COUNT())
         ) {
             throw ODataException::createBadRequestError(
                 Messages::queryProcessorQueryFilterOptionNotApplicable()
@@ -321,7 +310,7 @@ class QueryProcessor
 
         //You can't specify $count & $inlinecount together
         //TODO: ensure there's a test for this case see #55
-        if ($this->request->queryType == QueryType::COUNT) {
+        if ($this->request->queryType == QueryType::COUNT()) {
             throw ODataException::createBadRequestError(
                 Messages::queryProcessorInlineCountWithValueCount()
             );
@@ -330,7 +319,7 @@ class QueryProcessor
         $this->checkSetQueryApplicable(); //TODO: why do we do this check?
 
         if ($inlineCount === ODataConstants::URI_ROWCOUNT_ALLOPTION) {
-            $this->request->queryType = QueryType::ENTITIES_WITH_COUNT;
+            $this->request->queryType = QueryType::ENTITIES_WITH_COUNT();
 
             $this->request->raiseMinVersionRequirement(2, 0);
             $this->request->raiseResponseVersion(2, 0);
@@ -422,7 +411,6 @@ class QueryProcessor
         // expand and select in this case must be null (we are ensuring this above)
         // 'RootProjectionNode' is required while generating next page Link
         if ($this->expandSelectApplicable || $this->request->isLinkUri()) {
-
             $rootProjectionNode = ExpandProjectionParser::parseExpandAndSelectClause(
                     $this->request->getTargetResourceSetWrapper(),
                     $this->request->getTargetResourceType(),

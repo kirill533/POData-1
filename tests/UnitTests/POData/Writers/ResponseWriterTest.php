@@ -48,12 +48,14 @@ class ResponseWriterTest extends TestCase
     {
         $writer = m::mock(IODataWriter::class);
         $writer->shouldReceive('writeServiceDocument->getOutput')->andReturn('ServiceDocument');
+        $writer->shouldReceive('write')->andReturn('ServiceDocument');
 
         $wrapper = m::mock(ProvidersWrapper::class);
 
         $request = m::mock(RequestDescription::class);
         $request->shouldReceive('getResponseVersion')->andReturn(Version::v3());
         $request->shouldReceive('getTargetKind')->andReturn(TargetKind::SERVICE_DIRECTORY());
+        $request->shouldReceive('getSegments')->andReturn([]);
 
         $response = m::mock(OutgoingResponse::class)->makePartial();
         $response->shouldReceive('setStream')->withArgs(['ServiceDocument'])->andReturnNull()->once();

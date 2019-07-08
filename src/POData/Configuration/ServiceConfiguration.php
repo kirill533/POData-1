@@ -108,7 +108,7 @@ class ServiceConfiguration implements IServiceConfiguration
         $this->acceptCountRequest = false;
         $this->acceptProjectionRequest = false;
 
-        $this->maxVersion = ProtocolVersion::V3; //We default to the highest version
+        $this->maxVersion = ProtocolVersion::V3(); //We default to the highest version
 
         $this->validateETagHeader = true;
     }
@@ -188,7 +188,8 @@ class ServiceConfiguration implements IServiceConfiguration
         }
 
         $this->maxResultsPerCollection = $this->checkIntegerNonNegativeParameter(
-            $maxResultPerCollection, 'setMaxResultsPerCollection'
+            $maxResultPerCollection,
+            'setMaxResultsPerCollection'
         );
     }
 
@@ -363,13 +364,13 @@ class ServiceConfiguration implements IServiceConfiguration
     public function getMaxDataServiceVersion()
     {
         switch ($this->maxVersion) {
-            case ProtocolVersion::V1:
+            case ProtocolVersion::V1():
                 return new Version(1, 0);
 
-            case ProtocolVersion::V2:
+            case ProtocolVersion::V2():
                 return new Version(2, 0);
 
-            case ProtocolVersion::V3:
+            case ProtocolVersion::V3():
             default:
                 return new Version(3, 0);
         }
@@ -385,30 +386,29 @@ class ServiceConfiguration implements IServiceConfiguration
         $this->maxVersion = $version;
     }
 
-        /**
-         * Specify whether to validate the ETag or not.
-         *
-         * @param bool $validate True if ETag needs to validated, false otherwise
-         */
-         public
-        function setValidateETagHeader($validate)
-        {
-            $this->validateETagHeader = $validate;
-        }
+    /**
+     * Specify whether to validate the ETag or not.
+     *
+     * @param bool $validate True if ETag needs to validated, false otherwise
+     */
+    public function setValidateETagHeader($validate)
+    {
+        $this->validateETagHeader = $validate;
+    }
 
-        /**
-         * Gets whether to validate the ETag or not.
-         *
-         * @return bool True if ETag needs to validated, false
-         *                 if its not to be validated, Note that in case
-         *                 of false library will not write the ETag header
-         *                 in the response even though the requested resource
-         *                 support ETag
-         */
-       public function getValidateETagHeader()
-        {
-            return $this->validateETagHeader;
-        }
+    /**
+     * Gets whether to validate the ETag or not.
+     *
+     * @return bool True if ETag needs to validated, false
+     *                 if its not to be validated, Note that in case
+     *                 of false library will not write the ETag header
+     *                 in the response even though the requested resource
+     *                 support ETag
+     */
+    public function getValidateETagHeader()
+    {
+        return $this->validateETagHeader;
+    }
 
     /**
      * Checks that the parameter to a function is numeric and is not negative.

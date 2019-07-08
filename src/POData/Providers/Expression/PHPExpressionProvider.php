@@ -6,7 +6,6 @@ use POData\Common\ODataConstants;
 use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\Type\IType;
 use POData\Common\NotImplementedException;
-use POData\Common\ODataConstants;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ExpressionType;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\PropertyAccessExpression;
 use POData\UriProcessor\QueryProcessor\FunctionDescription;

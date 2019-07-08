@@ -143,9 +143,9 @@ class InternalOrderByInfo
      * Build value of $skiptoken from the given object which will be the
      * last object in the page.
      *
-     * @param mixed $lastObject entity instance from which skiptoken needs
-      to be built
-     ** @throws ODataException If reflection exception occurs while accessing property
+     * @param mixed $lastObject entity instance from which skiptoken needs to be built
+     *
+     * @throws ODataException If reflection exception occurs while accessing property
      *
      * @return string
      *
@@ -167,7 +167,6 @@ class InternalOrderByInfo
                     if ($currentObject instanceof QueryResult) {
                         $currentObject = $currentObject->results;
                     }
-                    $dummyProperty->setAccessible(true);
                     $currentObject = $this->getResourceType()->getPropertyValue($currentObject, $segName);
                     if (null === $currentObject) {
                         $nextPageLink .= 'null, ';
@@ -189,12 +188,10 @@ class InternalOrderByInfo
                         //    $currentObject = urlencode($currentObject);
                         //}
 
-                        // call IType::convertToOData to attach required suffix
-                         and prefix.
+                        // call IType::convertToOData to attach required suffix and prefix.
                         // e.g. $valueM, $valueF, datetime'$value', guid'$value',
                         // '$value' etc..
-                        // Also we can think about moving above urlencode to this
-                         function
+                        // Also we can think about moving above urlencode to this function
                         $value = $type->convertToOData($currentObject);
                         $nextPageLink .= $value . ', ';
                     }

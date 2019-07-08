@@ -8,7 +8,6 @@ use POData\Common\ODataException;
 use POData\Providers\Metadata\Type\DateTime;
 use UnitTests\POData\Facets\ServiceHostTestFake;
 use UnitTests\POData\Facets\NorthWind4\NorthWindService;
-use UnitTests\POData\Facets\ServiceHostTestFake;
 use UnitTests\POData\TestCase;
 
 class NorthWindSQLSRVTest extends TestCase
@@ -16,7 +15,7 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated string comparison expression in sql server.
      */
-    publicfunction testStringCompareSQLServer()
+    public function testStringCompareSQLServer()
 	{
 
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
@@ -51,9 +50,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated function-call expression in sql server.
      */
-    publicfunction testFunctionCallSQLServer()
+    public function testFunctionCallSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
 		$requestUri = $serviceUri . $resourcePath;
@@ -79,15 +77,14 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("(REPLACE(CustomerID, 'LFK', 'RTT') = 'ARTTI')", $sqlexpression);
+        $this->AssertEquals("((REPLACE(CustomerID, 'LFK', 'RTT') =  'ARTTI'))", $sqlexpression);
     }
 
     /**
      * Test the generated expression for nullability check in sql server.
      */
-    publicfunction testNullabilityCheckSQLServer()
+    public function testNullabilityCheckSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
 		$requestUri = $serviceUri . $resourcePath;
@@ -111,7 +108,6 @@ class NorthWindSQLSRVTest extends TestCase
 		$filterInfo = $requestDescription->getFilterInfo();
 		$this->assertNotNull($filterInfo);
 
-
 		$sqlexpression = $filterInfo->getExpressionAsString();
 		$this->AssertEquals('(CustomerID = NULL)', $sqlexpression);
     }
@@ -119,9 +115,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression for negation in sql server.
      */
-    publicfunction testNegationSQLServer()
+    public function testNegationSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Orders';
 		$requestUri = $serviceUri . $resourcePath;
@@ -152,9 +147,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression for datetime comaprsion in sql server.
      */
-    publicfunction testDateTimeComparisionSQLServer()
+    public function testDateTimeComparisionSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Orders';
 		$requestUri = $serviceUri . $resourcePath;
@@ -185,9 +179,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression for YEAR function call in sql server.
      */
-    publicfunction testYearFunctionCallSQLServer()
+    public function testYearFunctionCallSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Orders';
 		$requestUri = $serviceUri . $resourcePath;
@@ -218,9 +211,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression for YEAR function call with aritmetic and equality sql server.
      */
-    publicfunction testYearFunctionCallWithAriRelSQLServer()
+    public function testYearFunctionCallWithAriRelSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Orders';
 		$requestUri = $serviceUri . $resourcePath;
@@ -251,9 +243,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression for ceil and floor sql server.
      */
-    publicfunction testCeilFloorFunctionCallSQLServer()
+    public function testCeilFloorFunctionCallSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Orders';
 		$requestUri = $serviceUri . $resourcePath;
@@ -284,9 +275,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression for round function-call for sql server.
      */
-    publicfunction testRoundFunctionCallSQLServer()
+    public function testRoundFunctionCallSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Orders';
 		$requestUri = $serviceUri . $resourcePath;
@@ -317,9 +307,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression for mod operator sql server.
      */
-    publicfunction testModOperatorSQLServer()
+    public function testModOperatorSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Orders';
 		$requestUri = $serviceUri . $resourcePath;
@@ -350,9 +339,8 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression 2 param version of sub-string in sql server.
      */
-    publicfunction testSubString2ParamSQLServer()
+    public function testSubString2ParamSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
 		$requestUri = $serviceUri . $resourcePath;
@@ -377,13 +365,13 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("(SUBSTRING(CompanyName, 1 + 1, LEN(CompanyName)) = 'lfreds Futterkiste')", $sqlexpression);
+        $this->AssertEquals("((SUBSTRING(CompanyName, 1 + 1, LEN(CompanyName)) =  'lfreds Futterkiste'))", $sqlexpression);
     }
 
     /**
      * Test the generated expression 3 param version of sub-string in sql server.
      */
-    publicfunction testSubString3ParamSQLServer()
+    public function testSubString3ParamSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -409,13 +397,13 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("(SUBSTRING(CompanyName, 1 + 1, 6) = 'lfreds')", $sqlexpression);
+        $this->AssertEquals("((SUBSTRING(CompanyName, 1 + 1, 6) =  'lfreds'))", $sqlexpression);
     }
 
     /**
      * Test the generated expression trim in sql server.
      */
-    publicfunction testSubStringTrimSQLServer()
+    public function testSubStringTrimSQLServer()
 	{
 
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
@@ -442,13 +430,13 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("(RTRIM(LTRIM('  ALFKI  ')) = CustomerID)", $sqlexpression);
+        $this->AssertEquals("((RTRIM(LTRIM('  ALFKI  ')) =  CustomerID))", $sqlexpression);
     }
 
     /**
      * Test the generated expression endswith function-call in sql server.
      */
-    publicfunction testEndsWithSQLServer()
+    public function testEndsWithSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -480,7 +468,7 @@ class NorthWindSQLSRVTest extends TestCase
 	/**
 	 * Test the generated expression startswith function-call in sql server.
      */
-    publicfunction testStartsWithSQLServer()
+    public function testStartsWithSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -512,7 +500,7 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression indexof function-call in sql server.
      */
-    publicfunction testIndexOfSQLServer()
+    public function testIndexOfSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -544,7 +532,7 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression replace function-call in sql server.
      */
-    publicfunction testReplaceSQLServer()
+    public function testReplaceSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -570,13 +558,13 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("(REPLACE(CompanyName, ' ', '') = 'AlfredsFutterkiste')", $sqlexpression);
+        $this->AssertEquals("((REPLACE(CompanyName, ' ', '') =  'AlfredsFutterkiste'))", $sqlexpression);
     }
 
     /**
      * Test the generated expression substringof function-call in sql server.
      */
-    publicfunction testSubStringOfSQLServer()
+    public function testSubStringOfSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -608,7 +596,7 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression substringof and indexof function-call in sql server.
      */
-    publicfunction testSubStringOfIndexOfSQLServer()
+    public function testSubStringOfIndexOfSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -640,7 +628,7 @@ class NorthWindSQLSRVTest extends TestCase
     /**
      * Test the generated expression concat function-call in sql server.
      */
-    publicfunction testSubConcatSQLServer()
+    public function testSubConcatSQLServer()
 	{
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
@@ -666,15 +654,14 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("(CustomerID + ', ' + ContactName = 'ALFKI, Maria Anders')", $sqlexpression);
+        $this->AssertEquals("((CustomerID + ', ' + ContactName =  'ALFKI, Maria Anders'))", $sqlexpression);
 	}
 
 	/**
 	 * Test the generated expression level 2 property access in sql server.
      */
-    publicfunction testLevel2PropertyAccessSQLServer()
+    public function testLevel2PropertyAccessSQLServer()
 	{
-
 		$serviceUri = 'http://localhost:8083/NorthWindDataService.svc/';
 		$resourcePath = 'Customers';
 		$requestUri = $serviceUri . $resourcePath;
@@ -699,6 +686,6 @@ class NorthWindSQLSRVTest extends TestCase
 		$this->assertNotNull($filterInfo);
 
 		$sqlexpression = $filterInfo->getExpressionAsString();
-		$this->AssertEquals("(Country = 'USA')", $sqlexpression);
+        $this->AssertEquals("((Country =  'USA'))", $sqlexpression);
 	}
 }

@@ -9,7 +9,6 @@ use POData\Common\Version;
  */
 class ODataWriterRegistry
 {
-
     /** @var IODataWriter[]  */
     private $writers = [];
 
@@ -32,12 +31,10 @@ class ODataWriterRegistry
     public function getWriter(Version $responseVersion, $contentType)
     {
         foreach ($this->writers as $writer){
-
             if ($writer->canHandle($responseVersion, $contentType)) {
                 return $writer;
             }
         }
-}
         return null;
     }
 }

@@ -152,7 +152,7 @@ class BaseServiceNewTest extends TestCase
         $request = m::mock(RequestDescription::class);
         $request->shouldReceive('getResponseVersion')->andReturn(Version::v3());
         $request->shouldReceive('isLinkUri')->andReturn(false);
-        $request->shouldReceive('getTargetKind')->andReturn(TargetKind::PRIMITIVE_VALUE());
+        $request->shouldReceive('getTargetKind')->andReturn(TargetKind::PRIMITIVE_VALUE);
         $request->shouldReceive('getIdentifier')->andReturn('entity');
         $request->shouldReceive('getProjectedProperty')->andReturn(null);
 
@@ -1267,6 +1267,7 @@ class BaseServiceNewTest extends TestCase
         $request->shouldReceive('getTargetResult')->andReturn($queryResult);
         $request->shouldReceive('getTargetResourceType')->andReturn($type)->once();
         $request->shouldReceive('isSingleResult')->andReturn(false)->once();
+        $request->shouldReceive('getParts')->andReturn([])->once();
 
         $uriProc = m::mock(UriProcessor::class);
         $uriProc->shouldReceive('execute')->andReturnNull()->once();

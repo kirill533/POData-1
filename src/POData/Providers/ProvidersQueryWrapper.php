@@ -109,7 +109,7 @@ class ProvidersQueryWrapper
      * @return QueryResult
      */
     public function getResourceSet(
-        QueryType $queryType,
+        $queryType,
         ResourceSet $resourceSet,
         FilterInfo $filterInfo = null,
         InternalOrderByInfo $orderBy = null,

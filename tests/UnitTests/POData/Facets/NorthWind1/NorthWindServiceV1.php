@@ -32,7 +32,7 @@ class NorthWindServiceV1 extends BaseServiceTestWrapper
         $config->setEntitySetPageSize('*', 5);
         $config->setAcceptCountRequests(true);
         $config->setAcceptProjectionRequests(true);
-        $config->setMaxDataServiceVersion(ProtocolVersion::V1);
+        $config->setMaxDataServiceVersion(ProtocolVersion::V1());
     }
 
     /**

@@ -17,7 +17,6 @@ use UnitTests\POData\Facets\NorthWind1\Customer2;
 use UnitTests\POData\Facets\NorthWind1\NorthWindMetadata;
 use UnitTests\POData\Facets\NorthWind1\Order2;
 use UnitTests\POData\TestCase;
-use PHPUnit\Framework\TestCase;
 
 class SkipTokenParserTest extends TestCase
 {

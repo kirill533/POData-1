@@ -4,23 +4,19 @@ namespace POData\UriProcessor\QueryProcessor;
 
 use POData\Common\Messages;
 use POData\Common\ODataConstants;
+use POData\Common\ODataException;
 use POData\Providers\Metadata\Type\Null1;
 use POData\Providers\Metadata\Type\INavigationType;
 use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\Int16;
+use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Guid;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\Double;
 use POData\Providers\Metadata\Type\Decimal;
 use POData\Providers\Metadata\Type\DateTime;
-use POData\Providers\Metadata\Type\Decimal;
-use POData\Providers\Metadata\Type\Double;
-use POData\Providers\Metadata\Type\Guid;
-use POData\Providers\Metadata\Type\Int16;
-use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\StringType;
 use POData\Providers\Metadata\Type\Boolean;
-use POData\Providers\Metadata\Type\Void;
 use POData\Providers\Metadata\Type\Binary;
 use POData\Providers\Metadata\Type\IType;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\Expressions\ExpressionType;
@@ -579,7 +575,7 @@ class FunctionDescription
         $rightArgument
     ) {
         //for null operands only equality operators are allowed
-        $null = new NullType();
+        $null = new Null1();
         if ($leftArgument->typeIs($null) || $rightArgument->typeIs($null)) {
             if ((strcmp($expressionToken->Text, ODataConstants::KEYWORD_EQUAL) != 0)
                 && (strcmp($expressionToken->Text, ODataConstants::KEYWORD_NOT_EQUAL) != 0)
@@ -656,8 +652,6 @@ class FunctionDescription
      * @param AbstractExpression $argExpression   Argument expression
      *
      * @throws ODataException
-     *
-     * @return void
      */
     public static function validateUnaryOpArguments($expressionToken, $argExpression)
     {
@@ -703,6 +697,7 @@ class FunctionDescription
         }
 
         $filterFunctions = self::filterFunctionDescriptions();
+
         return $filterFunctions[$expressionToken->Text];
     }
 

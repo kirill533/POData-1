@@ -35,7 +35,7 @@ class NorthWindService extends BaseService
         $config->setEntitySetAccessRule('*', EntitySetRights::ALL);
         $config->setAcceptCountRequests(true);
         $config->setAcceptProjectionRequests(true);
-        $config->setMaxDataServiceVersion(ProtocolVersion::V3);
+        $config->setMaxDataServiceVersion(ProtocolVersion::V3());
     }
 
     /**

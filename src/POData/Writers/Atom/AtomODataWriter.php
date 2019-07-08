@@ -3,6 +3,9 @@
 namespace POData\Writers\Atom;
 
 use Carbon\Carbon as Carbon;
+use POData\Common\MimeTypes;
+use POData\Common\ODataConstants;
+use POData\Common\ODataException;
 use POData\Common\Version;
 use POData\ObjectModel\ODataBagContent;
 use POData\ObjectModel\ODataCategory;
@@ -12,9 +15,10 @@ use POData\ObjectModel\ODataLink;
 use POData\ObjectModel\ODataProperty;
 use POData\ObjectModel\ODataPropertyContent;
 use POData\ObjectModel\ODataTitle;
-use POData\ObjectModel\ODataBagContent;
-use POData\ObjectModel\ODataProperty;
 use POData\ObjectModel\ODataMediaLink;
+use POData\ObjectModel\ODataURL;
+use POData\ObjectModel\ODataURLCollection;
+use POData\Providers\ProvidersWrapper;
 use POData\Writers\IODataWriter;
 
 /**
@@ -219,10 +223,8 @@ class AtomODataWriter implements IODataWriter
         }
         $this->xmlWriter->endElement();
 
-
         return $this;
     }
-
 
     /**
      * Write top level entry.
@@ -245,7 +247,6 @@ class AtomODataWriter implements IODataWriter
             ->postWriteProperties($entry);
 
         $this->xmlWriter->endElement();
-
 
         return $this;
     }
@@ -290,7 +291,9 @@ class AtomODataWriter implements IODataWriter
         $this->xmlWriter->startElement(ODataConstants::ATOM_NAME_ELEMENT_NAME);
         $this->xmlWriter->endElement();
         $this->xmlWriter->endElement();
-    $this->xmlWriter->startElement(ODataConstants::ATOM_LINK_ELEMENT_NAME);
+
+
+        $this->xmlWriter->startElement(ODataConstants::ATOM_LINK_ELEMENT_NAME);
         $this->xmlWriter->startAttribute(ODataConstants::ATOM_LINK_RELATION_ATTRIBUTE_NAME);
         $this->xmlWriter->text(ODataConstants::ATOM_EDIT_RELATION_ATTRIBUTE_VALUE);
         $this->xmlWriter->endAttribute();
@@ -305,7 +308,10 @@ class AtomODataWriter implements IODataWriter
         }
         $this->xmlWriter->endAttribute();
 
-        $this->xmlWriter->endElement();    if ($entry->isMediaLinkEntry) {
+        $this->xmlWriter->endElement();
+
+
+        if ($entry->isMediaLinkEntry) {
             $this->xmlWriter->startElement(ODataConstants::ATOM_LINK_ELEMENT_NAME);
             if ($entry->mediaLink->eTag != null) {
                 $this->xmlWriter->startAttributeNs(
@@ -335,6 +341,7 @@ class AtomODataWriter implements IODataWriter
             $this->xmlWriter->endAttribute();
             $this->xmlWriter->endElement();
 
+
             foreach ($entry->mediaLinks as $mediaLink) {
                 $this->xmlWriter->startElement(ODataConstants::ATOM_LINK_ELEMENT_NAME);
                 if ($mediaLink->eTag != null) {
@@ -347,9 +354,7 @@ class AtomODataWriter implements IODataWriter
                     $this->xmlWriter->endAttribute();
                 }
                 $this->xmlWriter->startAttribute(ODataConstants::ATOM_LINK_RELATION_ATTRIBUTE_NAME);
-                $this->xmlWriter->text(
-                    $mediaLink->rel
-                );
+                $this->xmlWriter->text($mediaLink->rel);
                 $this->xmlWriter->endAttribute();
 
                 $this->xmlWriter->startAttribute(ODataConstants::ATOM_TYPE_ATTRIBUTE_NAME);
@@ -370,11 +375,7 @@ class AtomODataWriter implements IODataWriter
         return $this;
     }
 
-
-
-
     /**
-     *
      * @param ODataLink $link Link to write
      *
      * @return AtomODataWriter
@@ -390,7 +391,6 @@ class AtomODataWriter implements IODataWriter
                 null
             );
 
-
             if (null !== $link->expandedResult) {
                 if ($link->isCollection) {
                     $this->writeFeed($link->expandedResult);
@@ -399,7 +399,6 @@ class AtomODataWriter implements IODataWriter
                 }
             }
 
-
             $this->xmlWriter->endElement();
             $this->xmlWriter->endElement();
         }
@@ -407,35 +406,35 @@ class AtomODataWriter implements IODataWriter
         return $this;
     }
 
-
-
-
     /**
      * Write the given collection of properties.
      * (properties of an entity or complex type).
      *
      * @param ODataPropertyContent $properties Collection of properties
      * @param bool $topLevel is this property content is the top level response to be written?
-     ** @return AtomODataWriter
+     *
+     * @return AtomODataWriter
      */
     protected function writeProperties(ODataPropertyContent $properties= null, $topLevel = false)
-    {if (null !== $properties) {
-        foreach ($properties->properties as $property) {
-            $this->beginWriteProperty($property, $topLevel);
+    {
+        if (null !== $properties) {
+            foreach ($properties->properties as $property) {
+                $this->beginWriteProperty($property, $topLevel);
 
-            if ($property->value == null) {
-                $this->writeNullValue($property);
-            } elseif ($property->value instanceof ODataPropertyContent) {
-                $this->writeProperties($property->value, false);
-            } elseif ($property->value instanceof ODataBagContent) {
-                $this->writeBagContent($property->value);
-            } else {
-                $value = $this->beforeWriteValue($property->value, $property->typeName);
-                $this->xmlWriter->text($value);
+                if ($property->value == null) {
+                    $this->writeNullValue($property);
+                } elseif ($property->value instanceof ODataPropertyContent) {
+                    $this->writeProperties($property->value, false);
+                } elseif ($property->value instanceof ODataBagContent) {
+                    $this->writeBagContent($property->value);
+                } else {
+                    $value = $this->beforeWriteValue($property->value, $property->typeName);
+                    $this->xmlWriter->text($value);
+                }
+
+                $this->xmlWriter->endElement();
             }
-
-            $this->xmlWriter->endElement();
-        }}
+        }
 
         return $this;
     }
@@ -628,6 +627,7 @@ class AtomODataWriter implements IODataWriter
                 ODataConstants::XML_TRUE_LITERAL
             );
         }
+
         return $this;
     }
 
@@ -814,7 +814,8 @@ class AtomODataWriter implements IODataWriter
      *
      * @return IODataWriter
      */
-    public function writeServiceDocument(ProvidersWrapper $providers) {
+    public function writeServiceDocument(ProvidersWrapper $providers)
+    {
         $writer = $this->xmlWriter;
         $writer->startElementNs(
             null,

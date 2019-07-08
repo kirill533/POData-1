@@ -264,7 +264,8 @@ class ProvidersWrapper
     /**
      * To get all resource types in the data source,
      * Note: Wrapper for IMetadataProvider::getTypes method implementation.
-     ** @throws ODataException
+     *
+     * @throws ODataException
      * @return ResourceType[]
      */
     public function getTypes()
@@ -300,8 +301,6 @@ class ProvidersWrapper
      *
      * @param string $name Name of the resource set
      *
-     * @return ResourceSetWrapper|null Returns resource set with the given name if found, NULL if resource set is set to invisible or not found
-     *
      * @return ResourceSetWrapper|null Returns resource set with the given name if found,
      *                                 NULL if resource set is set to invisible or not found
      */
@@ -325,12 +324,10 @@ class ProvidersWrapper
      * method implementation.
      *
      * @param string $name Name of the resource set
-     ** @throws ODataException If the ResourceType is invalid
-     *
-     * @return ResourceType|null resource type with the given resource set name if found else NULL
-     *
      *
      * @throws ODataException If the ResourceType is invalid
+     *
+     * @return ResourceType|null resource type with the given resource set name if found else NULL
      */
     public function resolveResourceType($name)
     {
@@ -374,7 +371,8 @@ class ProvidersWrapper
     {
         $derivedTypes = $this->getMetaProvider()->getDerivedTypes($resourceType);
         if (!is_array($derivedTypes)) {
-            throw new InvalidOperationException(Messages::metadataAssociationTypeSetInvalidGetDerivedTypesReturnType($resourceType->getName())
+            throw new InvalidOperationException(
+                Messages::metadataAssociationTypeSetInvalidGetDerivedTypesReturnType($resourceType->getName())
     );
         }
 
@@ -390,10 +388,8 @@ class ProvidersWrapper
      * Entity Types, else false.
      * Note: Wrapper for IMetadataProvider::hasDerivedTypes method implementation.
      *
-     * @param ResourceEntityType $resourceType Resource to check for derived resource
-      types
+     * @param ResourceEntityType $resourceType Resource to check for derived resource types
      *
-
      * @throws ODataException If the ResourceType is invalid
      *
      * @return bool
@@ -556,79 +552,6 @@ class ProvidersWrapper
     }
 
     /**
-     * Gets the target resource set wrapper for the given navigation property,
-     * source resource set wrapper and the source resource type
-     *
-     * @param ResourceSetWrapper $resourceSetWrapper         Source resource set.
-     * @param ResourceType       $resourceType               Source resource type.
-     * @param ResourceProperty   $navigationResourceProperty Navigation property.
-     *
-     * @return ResourceSetWrapper|null Returns instance of ResourceSetWrapper
-     *     (describes the entity set and associated configuration) for the
-     *     given navigation property. returns NULL if resourceset for the
-     *     navigation property is invisible or if metadata provider returns
-     *     null resource association set
-     */
-    public function getResourceSetWrapperForNavigationProperty(
-        ResourceSetWrapper $resourceSetWrapper,
-        ResourceType $resourceType,
-        ResourceProperty $navigationResourceProperty
-    ) {
-        $associationSet = $this->getResourceAssociationSet(
-            $resourceSetWrapper,
-            $resourceType,
-            $navigationResourceProperty
-        );
-
-        if (!is_null($associationSet)) {
-            $relatedAssociationSetEnd = $associationSet->getRelatedResourceAssociationSetEnd(
-                $resourceSetWrapper->getResourceSet(),
-                $resourceType,
-                $navigationResourceProperty
-            );
-            return $this->_validateResourceSetAndGetWrapper(
-                $relatedAssociationSetEnd->getResourceSet()
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets the visible resource properties for the given resource type from the given resource set wrapper.
-     *
-     * @param ResourceSetWrapper $setWrapper Resource set wrapper in question.
-     * @param ResourceType       $resourceType       Resource type in question.
-     * @return ResourceProperty[] Collection of visible resource properties from the given resource set wrapper and resource type.
-     */
-    public function getResourceProperties(ResourceSetWrapper $setWrapper, ResourceType $resourceType) {
-        if ($resourceType->getResourceTypeKind() != ResourceTypeKind::ENTITY) {
-            //Complex resource type
-            return $resourceType->getAllProperties();
-        }
-        //TODO: move this to doctrine annotations
-        $cacheKey = $setWrapper->getName() . '_' . $resourceType->getFullName();
-        if (!array_key_exists($cacheKey, $this->propertyCache)) {
-            //Fill the cache
-            $this->propertyCache[$cacheKey] = array();
-            foreach ($resourceType->getAllProperties() as $resourceProperty) {
-                //Check whether this is a visible navigation property
-                //TODO: is this broken?? see #87
-                if ($resourceProperty->getTypeKind() == ResourceTypeKind::ENTITY
-                    && !is_null($this->getResourceSetWrapperForNavigationProperty($setWrapper, $resourceType, $resourceProperty))
-                ) {
-                    $this->propertyCache[$cacheKey][$resourceProperty->getName()] = $resourceProperty;
-                } else {
-                    //primitive, bag or complex property
-                    $this->propertyCache[$cacheKey][$resourceProperty->getName()] = $resourceProperty;
-                }
-            }
-        }
-        return $this->propertyCache[$cacheKey];
-
-    }
-
-    /**
      * Wrapper function over _validateResourceSetAndGetWrapper function
      *
      * @param ResourceSet $resourceSet see the comments of _validateResourceSetAndGetWrapper
@@ -720,8 +643,7 @@ class ProvidersWrapper
      *                           $property is not declared anywhere
      *                           in the inheritance hierarchy
      */
-    private function getResourceTypeWherePropertyIsDeclared(ResourceType $type,
-        ResourceProperty $property)
+    private function getResourceTypeWherePropertyIsDeclared(ResourceType $type, ResourceProperty $property)
     {
         while (null !== $type) {
             if (null !== $type->resolvePropertyDeclaredOnThisType($property->getName())) {
@@ -735,32 +657,8 @@ class ProvidersWrapper
     }
 
     /**
-     * Wrapper function over _validateResourceSetAndGetWrapper function.
-     *
-     * @param ResourceSet $resourceSet see the comments of _validateResourceSetAndGetWrapper
-     *
-     * @return ResourceSetWrapper|null see the comments of _validateResourceSetAndGetWrapper
-     */
-    public function validateResourceSetAndGetWrapper(ResourceSet $resourceSet)
-    {
-        return $this->validateResourceSetAndWrapper($resourceSet);
-    }
-
-    /**
-     * Gets the Edm Schema version compliance to the metadata.
-     *
-     * @return EdmSchemaVersion
-     */
-    public function getEdmSchemaVersion()
-    {
-        //The minimal schema version for custom provider is 1.1
-        return EdmSchemaVersion::VERSION_1_DOT_1;
-    }
-
-    /**
      * Gets the underlying custom expression provider, the end developer is
-     * responsible for implementing IExpressionProvider if he choose for
-     .
+     * responsible for implementing IExpressionProvider if he choose for.
      *
      * @return IExpressionProvider Instance of IExpressionProvider implementation
      */
@@ -772,9 +670,9 @@ class ProvidersWrapper
 	/**
 	 * Indicates if the QueryProvider can handle ordered paging, this means respecting order, skip, and top parameters
 	 * If the query provider can not handle ordered paging, it must return the entire result set and POData will
-	 * perform the ordering and paging
+     * perform the ordering and paging.
 	 *
-	 * @return Boolean True if the query provider can handle ordered paging, false if POData should perform the paging
+     * @return bool True if the query provider can handle ordered paging, false if POData should perform the paging
 	 */
 	public function handlesOrderedPaging()
 	{
@@ -831,7 +729,7 @@ class ProvidersWrapper
      * @return QueryResult
      */
     public function getResourceSet(
-        QueryType $queryType,
+        $queryType,
         ResourceSet $resourceSet,
         FilterInfo $filterInfo = null,
         InternalOrderByInfo $orderBy = null,
@@ -913,26 +811,6 @@ class ProvidersWrapper
         $queryResult = $this->queryProvider->postResource(
             $resourceSet,
             $data
-        );
-
-        return $queryResult;
-    }
-
-    /**
-     * Posts an entity instance to entity set identified by a key
-     *
-     * @param ResourceSet $resourceSet The entity set containing the entity to update
-     * @param KeyDescriptor $keyDescriptor The key identifying the entity to update
-     *
-     * @return bool|null Returns result of executiong query
-     */
-    public function deleteResource(
-        ResourceSet $resourceSet,
-        $keyDescriptor
-    ) {
-        $queryResult = $this->queryProvider->deleteResource(
-            $resourceSet,
-            $keyDescriptor
         );
 
         return $queryResult;
@@ -1222,6 +1100,7 @@ class ProvidersWrapper
             $navPropName
         );
     }
+
     /**
      * Removes child model from parent model.
      *
@@ -1262,8 +1141,6 @@ class ProvidersWrapper
      *
      * @param bool      $isBulk     Is this transaction inside a batch request?
      * @return void
-     *
-     * @throws ODataException
      */
     public function startTransaction($isBulk = false)
     {

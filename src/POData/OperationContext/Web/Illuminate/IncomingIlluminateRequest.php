@@ -101,7 +101,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
         //not sure how to test that...
         //Have to convert to the stranger format known to POData that deals with multiple query strings.
         //this makes this request a bit non compliant as it doesn't expose duplicate keys, something POData will //check for
-        instead whatever parameter was last in the query string is set.  IE
+        // instead whatever parameter was last in the query string is set.  IE
         //odata.svc/?$format=xml&$format=json the format will be json
         $this->queryOptions = [];
         $this->queryOptionsCount = [];

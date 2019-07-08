@@ -17,15 +17,16 @@ use POData\Common\ODataException;
 use POData\OperationContext\ServiceHost;
 
 use POData\HttpProcessUtility;
+use UnitTests\POData\TestCase;
 
 class TestObjectModelSerializer extends TestCase
 {	
-    protected function setUp()
+    function setUp()
     {
         ob_start();
     }
 
-    public function tearDown()
+    function tearDown()
     {
         ob_end_clean();
     }

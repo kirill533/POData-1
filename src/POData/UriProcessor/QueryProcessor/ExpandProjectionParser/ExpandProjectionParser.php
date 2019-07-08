@@ -4,6 +4,7 @@ namespace POData\UriProcessor\QueryProcessor\ExpandProjectionParser;
 
 use POData\Common\Messages;
 use POData\Common\ODataException;
+use POData\Providers\Metadata\ResourceAssociationSet;
 use POData\Providers\Metadata\ResourceEntityType;
 use POData\Providers\Metadata\ResourceProperty;
 use POData\Providers\Metadata\ResourcePropertyKind;
@@ -12,8 +13,6 @@ use POData\Providers\Metadata\ResourceSet;
 use POData\Configuration\ServiceConfiguration;
 use POData\Providers\Metadata\ResourceType;
 use POData\Providers\Metadata\ResourceSetWrapper;
-use POData\Providers\Metadata\ResourceType;
-use POData\Providers\Metadata\ResourceTypeKind;
 use POData\Providers\ProvidersWrapper;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;

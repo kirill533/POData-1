@@ -20,9 +20,6 @@ use POData\Providers\Metadata\ResourceFunctionType;
 use POData\Providers\Metadata\ResourceSetWrapper;
 use POData\Providers\ProvidersWrapper;
 use POData\Writers\Json\JsonODataV1Writer;
-use POData\Providers\ProvidersWrapper;
-use POData\Common\Version;
-use POData\Common\MimeTypes;
 
 use Phockito;
 use PhockitoUnit\PhockitoUnitTestCase;

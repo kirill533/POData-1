@@ -299,5 +299,5 @@ interface IQueryProvider
      */
     public function rollBackTransaction();
 
-    public function getCustomProperties($entryObject);
+//    public function getCustomProperties($entryObject);
 }

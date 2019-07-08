@@ -59,7 +59,7 @@ class BaseServiceTest extends PhockitoUnitTestCase {
         //will change this once that request pipeline is cleaned up
         $service->shouldReceive('getODataWriterRegistry')->andReturn($this->mockRegistry);
         $fakeConfig = new ServiceConfiguration($this->mockMetaProvider);
-        $fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V1);
+        $fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V1());
         $service->shouldReceive('getConfiguration')->andReturn($fakeConfig);
 
         $service->registerWriters();
@@ -91,7 +91,7 @@ class BaseServiceTest extends PhockitoUnitTestCase {
         //will change this once that request pipeline is cleaned up
         $service->shouldReceive('getODataWriterRegistry')->andReturn($this->mockRegistry);
         $fakeConfig = new ServiceConfiguration($this->mockMetaProvider);
-        $fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V2);
+        $fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V2());
         $service->shouldReceive('getConfiguration')->andReturn($fakeConfig);
 
         $service->registerWriters();
@@ -122,7 +122,7 @@ class BaseServiceTest extends PhockitoUnitTestCase {
         //will change this once that request pipeline is cleaned up
         $service->shouldReceive('getODataWriterRegistry')->andReturn($this->mockRegistry);
         $fakeConfig = new ServiceConfiguration($this->mockMetaProvider);
-        $fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V3);
+        $fakeConfig->setMaxDataServiceVersion(ProtocolVersion::V3());
         $service->shouldReceive('getConfiguration')->andReturn($fakeConfig);
 
         //fake the service url

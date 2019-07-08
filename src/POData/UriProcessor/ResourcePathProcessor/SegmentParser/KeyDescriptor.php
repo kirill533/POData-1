@@ -16,14 +16,12 @@ use POData\Providers\Metadata\Type\Guid;
 use POData\Providers\Metadata\Type\Int32;
 use POData\Providers\Metadata\Type\Int64;
 use POData\Providers\Metadata\Type\IType;
-use POData\Providers\Metadata\Type\NullType;
+use POData\Providers\Metadata\Type\Null1;
 use POData\Providers\Metadata\Type\Single;
 use POData\Providers\Metadata\Type\StringType;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionTokenId;
 use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionToken;
-use POData\UriProcessor\QueryProcessor\ExpressionParser\ExpressionLexer;
-use POData\Common\Messages;
 
 
 /**
@@ -531,7 +529,7 @@ class KeyDescriptor
                 $outType = new Single();
                 break;
             case ExpressionTokenId::NULL_LITERAL:
-                $outType = new NullType();
+                $outType = new Null1();
                 break;
             default:
                 $outType = null;
