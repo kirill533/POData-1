@@ -85,9 +85,8 @@ class RequestDescriptionJsonTest extends TestCase
 
     public function testWriteOdataEntryOverJsonLightWithNoMetadata()
     {
-        $expected = '{
-    "CustomerID":"1","CustomerGuid":"123e4567-e89b-12d3-a456-426655440000","CustomerName":" MakeItPhunkee ","country":" Oop North ","Rating":null,"Photo":null,"Address":null
-}';
+        $expected = "{
+" . '    "CustomerID":"1","CustomerGuid":"123e4567-e89b-12d3-a456-426655440000","CustomerName":" MakeItPhunkee ","country":" Oop North ","Rating":null,"Photo":null,"Address":null' . "\n}";
         $payload = $this->generateODataEntry();
 
         $jsonWriter = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), 'http://localhost/odata.svc');
