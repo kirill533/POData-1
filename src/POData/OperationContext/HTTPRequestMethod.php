@@ -15,13 +15,13 @@ use MyCLabs\Enum\Enum;
  * @method static HTTPRequestMethod MERGE()
  * @method static HTTPRequestMethod NONE()
  */
-class HTTPRequestMethod extends Enum {
-
-	const GET = "GET";
-	const POST = "POST";
-	const PUT = "PUT";
-	const DELETE = "DELETE";
-	const PATCH = "PATCH";
-	const MERGE = "MERGE";
+class HTTPRequestMethod extends Enum
+{
+    const GET = 'GET';
+    const POST = 'POST';
+    const PUT = 'PUT';
+    const DELETE = 'DELETE';
+    const PATCH = 'PATCH';
+    const MERGE = 'MERGE';
     const NONE = 'NONE';
 }

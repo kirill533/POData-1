@@ -32,7 +32,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
     /**
      * The request method (GET, POST, PUT, DELETE or MERGE).
      *
-     * @var string HttpVerb
+     * @var HTTPRequestMethod HttpVerb
      */
     private $method;
 
@@ -62,7 +62,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
         $this->headers = [];
         $this->queryOptions = [];
         $this->queryOptionsCount = [];
-        $this->method = $this->request->getMethod();
+        $this->method = new HTTPRequestMethod($this->request->getMethod());
     }
 
     /**
@@ -77,14 +77,16 @@ class IncomingIlluminateRequest implements IHTTPRequest
 
     /**
      * @param string $key The header name
-     ** @return array|null|string
+     *
+     * @return array|null|string
      */
     public function getRequestHeader($key)
     {
         $result = $this->request->header($key);
         //Zend returns false for a missing header...POData needs a null
         if (false === $result || '' === $result) {
-            return null;}
+            return null;
+        }
 
         return $result;
     }
@@ -100,11 +102,12 @@ class IncomingIlluminateRequest implements IHTTPRequest
         //TODO: the contract is more specific than this, it requires the name and values to be decoded
         //not sure how to test that...
         //Have to convert to the stranger format known to POData that deals with multiple query strings.
-        //this makes this request a bit non compliant as it doesn't expose duplicate keys, something POData will //check for
-        // instead whatever parameter was last in the query string is set.  IE
+        //this makes this request a bit non compliant as it doesn't expose duplicate keys, something POData will
+        //check for instead whatever parameter was last in the query string is set.  IE
         //odata.svc/?$format=xml&$format=json the format will be json
         $this->queryOptions = [];
         $this->queryOptionsCount = [];
+
         foreach ($this->request->all() as $key => $value) {
             $keyBitz = explode(';', $key);
             $newKey = strtolower($keyBitz[count($keyBitz) - 1]);
@@ -119,7 +122,7 @@ class IncomingIlluminateRequest implements IHTTPRequest
     }
 
     /**
-     * @return string
+     * @return HTTPRequestMethod
      */
     public function getMethod()
     {

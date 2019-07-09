@@ -94,12 +94,14 @@ class ChangeSetParser implements IBatchParser
     public function handleData()
     {
         $firstLine = trim(strtok($this->getData(), "\n"));
+
         $this->changeSetBoundary = substr($firstLine, 40);
 
         $prefix = 'HTTP_';
         $matches = explode('--' . $this->changeSetBoundary, $this->getData());
         array_shift($matches);
         $contentIDinit = -1;
+
         foreach ($matches as $match) {
             if ('--' === trim($match)) {
                 continue;
@@ -108,6 +110,7 @@ class ChangeSetParser implements IBatchParser
             $stage = 0;
             $gotRequestPathParts = false;
             $match = trim($match);
+            $match = str_replace("\r", '', $match); // removes windows specific character
             $lines = explode("\n", $match);
 
             $requestPathParts = [];
@@ -168,6 +171,7 @@ class ChangeSetParser implements IBatchParser
             if ($contentIDinit == $contentID) {
                 $contentIDinit--;
             }
+
             $this->rawRequests[$contentID] = (object)[
                 'RequestVerb' => $requestPathParts[0],
                 'RequestURL' => $requestPathParts[1],

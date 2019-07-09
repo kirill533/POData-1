@@ -13,8 +13,8 @@ use POData\UriProcessor\QueryProcessor\FunctionDescription;
  */
 interface IExpressionProvider
 {
-
     //TODO: does this really need to be part of this interface? see #89
+
     /**
      * Get the name of the iterator.
      *
@@ -96,7 +96,7 @@ interface IExpressionProvider
     /**
      * Call-back for function call expression.
      *
-     * @param string|FunctionDescription $functionDescription Description of the function
+     * @param string        $functionDescription Description of the function
      * @param array<string> $params Arguments to the functions
      *
      * @return string

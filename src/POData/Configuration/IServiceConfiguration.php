@@ -155,7 +155,7 @@ interface IServiceConfiguration
     /**
      * Sets Maximum version of the response sent by server.
      *
-     * @param  ProtocolVersion|int $version The version to set
+     * @param  ProtocolVersion $version The version to set
      * @return void
      */
     public function setMaxDataServiceVersion($version);

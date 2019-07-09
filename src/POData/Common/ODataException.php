@@ -20,6 +20,7 @@ class ODataException extends \Exception
      * @var int
      */
     private $statusCode;
+
     /**
      * Create new instance of ODataException.
      *

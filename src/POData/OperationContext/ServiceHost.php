@@ -346,6 +346,7 @@ class ServiceHost
     {
         if (($pos = strpos($this->absoluteRequestUriAsString, '.svc')) !== false) {
             $serviceUri = substr($this->absoluteRequestUriAsString, 0, $pos + strlen('.svc'));
+
             return $serviceUri;
         }
 
@@ -439,7 +440,7 @@ class ServiceHost
     /**
      * Get the value of If-Match header of the request.
      *
-     * @return null|string|null
+     * @return string|null
      */
     public function getRequestIfMatch()
     {
@@ -450,7 +451,7 @@ class ServiceHost
     /**
      * Gets the value of If-None-Match header of the request.
      *
-     * @return null|string|null
+     * @return string|null
      */
     public function getRequestIfNoneMatch()
     {
@@ -629,15 +630,17 @@ class ServiceHost
 
     /**
      * Translates the short $format forms into the full mime type forms.
-     ** @param Version $responseVersion the version scheme to interpret the short form with
+     *
+     * @param Version $responseVersion the version scheme to interpret the short form with
      * @param string $format the short $format form
-     ** @return string the full mime type corresponding to the short format form for the given version
+     *
+     * @return string the full mime type corresponding to the short format form for the given version
      */
-    public static function translateFormatToMime(Version $responseVersion, $format) {
+    public static function translateFormatToMime(Version $responseVersion, $format)
+    {
         //TODO: should the version switches be off of the requestVersion, not the response version? see #91
 
         switch ($format) {
-
             case ODataConstants::FORMAT_XML:
                 $format = MimeTypes::MIME_APPLICATION_XML;
                 break;

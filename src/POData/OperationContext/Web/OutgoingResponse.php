@@ -4,7 +4,6 @@ namespace POData\OperationContext\Web;
 
 use POData\Common\ODataConstants;
 
-
 /**
  * Class OutgoingResponse represents HTTP methods,headers and stream associated with a HTTP response.
  */

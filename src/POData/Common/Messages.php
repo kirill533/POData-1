@@ -2,9 +2,6 @@
 
 namespace POData\Common;
 
-use POData\OperationContext\HTTPRequestMethod;
-use POData\Providers\Query\QueryType;
-
 use POData\Common\Messages\common;
 use POData\Common\Messages\configuration;
 use POData\Common\Messages\eTag;

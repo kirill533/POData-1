@@ -27,12 +27,11 @@ class IncomingRequest implements IHTTPRequest
      * @var string
      */
     private $rawUrl = null;
-    
 
     /**
      * The request method (GET, POST, PUT, DELETE or MERGE).
      *
-     * @var string HttpVerb
+     * @var HTTPRequestMethod HttpVerb
      */
     private $method;
 
@@ -55,7 +54,7 @@ class IncomingRequest implements IHTTPRequest
      */
     public function __construct()
     {
-        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->method = new HTTPRequestMethod($_SERVER['REQUEST_METHOD']);
         $this->queryOptions = [];
         $this->queryOptionsCount = [];
         $this->headers = [];
@@ -130,7 +129,8 @@ class IncomingRequest implements IHTTPRequest
                 $this->rawUrl = ODataConstants::HTTPREQUEST_PROTOCOL_HTTPS;
             }
 
-            $this->rawUrl .= '://' . $_SERVER[HttpProcessUtility::headerToServerKey(ODataConstants::HTTPREQUEST_HEADER_HOST)];
+            $this->rawUrl .= '://' .
+                             $_SERVER[HttpProcessUtility::headerToServerKey(ODataConstants::HTTPREQUEST_HEADER_HOST)];
             $this->rawUrl .= utf8_decode(urldecode($_SERVER[ODataConstants::HTTPREQUEST_URI]));
         }
 
@@ -207,7 +207,7 @@ class IncomingRequest implements IHTTPRequest
      * Value will be set from the value of the HTTP method of the
      * incoming Web request.
      *
-     * @return string $_header[HttpRequestHeaderMethod]
+     * @return HTTPRequestMethod $_header[HttpRequestHeaderMethod]
      */
     public function getMethod()
     {

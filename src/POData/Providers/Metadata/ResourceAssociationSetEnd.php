@@ -59,7 +59,8 @@ class ResourceAssociationSetEnd
     ) {
         if (null !== $resourceProperty
             && (null === $resourceType->resolveProperty($resourceProperty->getName())
-                || (($resourceProperty->getKind() != ResourcePropertyKind::RESOURCE_REFERENCE) && ($resourceProperty->getKind() != ResourcePropertyKind::RESOURCESET_REFERENCE) && ($resourceProperty->getKind() != ResourcePropertyKind::KEY_RESOURCE_REFERENCE)))
+                || (($resourceProperty->getKind() != ResourcePropertyKind::RESOURCE_REFERENCE)
+                    && ($resourceProperty->getKind() != ResourcePropertyKind::RESOURCESET_REFERENCE)))
         ) {
             throw new \InvalidArgumentException(
                 Messages::resourceAssociationSetEndPropertyMustBeNavigationProperty(
@@ -79,7 +80,7 @@ class ResourceAssociationSetEnd
                 )
             );
         }
-if (null !== $concreteType) {
+        if (null !== $concreteType) {
             if ($concreteType->isAbstract()) {
                 $msg = 'Concrete type must not be abstract if explicitly supplied';
                 throw new \InvalidArgumentException($msg);

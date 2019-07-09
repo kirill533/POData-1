@@ -126,6 +126,7 @@ class Binary implements IType
 
         if (!ctype_xdigit($value)) {
             $outValue = null;
+
             return false;
         }
 

@@ -44,10 +44,10 @@ class SimpleRequestAdapter extends IncomingRequest implements IHTTPRequest
     /**
      * Get the HTTP method/verb of the HTTP Request.
      *
-     * @return string
+     * @return HTTPRequestMethod
      */
     public function getMethod()
     {
-        return $_SERVER['REQUEST_METHOD'];
+        return new HTTPRequestMethod($_SERVER['REQUEST_METHOD']);
     }
 }

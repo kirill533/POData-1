@@ -121,30 +121,33 @@ class Version
     private static $fixedVersion = null;
 
     private static function fillVersions()
-        {if (null == self::$fixedVersion)  {
+    {
+        if (null == self::$fixedVersion) {
             self::$fixedVersion = [
                 1 => new self(1, 0),
                 2 => new self(2, 0),
                 3 => new self(3, 0)];
-            }
         }
-
+    }
 
     public static function v1()
     {
         self::fillVersions();
+
         return self::$fixedVersion[1];
     }
 
-
     public static function v2()
-        {self::fillVersions();
+    {
+        self::fillVersions();
+
         return self::$fixedVersion[2];
     }
 
-
     public static function v3()
-        {self::fillVersions();
+    {
+        self::fillVersions();
+
         return self::$fixedVersion[3];
     }
 
