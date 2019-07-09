@@ -46,13 +46,13 @@ class JsonLightODataWriterFullMetadataTest extends TestCase
         $this->assertSame($writer, $result);
 
         //decoding the json string to test, there is no json string comparison in php unit
-        $actual = json_decode($writer->getOutput());
+        $actual = json_decode($writer->getOutput(), 1);
 
         $expected = '{
-						"odata.metdata" : "http://services.odata.org/OData/OData.svc/$metadata#Products/$links/Supplier",
-						"url": "http://services.odata.org/OData/OData.svc/Suppliers(0)"
+						"url": "http://services.odata.org/OData/OData.svc/Suppliers(0)",
+						"odata.metadata" : "http://services.odata.org/OData/OData.svc/$metadata#Products/$links/Supplier"
 					}';
-        $expected = json_decode($expected);
+        $expected = json_decode($expected, 1);
         $this->assertEquals([$expected], [$actual], 'raw JSON is: '.$writer->getOutput());
     }
 
@@ -1364,7 +1364,11 @@ class JsonLightODataWriterFullMetadataTest extends TestCase
         $writer = new JsonLightODataWriter(JsonLightMetadataLevel::FULL(), $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
-        $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n\n        ]\n    }\n}";
+        $expected = '{
+    "odata.metadata":"http://services.odata.org/OData/OData.svc/$metadata","value":[
+
+    ]
+}';
 
         $this->assertEquals($expected, $actual);
     }
@@ -1389,7 +1393,15 @@ class JsonLightODataWriterFullMetadataTest extends TestCase
         $writer = new JsonLightODataWriter(JsonLightMetadataLevel::FULL(), $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
-        $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n            \"Name 1\",\"XML escaped stuff \\\" ' <> & ?\"\n        ]\n    }\n}";
+        $expected = '{
+    "odata.metadata":"http://services.odata.org/OData/OData.svc/$metadata","value":[
+        {
+            "name":"Name 1","url":"Name 1"
+        },{
+            "name":"XML escaped stuff \" \' <> & ?","url":"XML escaped stuff \" \' <> & ?"
+        }
+    ]
+}';
 
         $this->assertEquals($expected, $actual);
     }
@@ -1419,7 +1431,7 @@ class JsonLightODataWriterFullMetadataTest extends TestCase
 
             [200, Version::v1(), MimeTypes::MIME_APPLICATION_JSON, false],
             [201, Version::v2(), MimeTypes::MIME_APPLICATION_JSON, false],
-            [202, Version::v3(), MimeTypes::MIME_APPLICATION_JSON, false],
+            [202, Version::v3(), MimeTypes::MIME_APPLICATION_JSON, true],
 
             //TODO: is this first one right?  this should NEVER come up, but should we claim to handle this format when
             //it's invalid for V1? Ditto first of the next sections
@@ -1505,8 +1517,8 @@ class JsonLightODataWriterFullMetadataTest extends TestCase
         $expected .= '}';
         $foo->write($model);
         $actual = $foo->getOutput();
-        $expected = preg_replace('~(*BSR_ANYCRLF)\R~', "\r\n", $expected);
-        $actual = preg_replace('~(*BSR_ANYCRLF)\R~', "\r\n", $actual);
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
         $this->assertEquals($expected, $actual);
     }
 
@@ -1520,7 +1532,11 @@ class JsonLightODataWriterFullMetadataTest extends TestCase
         $actual = $foo->write($entry)->getOutput();
         $expected = '{'.PHP_EOL.'    "odata.metadata":"http://localhost/odata.svc/$metadata#Foobars/@Element"'
                     .',"odata.type":"","odata.id":"","odata.etag":"","odata.editLink":""'.PHP_EOL.'}';
-        $this->assertTrue(false !== strpos($actual, $expected));
+
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+
+        $this->assertEquals($actual, $expected);
     }
 
     public function testWriteEmptyODataFeed()
@@ -1538,6 +1554,8 @@ class JsonLightODataWriterFullMetadataTest extends TestCase
                     .'    "odata.metadata":"http://localhost/odata.svc/$metadata#title","value":['
                     .PHP_EOL.PHP_EOL.'    ]'.PHP_EOL.'}';
         $actual = $foo->write($feed)->getOutput();
-        $this->assertTrue(false !== strpos($actual, $expected));
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+        $this->assertEquals($actual, $expected);
     }
 }
