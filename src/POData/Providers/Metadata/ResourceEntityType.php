@@ -14,7 +14,7 @@ class ResourceEntityType extends ResourceType
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(\ReflectionClass $instanceType, TEntityTypeType $entity, IMetadataProvider $meta)
+    public function __construct($instanceType, TEntityTypeType $entity, IMetadataProvider $meta)
     {
         $resourceTypeKind = ResourceTypeKind::ENTITY();
         $bitz = explode('.', $entity->getName());

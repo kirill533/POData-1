@@ -372,9 +372,9 @@ abstract class BaseService implements IRequestHandler, IService
         }
 
         if (-1 < $serviceVersion->compare(Version::v3())) {
-            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $serviceURI));
-            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL(), $serviceURI));
             $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::FULL(), $serviceURI));
+            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL(), $serviceURI));
+            $registry->register(new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $serviceURI));
         }
     }
 

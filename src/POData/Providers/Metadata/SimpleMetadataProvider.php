@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use POData\Common\InvalidOperationException;
 use POData\Providers\Metadata\Type\IType;
 use POData\Providers\Metadata\Type\TypeCode;
+use POData\Providers\Metadata\Entity\IDynamic;
 
 /**
  * Class SimpleMetadataProvider.
@@ -279,7 +280,7 @@ class SimpleMetadataProvider implements IMetadataProvider
     /**
      * Add an entity type.
      *
-     * @param  \ReflectionClass                                         $refClass reflection class of the entity
+     * @param  \ReflectionClass|IDynamic                                         $refClass reflection class of the entity
      * @param  string                                                   $name name of the entity
      * @param  null|string                                              $pluralName  Optional custom resource set name
      * @param  mixed                                                    $isAbstract
@@ -289,7 +290,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      * @internal param string $namespace namespace of the data source
      */
     public function addEntityType(
-        \ReflectionClass $refClass,
+        $refClass,
         $name,
         $pluralName = null,
         $isAbstract = false,
@@ -320,7 +321,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      * @internal param null|ResourceType $baseResourceType
      */
     private function createResourceType(
-        \ReflectionClass $refClass,
+        $refClass,
         $name,
         $typeKind,
         $isAbstract = false,
@@ -507,6 +508,16 @@ class SimpleMetadataProvider implements IMetadataProvider
     private function checkInstanceProperty($name, ResourceType $resourceType)
     {
         $instance = $resourceType->getInstanceType();
+
+        if ($instance instanceof IDynamic) {
+            if (!$instance->hasProperty($name)) {
+                throw new InvalidOperationException(
+                    'Can\'t add a property which does not exist on the instance type. Property name: ' . $name
+                );
+            }
+            return;
+        }
+
         $hasMagicGetter = $instance instanceof IType || $instance->hasMethod('__get');
         if ($instance instanceof \ReflectionClass) {
             $hasMagicGetter |= $instance->isInstance(new \stdClass);
@@ -1001,15 +1012,7 @@ class SimpleMetadataProvider implements IMetadataProvider
      */
     private function _addPrimitivePropertyInternal($resourceType, $name, $typeCode, $isKey = false, $isBag = false, $isETagProperty = false)
     {
-        try
-        {
-            $resourceType->getInstanceType()->getProperty($name);
-        } catch (\ReflectionException $ex)
-        {
-            throw new InvalidOperationException(
-                'Can\'t add a property which does not exist on the instance type.'
-            );
-        }
+        $this->checkInstanceProperty($name, $resourceType);
 
         $primitiveResourceType = ResourceType::getPrimitiveResourceType($typeCode);
 

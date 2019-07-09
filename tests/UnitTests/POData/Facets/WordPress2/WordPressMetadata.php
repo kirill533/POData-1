@@ -8,10 +8,20 @@ namespace UnitTests\POData\Facets\WordPress2;
  *
  */
 
+use POData\Providers\Metadata\ResourceStreamInfo;
+use POData\Providers\Metadata\ResourceAssociationSetEnd;
+use POData\Providers\Metadata\ResourceAssociationSet;
+use POData\Common\NotImplementedException;
+use POData\Providers\Metadata\Type\EdmPrimitiveType;
+use POData\Providers\Metadata\ResourceSet;
+use POData\Providers\Metadata\ResourcePropertyKind;
+use POData\Providers\Metadata\ResourceProperty;
+use POData\Providers\Metadata\ResourceTypeKind;
+use POData\Providers\Metadata\ResourceType;
 use POData\Common\InvalidOperationException;
 use POData\Providers\Metadata\IMetadataProvider;
 use POData\Providers\Metadata\SimpleMetadataProvider;
-use POData\Providers\Metadata\Type\EdmPrimitiveType;
+use POData\Providers\Metadata\MetadataMapping;
 
 //Begin Resource Classes
 
@@ -167,7 +177,8 @@ class User
 
 class WordPressMetadata
 {
-    private static $_entityMapping = [];
+
+    private static $_entityMapping = array();
 
     /**
      * create metadata.
@@ -181,8 +192,64 @@ class WordPressMetadata
         $metadata = new SimpleMetadataProvider('WordPressEntities', 'WordPress');
 
         //Register the entity (resource) type 'Post'
-        $postsEntityType = $metadata->addEntityType(
-            new \ReflectionClass('UnitTests\POData\Facets\WordPress2\Post'), 'Post'
+        //Register the entity (resource) type 'Post'
+        $dynamicEntity = new \POData\Providers\Metadata\Entity\Dynamic([
+            //Key Edm.Int32
+            'PostID' => [],
+            //Edm.Int32
+            'Author' => [],
+            //Edm.DateTime
+            'Date' => [],
+            //Edm.DateTime
+            'DateGmt' => [],
+            //Edm.String
+            'Content' => [],
+            //Edm.String
+            'Title' => [],
+            //Edm.String
+            'Excerpt' => [],
+            //Edm.String
+            'Status' => [],
+            //Edm.String
+            'CommentStatus' => [],
+            //Edm.String
+            'PingStatus' => [],
+            //Edm.String
+            'Password' => [],
+            //Edm.String
+            'Name' => [],
+            //Edm.String
+            'ToPing' => [],
+            //Edm.String
+            'Pinged' => [],
+            //Edm.DateTime
+            'Modified' => [],
+            //Edm.DateTime
+            'ModifiedGmt' => [],
+            //Edm.String
+            'ContentFiltered' => [],
+            //Edm.Int32
+            'ParentID' => [],
+            //Edm.String
+            'Guid' => [],
+            //Edm.Int32
+            'MenuOrder' => [],
+            //Edm.String
+            'Type' => [],
+            //Edm.String
+            'MimeType' => [],
+            //Edm.Int32
+            'CommentCount' => [],
+            //Navigation Property User (ResourceReference)
+            'User' => [],
+            //Navigation Property tags (ResourceSetReference)
+            'Tags' => [],
+            //Navigation Property categories (ResourceSetReference)
+            'Categories' => [],
+            //Navigation Property comments (ResourceSetReference)
+            'Comments' => [],
+        ]);
+        $postsEntityType = $metadata->addEntityType($dynamicEntity, 'Post'
         );
         $metadata->addKeyProperty($postsEntityType, 'PostID', EdmPrimitiveType::INT32);
         $metadata->addPrimitiveProperty($postsEntityType, 'Author', EdmPrimitiveType::INT32);
