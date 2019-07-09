@@ -1443,6 +1443,10 @@ class JsonODataV1WriterTest extends TestCase
 
         $actual = $foo->write($entry)->getOutput();
         $expected = '"__metadata":{'.PHP_EOL.PHP_EOL.'        }';
+
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+
         $this->assertTrue(false !== strpos($actual, $expected));
     }
 
@@ -1459,6 +1463,10 @@ class JsonODataV1WriterTest extends TestCase
         $foo = new JsonODataV1Writer('http://localhost/odata.svc');
         $expected = '"d":['.PHP_EOL.PHP_EOL.'    ]';
         $actual = $foo->write($feed)->getOutput();
+
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+
         $this->assertTrue(false !== strpos($actual, $expected));
     }
 }

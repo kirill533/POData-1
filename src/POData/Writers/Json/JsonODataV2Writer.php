@@ -37,12 +37,13 @@ class JsonODataV2Writer extends JsonODataV1Writer
 
     protected $nextLinkName = ODataConstants::JSON_NEXT_STRING;
 
-
     /**
      * Determines if the given writer is capable of writing the response or not.
-     ** @param Version $responseVersion the OData version of the response
-     * @param string $contentType the Content Type of the response
-     ** @return bool true if the writer can handle the response, false otherwise
+     *
+     * @param Version $responseVersion the OData version of the response
+     * @param string  $contentType     the Content Type of the response
+     *
+     * @return bool true if the writer can handle the response, false otherwise
      */
     public function canHandle(Version $responseVersion, $contentType)
     {
@@ -50,12 +51,15 @@ class JsonODataV2Writer extends JsonODataV1Writer
 
         //special case, in v3 verbose is the v2 writer
         if ($responseVersion == Version::v3()) {
-            return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (in_array('odata=verbose', $parts) || in_array('odata=minimal', $parts));
+            return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (in_array('odata=verbose', $parts));
         }
 
-        return $responseVersion == Version::v2();
-    }
+        if ($responseVersion != Version::v2()) {
+            return false;
+        }
 
+        return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts);
+    }
 
     /**
      * Write the given OData model in a specific response format.
@@ -65,15 +69,14 @@ class JsonODataV2Writer extends JsonODataV1Writer
      * @return JsonODataV2Writer
      */
     public function write($model)
-        {// { "d" :
+    {
+        // { "d" :
         $this->writer
             ->startObjectScope()
             ->writeName('d')
             ->startObjectScope();
 
-
         if ($model instanceof ODataURL) {
-
             $this->writeUrl($model);
         } elseif ($model instanceof ODataURLCollection) {
             $this->writeUrlCollection($model);
@@ -89,11 +92,9 @@ class JsonODataV2Writer extends JsonODataV1Writer
                 ->startArrayScope();
             $this->writeFeed($model);
             $this->writer->endScope();
-
         } elseif ($model instanceof ODataEntry) {
             $this->writeEntry($model);
         }
-
 
         $this->writer->endScope();
         $this->writer->endScope();
@@ -119,13 +120,12 @@ class JsonODataV2Writer extends JsonODataV1Writer
             ->writeName($this->dataArrayName)
             ->startArrayScope();
 
-            parent::writeUrlCollection($urls);
+        parent::writeUrlCollection($urls);
 
         $this->writer->endScope();
 
         return $this;
     }
-
 
     /**
      * Writes the row count.
@@ -143,7 +143,6 @@ class JsonODataV2Writer extends JsonODataV1Writer
 
         return $this;
     }
-
 
     /**
      * Writes the next page link.
@@ -179,8 +178,6 @@ class JsonODataV2Writer extends JsonODataV1Writer
             $this->writeEntry($link->expandedResult);
         }
 
-
         $this->writer->endScope();
     }
-
 }

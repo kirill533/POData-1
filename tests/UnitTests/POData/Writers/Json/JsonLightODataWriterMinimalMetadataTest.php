@@ -1284,7 +1284,11 @@ class JsonLightODataWriterMinimalMetadataTest extends TestCase
         $writer = new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL(), $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
-        $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n\n        ]\n    }\n}";
+        $expected = '{
+    "odata.metadata":"http://services.odata.org/OData/OData.svc/$metadata","value":[
+
+    ]
+}';
 
         $this->assertEquals($expected, $actual);
     }
@@ -1309,7 +1313,15 @@ class JsonLightODataWriterMinimalMetadataTest extends TestCase
         $writer = new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL(), $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
-        $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n            \"Name 1\",\"XML escaped stuff \\\" ' <> & ?\"\n        ]\n    }\n}";
+        $expected = '{
+    "odata.metadata":"http://services.odata.org/OData/OData.svc/$metadata","value":[
+        {
+            "name":"Name 1","url":"Name 1"
+        },{
+            "name":"XML escaped stuff \" \' <> & ?","url":"XML escaped stuff \" \' <> & ?"
+        }
+    ]
+}';
 
         $this->assertEquals($expected, $actual);
     }
@@ -1339,7 +1351,7 @@ class JsonLightODataWriterMinimalMetadataTest extends TestCase
 
             [200, Version::v1(), MimeTypes::MIME_APPLICATION_JSON, false],
             [201, Version::v2(), MimeTypes::MIME_APPLICATION_JSON, false],
-            [202, Version::v3(), MimeTypes::MIME_APPLICATION_JSON, false],
+            [202, Version::v3(), MimeTypes::MIME_APPLICATION_JSON, true],
 
             //TODO: is this first one right?  this should NEVER come up, but should we claim to handle this format when
             //it's invalid for V1? Ditto first of the next sections
@@ -1369,9 +1381,12 @@ class JsonLightODataWriterMinimalMetadataTest extends TestCase
         $foo = new JsonLightODataWriter(JsonLightMetadataLevel::MINIMAL(), 'http://localhost/odata.svc');
 
         $actual = $foo->write($entry)->getOutput();
-        $expected = '{'.PHP_EOL.'    "odata.metadata":"http://localhost/odata.svc/$metadata#Foobars/@Element"'
-                    .PHP_EOL.'}';
-        $this->assertTrue(false !== strpos($actual, $expected));
+        $expected = '{'.PHP_EOL.'    "odata.metadata":"http://localhost/odata.svc/$metadata#Foobars/@Element"'.PHP_EOL.'}';
+
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+
+        $this->assertEquals($actual, $expected);
     }
 
     public function testWriteEmptyODataFeed()
@@ -1389,6 +1404,8 @@ class JsonLightODataWriterMinimalMetadataTest extends TestCase
                     .'    "odata.metadata":"http://localhost/odata.svc/$metadata#title","value":['
                     .PHP_EOL.PHP_EOL.'    ]'.PHP_EOL.'}';
         $actual = $foo->write($feed)->getOutput();
-        $this->assertTrue(false !== strpos($actual, $expected));
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+        $this->assertEquals($actual, $expected);
     }
 }

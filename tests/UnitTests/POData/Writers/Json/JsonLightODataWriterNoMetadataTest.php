@@ -1263,7 +1263,11 @@ class JsonLightODataWriterNoMetadataTest extends TestCase
         $writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
-        $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n\n        ]\n    }\n}";
+        $expected = '{
+    "odata.metadata":"this should not be used for minimal metadata/$metadata","value":[
+
+    ]
+}';
 
         $this->assertEquals($expected, $actual);
     }
@@ -1288,7 +1292,15 @@ class JsonLightODataWriterNoMetadataTest extends TestCase
         $writer = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), $this->serviceBase);
         $actual = $writer->writeServiceDocument($this->mockProvider)->getOutput();
 
-        $expected = "{\n    \"d\":{\n        \"EntitySet\":[\n            \"Name 1\",\"XML escaped stuff \\\" ' <> & ?\"\n        ]\n    }\n}";
+        $expected = '{
+    "odata.metadata":"this should not be used for minimal metadata/$metadata","value":[
+        {
+            "name":"Name 1","url":"Name 1"
+        },{
+            "name":"XML escaped stuff \" \' <> & ?","url":"XML escaped stuff \" \' <> & ?"
+        }
+    ]
+}';
 
         $this->assertEquals($expected, $actual);
     }
@@ -1318,7 +1330,7 @@ class JsonLightODataWriterNoMetadataTest extends TestCase
 
             [200, Version::v1(), MimeTypes::MIME_APPLICATION_JSON, false],
             [201, Version::v2(), MimeTypes::MIME_APPLICATION_JSON, false],
-            [202, Version::v3(), MimeTypes::MIME_APPLICATION_JSON, false],
+            [202, Version::v3(), MimeTypes::MIME_APPLICATION_JSON, true],
 
             //TODO: is this first one right?  this should NEVER come up, but should we claim to handle this format when
             //it's invalid for V1? Ditto first of the next sections
@@ -1349,6 +1361,10 @@ class JsonLightODataWriterNoMetadataTest extends TestCase
 
         $actual = $foo->write($entry)->getOutput();
         $expected = '{'.PHP_EOL.PHP_EOL.'}';
+
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+
         $this->assertTrue(false !== strpos($actual, $expected));
     }
 
@@ -1365,6 +1381,10 @@ class JsonLightODataWriterNoMetadataTest extends TestCase
         $foo = new JsonLightODataWriter(JsonLightMetadataLevel::NONE(), 'http://localhost/odata.svc');
         $expected = '{'.PHP_EOL.'    "value":['.PHP_EOL.PHP_EOL.'    ]'.PHP_EOL.'}';
         $actual = $foo->write($feed)->getOutput();
+
+        $expected = str_replace("\r", "", $expected);
+        $actual = str_replace("\r", "", $actual);
+
         $this->assertTrue(false !== strpos($actual, $expected));
     }
 }

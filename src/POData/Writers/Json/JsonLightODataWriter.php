@@ -28,6 +28,11 @@ class JsonLightODataWriter extends JsonODataV2Writer
     protected $metadataLevel;
 
     /**
+     * @var JsonLightMetadataLevel
+     */
+    protected $metadataLevelAlternative = 'not_set';
+
+    /**
      * The service base uri.
      *
      * @var string
@@ -52,6 +57,10 @@ class JsonLightODataWriter extends JsonODataV2Writer
         $this->dataArrayName = ODataConstants::JSON_LIGHT_VALUE_NAME;
         $this->rowCountName = ODataConstants::JSON_LIGHT_ROWCOUNT_STRING;
         $this->metadataLevel = $metadataLevel;
+
+        if ($this->metadataLevel == JsonLightMetadataLevel::MINIMAL()) {
+            $this->metadataLevelAlternative = JsonLightMetadataLevel::MINIMAL_ALT();
+        }
     }
 
     /**
@@ -72,7 +81,8 @@ class JsonLightODataWriter extends JsonODataV2Writer
 
         //It must be app/json and have the right odata= piece
         $metadata = array_filter($parts, function($item) { return strpos($item, 'odata') !== false; });
-        return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (empty($metadata) || in_array($this->metadataLevel, $metadata));
+        return in_array(MimeTypes::MIME_APPLICATION_JSON, $parts) && (empty($metadata) || in_array($this->metadataLevel, $metadata)
+                || in_array($this->metadataLevelAlternative, $metadata));
     }
 
     /**
