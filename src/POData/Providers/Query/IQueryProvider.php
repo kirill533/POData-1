@@ -102,11 +102,11 @@ interface IQueryProvider
         $sourceEntityInstance,
         ResourceSet $targetResourceSet,
         ResourceProperty $targetProperty,
-        FilterInfo$filter = null,
+        FilterInfo $filter = null,
         $orderBy = null,
         $top = null,
         $skip = null,
-    $skipToken = null
+        $skipToken = null
     );
 
     /**

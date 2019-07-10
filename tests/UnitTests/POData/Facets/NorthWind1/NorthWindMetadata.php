@@ -204,4 +204,71 @@ class NorthWindMetadata
             $employeeSet
         );
     }
+
+    public static function CreateRefConstraints()
+    {
+        list($metadata,
+            $customersEntityType,
+            $orderEntityType,
+            $productEntityType,
+            $orderDetailsEntityType,
+            $employeeEntityType,
+            $customersResourceSet,
+            $ordersResourceSet,
+            $productResourceSet,
+            $orderDetailsEntitySet,
+            $employeeSet) = self::createMetadataCore();
+
+        $metadata->addPrimitiveProperty(
+            $orderEntityType,
+            'CustomerID',
+            EdmPrimitiveType::INT32
+        );
+
+        /**
+         * @var SimpleMetadataProvider $metadata
+         */
+        //Register the associations (navigations)
+        //Customers (1) <==> Orders (0-*)
+//        $metadata->addResourceReferencePropertyBidirectional(
+//            $customersEntityType,
+//            $orderEntityType,
+//            'Orders',
+//            'Customer'
+//        );
+        $metadata->addResourceReferencePropertyConstraint(
+            $customersEntityType,
+            $orderEntityType,
+            'Orders',
+            'Customer',
+            'CustomerID',
+            'CustomerID',
+            true
+        );
+
+        //Orders (1) <==> Order_Details (0-*)
+        //Products (1) <==> Order_Details (0-*)
+//        $metadata->addResourceReferencePropertyBidirectional(
+//            $productEntityType,
+//            $orderDetailsEntityType,
+//            'Order_Details',
+//            'Product'
+//        );
+//        $metadata->addResourceReferencePropertyBidirectional(
+//            $orderEntityType,
+//            $orderDetailsEntityType,
+//            'Order_Details',
+//            'Order'
+//        );
+        //Employees (1) <==> Employees (1) 'Manager
+        //Employees (1) <==> Employees (*) 'Subordinates
+//        $metadata->addResourceReferencePropertyBidirectional(
+//            $employeeEntityType,
+//            $employeeEntityType,
+//            'Subordinates',
+//            'Manager'
+//        );
+
+        return $metadata;
+    }
 }
