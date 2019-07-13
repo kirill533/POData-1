@@ -205,6 +205,10 @@ class NorthWindMetadata
         );
     }
 
+    /**
+     * @return mixed|SimpleMetadataProvider
+     * @throws InvalidOperationException
+     */
     public static function CreateRefConstraints()
     {
         list($metadata,
@@ -224,6 +228,12 @@ class NorthWindMetadata
             'CustomerID',
             EdmPrimitiveType::INT32
         );
+
+        /*$metadata->addPrimitiveProperty(
+            $orderEntityType,
+            'EmployeeID',
+            EdmPrimitiveType::INT32
+        );*/
 
         /**
          * @var SimpleMetadataProvider $metadata
@@ -254,12 +264,34 @@ class NorthWindMetadata
 //            'Order_Details',
 //            'Product'
 //        );
+
+        $metadata->addResourceReferencePropertyConstraint(
+            $productEntityType,
+            $orderDetailsEntityType,
+            'Order_Details',
+            'Product',
+            'ProductID',
+            'ProductID',
+            false
+        );
+
 //        $metadata->addResourceReferencePropertyBidirectional(
 //            $orderEntityType,
 //            $orderDetailsEntityType,
 //            'Order_Details',
 //            'Order'
 //        );
+
+        $metadata->addResourceReferencePropertyConstraint(
+            $orderEntityType,
+            $orderDetailsEntityType,
+            'Order_Details',
+            'Order',
+            'OrderID',
+            'OrderID',
+            false
+        );
+
         //Employees (1) <==> Employees (1) 'Manager
         //Employees (1) <==> Employees (*) 'Subordinates
 //        $metadata->addResourceReferencePropertyBidirectional(
@@ -268,6 +300,16 @@ class NorthWindMetadata
 //            'Subordinates',
 //            'Manager'
 //        );
+
+        $metadata->addResourceReferencePropertyConstraint(
+            $employeeEntityType,
+            $employeeEntityType,
+            'Subordinates',
+            'Manager',
+            'EmployeeID',
+            'ReportsTo',
+            true
+        );
 
         return $metadata;
     }

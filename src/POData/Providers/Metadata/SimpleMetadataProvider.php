@@ -530,7 +530,7 @@ class SimpleMetadataProvider implements IMetadataProvider
                 }
             } catch (\ReflectionException $exception) {
                 throw new InvalidOperationException(
-                    'Can\'t add a property which does not exist on the instance type.'
+                    'Can\'t add a property which does not exist on the instance type. Property name: ' . $name
                 );
             }
         }
@@ -739,39 +739,45 @@ class SimpleMetadataProvider implements IMetadataProvider
 
         // Add navigation properties
         $sourceResourceNavProperty = new ResourceProperty($sourceNavProperty, null, $targetKind, $targetResourceType);
-        assert(
-            $targetKind == $sourceResourceNavProperty->getKind(),
-            'Resource property kind mismatch between $targetKind and $sourceResourceProperty'
-        );
+        if ($targetKind != $sourceResourceNavProperty->getKind()) {
+            throw new InvalidOperationException(
+                'Resource property kind mismatch between $targetKind and $sourceResourceNavProperty'
+            );
+        }
         $sourceResourceType->addProperty($sourceResourceNavProperty, false);
         $targetResourceNavProperty = new ResourceProperty($targetNavProperty, null, $sourceKind, $sourceResourceType);
-        assert(
-            $sourceKind == $targetResourceNavProperty->getKind(),
-            'Resource property kind mismatch between $sourceKind and $targetResourceProperty'
-        );
+        if ($sourceKind != $targetResourceNavProperty->getKind()) {
+            throw new InvalidOperationException(
+                'Resource property kind mismatch between $sourceKind and $targetResourceNavProperty'
+            );
+        }
         $targetResourceType->addProperty($targetResourceNavProperty, false);
 
         // find constraints keys properties
         $sourceResourceProperty = $sourceResourceType->resolvePropertyDeclaredOnThisType($sourceProperty);
-        assert(
-            $sourceResourceProperty !== null,
-            "Source property not fount in the source type"
-        );
-
-        assert(
-            $targetKind == $sourceResourceProperty->getKind(),
-            'Resource property kind mismatch between $targetKind and $sourceResourceProperty'
-        );
+        if ($sourceResourceProperty === null) {
+            throw new InvalidOperationException(
+                'Source property not fount in the source type'
+            );
+        }
+        /*if ($targetKind != $sourceResourceProperty->getKind()) {
+            throw new InvalidOperationException(
+                'Resource property kind mismatch between $targetKind and $sourceResourceProperty'
+            );
+        }*/
 
         $targetResourceProperty = $targetResourceType->resolvePropertyDeclaredOnThisType($targetProperty);
-        assert(
-            $targetResourceProperty !== null,
-            "Target property not fount in the target type"
-        );
-        assert(
-            $sourceKind == $targetResourceProperty->getKind(),
-            'Resource property kind mismatch between $sourceKind and $targetResourceProperty'
-        );
+
+        if ($targetResourceProperty === null) {
+            throw new InvalidOperationException(
+                'Target property not fount in the target type'
+            );
+        }
+        /*if ($sourceKind != $targetResourceProperty->getKind()) {
+            throw new InvalidOperationException(
+                'Resource property kind mismatch between $sourceKind and $targetResourceProperty'
+            );
+        }*/
 
         $fwdSet = new ResourceAssociationSet(
             $fwdSetKey,
@@ -798,16 +804,18 @@ class SimpleMetadataProvider implements IMetadataProvider
         $this->associationSets[$fwdSetKey] = $fwdSet;
 
         // verify resource property types are what we expect them to be
-        $sourceResourceKind = $sourceResourceType->resolveProperty($sourceProperty)->getKind();
-        assert(
-            ResourcePropertyKind::RESOURCE_REFERENCE == $sourceResourceKind,
-            '1 side of 1:N relationship not pointing to resource reference'
-        );
-        $targetResourceKind = $targetResourceType->resolveProperty($targetProperty)->getKind();
-        assert(
-            ResourcePropertyKind::RESOURCESET_REFERENCE == $targetResourceKind,
-            'N side of 1:N relationship not pointing to resource set reference'
-        );
+//        $sourceResourceKind = $sourceResourceType->resolveProperty($sourceProperty)->getKind();
+//        if (ResourcePropertyKind::RESOURCE_REFERENCE != $sourceResourceKind) {
+//            throw new InvalidOperationException(
+//                '1 side of 1:N relationship not pointing to resource reference'
+//            );
+//        }
+//        $targetResourceKind = $targetResourceType->resolveProperty($targetProperty)->getKind();
+//        if (ResourcePropertyKind::RESOURCESET_REFERENCE != $targetResourceKind) {
+//            throw new InvalidOperationException(
+//                'N side of 1:N relationship not pointing to resource set reference'
+//            );
+//        }
     }
 
     /**
