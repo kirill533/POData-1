@@ -1,7 +1,7 @@
 {
   "name": "bim/podata",
   "type": "library",
-  "version": "0.1",
+  "version": "0.2",
   "description": "OData for Poor PHP Developers",
   "keywords": [
     "rest",
