@@ -257,7 +257,7 @@ class RequestDescription
         $this->segmentCount = count($this->segments);
         $this->requestUrl = $requestUri;
         $this->lastSegment = $segmentDescriptors[$this->segmentCount - 1];
-        $this->queryType = QueryType::ENTITIES;
+        $this->queryType = QueryType::ENTITIES();
         $this->_service = $service;
         $this->_parts = array();
 
@@ -866,8 +866,8 @@ class RequestDescription
     public function needExecution()
     {
         return !$this->isExecuted
-            && ($this->lastSegment->getTargetKind() != TargetKind::METADATA)
-            && ($this->lastSegment->getTargetKind() != TargetKind::SERVICE_DIRECTORY);
+            && ($this->lastSegment->getTargetKind() != TargetKind::METADATA())
+            && ($this->lastSegment->getTargetKind() != TargetKind::SERVICE_DIRECTORY());
     }
 
     /**
@@ -878,7 +878,7 @@ class RequestDescription
     public function isLinkUri()
     {
         return ($this->segmentCount > 2)
-            && ($this->segments[$this->segmentCount - 2]->getTargetKind() == TargetKind::LINK);
+            && ($this->segments[$this->segmentCount - 2]->getTargetKind() == TargetKind::LINK());
     }
 
     /**
@@ -945,7 +945,6 @@ class RequestDescription
      */
     public function getResponseVersion()
     {
-
         return $this->requiredMinResponseVersion;
     }
 
@@ -958,7 +957,7 @@ class RequestDescription
     public function isETagHeaderAllowed()
     {
         return $this->lastSegment->isSingleResult()
-            && ($this->queryType != QueryType::COUNT)
+            && ($this->queryType != QueryType::COUNT())
             && !$this->isLinkUri()
             && (null === $this->rootProjectionNode
                 || !($this->rootProjectionNode->isExpansionSpecified())
@@ -1041,7 +1040,8 @@ class RequestDescription
      *
      * @param string $versionHeader The DataServiceVersion or MaxDataServiceVersion header value
      * @param string $headerName    The name of the header
-     ** @throws ODataException If the version is malformed or not supported
+     *
+     * @throws ODataException If the version is malformed or not supported
      *
      * @return Version
      *
@@ -1062,11 +1062,9 @@ class RequestDescription
         );
         for ($i = 0; $i < $libNameIndex; ++$i) {
             if ($versionHeader[$i] == '.') {
-
                 //Throw an exception if we find more than 1 dot
                 if ($dotIndex != -1) {
-                    throw ODataException::createBadRequestError(
-                        $badVersionMsg);
+                    throw ODataException::createBadRequestError($badVersionMsg);
                 }
 
                 $dotIndex = $i;
